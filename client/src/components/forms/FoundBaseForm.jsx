@@ -1,5 +1,6 @@
 import React from 'react'
 import Input from '../ui/Input'
+import MultilineInput from '../ui/MultiLineInput'
 
 const FoundBaseForm = ({formData, onChange}) => {
   return (
@@ -16,7 +17,13 @@ const FoundBaseForm = ({formData, onChange}) => {
         required={true}
       />
       
+      {/*Image Upload*/}
+
       {/*Description*/}
+      <MultilineInput
+        name='description'
+        label='Short Item Description'  
+      />
 
 
     </div>
