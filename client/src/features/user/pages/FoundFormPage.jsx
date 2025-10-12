@@ -25,10 +25,10 @@ const FoundFormPage = () => {
       <UserNavBar />
       <div className='flex flex-col items-center'>
 
-        <h1 className='mt-5'>Report Found Item:</h1>
         {/*FoundBaseForm*/}
         <div>
-          <FoundBaseForm 
+          <FoundBaseForm
+            title='Report Found Item Form:' 
             formData={formData} 
             onChange={handleChange} 
             onImageSelect={handleImageSelect}

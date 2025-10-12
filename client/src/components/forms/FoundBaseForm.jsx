@@ -2,10 +2,18 @@ import React from 'react'
 import Input from '../ui/Input'
 import MultilineInput from '../ui/MultiLineInput'
 import ImageUpload from '../ui/ImageUpload'
+import StatusBadge from '../ui/StatusBadge'
 
-const FoundBaseForm = ({ formData, onChange, onImageSelect }) => {
+const FoundBaseForm = ({ title, status = null, formData, onChange, onImageSelect }) => {
   return (
     <div className='flex flex-col items-center'>
+
+      <div>
+        <h1 className='mt-5'><b>{title}</b></h1>
+        {status && (
+          <StatusBadge status={status} />
+        )}
+      </div>
 
       {/*Item Name*/}
       <Input
