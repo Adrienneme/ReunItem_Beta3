@@ -12,12 +12,27 @@ const FoundFormPage = () => {
     photo: null
   })
 
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
-    setFormData({...formData, [e.target.name]: e.target.value});
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   }
 
   const handleImageSelect = (file) => {
-    setFormData({...formData, photo:file})
+    setFormData({ ...formData, photo: file })
+  }
+
+  const handleGenerate = async () => {
+    setLoading(true);
+    // Simulate AI generation - call API 
+    setTimeout(() => {
+      setFormData({
+        ...formData,
+        description:
+          'Black wallet with a silver zipper found near the library steps around 4 PM.',
+      });
+      setLoading(false);
+    }, 1500);
   }
 
   return (
@@ -28,10 +43,12 @@ const FoundFormPage = () => {
         {/*FoundBaseForm*/}
         <div>
           <FoundBaseForm
-            title='Report Found Item Form:' 
-            formData={formData} 
-            onChange={handleChange} 
+            title='Report Found Item Form:'
+            formData={formData}
+            onChange={handleChange}
             onImageSelect={handleImageSelect}
+            loading={loading}
+            onGenerate={handleGenerate}
           />
         </div>
 

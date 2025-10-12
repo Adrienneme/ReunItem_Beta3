@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 
 export default function MultilineInput({
+  name,
   label,
   type = 'text',
   value,
@@ -18,6 +19,7 @@ export default function MultilineInput({
       autoComplete="off"
     >
       <TextField
+        name={name}
         label={label}
         type={type}
         value={value}

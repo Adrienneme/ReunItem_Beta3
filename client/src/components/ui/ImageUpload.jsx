@@ -5,6 +5,7 @@ const ImageUpload = ({
   disabled = false,
   onImageSelect,
   message = "Upload Item Photo",
+  required = false
 }) => {
   const [preview, setPreview] = useState(null);
 
@@ -39,6 +40,7 @@ const ImageUpload = ({
             accept="image/*"
             onChange={handleImageChange}
             className="absolute inset-0 opacity-0 cursor-pointer"
+            required={required}
           />
         )}
 
