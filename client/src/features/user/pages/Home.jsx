@@ -1,5 +1,5 @@
 import React from 'react'
-import UserNavBar from '../../../components/ui/layout/UserNavBar'
+import UserNavBar from '../../../components/layout/UserNavBar'
 import HomeButton from '../../../components/ui/HomeButton'
 
 const Home = () => {

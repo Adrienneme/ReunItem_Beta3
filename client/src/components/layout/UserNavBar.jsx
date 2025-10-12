@@ -1,9 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import folder from "../../../assets/icons/folder.png";
-import home from "../../../assets/icons/home.png";
-import settings from "../../../assets/icons/setting.png";
-import logo from "../../../assets/icons/logo.png";
+import folder from "../../assets/icons/folder.png";
+import home from "../../assets/icons/home.png";
+import settings from "../../assets/icons/setting.png";
+import logo from "../../assets/icons/logo.png";
 
 const UserNavBar = ({ name = "Username", profile }) => {
   return (

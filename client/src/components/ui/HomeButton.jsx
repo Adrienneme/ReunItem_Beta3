@@ -25,7 +25,7 @@ const Button = ({ to, children, color = "green", size = "lg" }) => {
 
   const sizeStyle =
     size === "lg"
-      ? "px-25 py-10 text-lg mb-10"
+      ? "px-20 py-10 text-lg mb-10"
       : size === "md"
       ? "px-4 py-2 text-base"
       : "px-3 py-1 text-sm";
