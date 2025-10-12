@@ -1,0 +1,68 @@
+import React from "react";
+import { Link } from "react-router-dom";
+import folder from "../../../assets/icons/folder.png";
+import home from "../../../assets/icons/home.png";
+import settings from "../../../assets/icons/setting.png";
+import logo from "../../../assets/icons/logo.png";
+
+const UserNavBar = ({ name = "Username", profile }) => {
+  return (
+    <nav className="bg-gradient-to-t from-[#134E5E] to-[#71B280] text-white flex flex-col sm:flex-row sm:items-center sm:justify-between px-6 sm:px-10 py-3 sm:h-24 shadow-lg">
+      {/* Top Section (User Info on small screens) */}
+      <div className="flex items-center justify-between sm:justify-start sm:space-x-4 w-full sm:w-auto">
+        <div className="flex items-center space-x-3">
+          <img
+            src={profile || "https://via.placeholder.com/50"}
+            alt="Profile"
+            className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-white"
+          />
+          <h3 className="font-semibold text-lg sm:text-xl">{name}</h3>
+        </div>
+        {/* Hide ReunItem on mobile top row */}
+        <div className="flex sm:hidden items-center space-x-2">
+          <img src={logo} alt="logo" className="w-8 h-8 object-contain" />
+          <h3 className="text-lg font-bold">ReunItem</h3>
+        </div>
+      </div>
+
+      {/* Center Logo (hidden on mobile, visible on larger screens) */}
+      <div className="hidden sm:flex flex-row items-center space-y-1">
+        <img
+          src={logo}
+          alt="ReunItem logo"
+          className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
+        />
+        <h3 className="text-xl sm:text-2xl font-bold tracking-wide">ReunItem</h3>
+      </div>
+
+      {/* Menu Links */}
+      <div className="flex justify-around sm:justify-end items-center space-x-4 sm:space-x-10 mt-3 sm:mt-0 w-full sm:w-auto">
+        <Link
+          to="/user/home"
+          className="flex flex-col items-center hover:text-yellow-300 transition-colors duration-200"
+        >
+          <img src={home} alt="Home" className="w-6 h-6 sm:w-8 sm:h-8" />
+          <span className="text-sm sm:text-base mt-1">Home</span>
+        </Link>
+
+        <Link
+          to="/user/entries"
+          className="flex flex-col items-center hover:text-yellow-300 transition-colors duration-200"
+        >
+          <img src={folder} alt="Entries" className="w-6 h-6 sm:w-8 sm:h-8" />
+          <span className="text-sm sm:text-base mt-1">My Entries</span>
+        </Link>
+
+        <Link
+          to="/user/settings"
+          className="flex flex-col items-center hover:text-yellow-300 transition-colors duration-200"
+        >
+          <img src={settings} alt="Settings" className="w-6 h-6 sm:w-8 sm:h-8" />
+          <span className="text-sm sm:text-base mt-1">Settings</span>
+        </Link>
+      </div>
+    </nav>
+  );
+};
+
+export default UserNavBar;
