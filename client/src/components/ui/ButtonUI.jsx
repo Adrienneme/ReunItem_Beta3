@@ -40,11 +40,6 @@ export default function ButtonUI({
 // "warning"   → yellow/orange tone, for caution actions
 // "context"   → inherits color from parent container (Sheet/Card)
 
-// 🔹 SIZES (for consistency)
-// ------------------------------
-// "sm"        → small button (compact UI)
-// "md"        → medium (default)
-// "lg"        → large button (more emphasis)
 
 // 🔹 OTHER USEFUL PROPS
 // ------------------------------

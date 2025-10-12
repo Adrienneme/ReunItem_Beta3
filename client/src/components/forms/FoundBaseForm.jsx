@@ -4,6 +4,7 @@ import MultilineInput from '../ui/MultiLineInput'
 import ImageUpload from '../ui/ImageUpload'
 import StatusBadge from '../ui/StatusBadge'
 import GenerateButton from '../ui/GenerateButton'
+import DropDownSelect from '../ui/DropDownSelect'
 
 const FoundBaseForm = ({
   title,
@@ -46,6 +47,7 @@ const FoundBaseForm = ({
           <GenerateButton
             loading={loading}
             onClick={onGenerate}
+            disabled={!formData.photo}
           />
         </div>
       </div>
@@ -60,6 +62,9 @@ const FoundBaseForm = ({
         onChange={onChange}
       />
 
+      <div className='mt-5'>
+        <DropDownSelect/>
+      </div>
     </div>
   )
 }
