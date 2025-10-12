@@ -22,7 +22,8 @@ const FoundBaseForm = ({formData, onChange}) => {
       {/*Description*/}
       <MultilineInput
         name='description'
-        label='Short Item Description'  
+        label='Short Item Description'
+        placeholder='e.g. iPhone 12 with a black case and small crack on the upper-right corner of the screen. It was found near the cafeteria table around 2:30 PM.'  
       />
 
 
