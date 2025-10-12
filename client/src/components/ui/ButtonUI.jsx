@@ -1,7 +1,7 @@
 import React from "react";
 import Button from "@mui/joy/Button";
 
-export default function Button2({
+export default function ButtonUI({
   variant,
   color = "primary",
   children,
