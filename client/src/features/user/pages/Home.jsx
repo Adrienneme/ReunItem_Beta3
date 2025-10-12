@@ -2,6 +2,7 @@ import React from 'react'
 import UserNavBar from '../../../components/layout/UserNavBar'
 import HomeButton from '../../../components/ui/HomeButton'
 
+//Main User Page
 const Home = () => {
   return (
     <div>

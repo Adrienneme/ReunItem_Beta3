@@ -3,6 +3,8 @@ import UserNavBar from '../../../components/layout/UserNavBar'
 import FoundBaseForm from '../../../components/forms/FoundBaseForm'
 import { Button } from '@mui/joy'
 
+//Found Entry Subsmission Page (Creating Entries)
+
 const FoundFormPage = () => {
   return (
     <div>
