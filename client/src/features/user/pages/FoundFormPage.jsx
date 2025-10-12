@@ -9,10 +9,15 @@ const FoundFormPage = () => {
   const [formData, setFormData] = useState({
     item_name: "",
     description: "",
+    photo: null
   })
 
   const handleChange = (e) => {
     setFormData({...formData, [e.target.name]: e.target.value});
+  }
+
+  const handleImageSelect = (file) => {
+    setFormData({...formData, photo:file})
   }
 
   return (
@@ -23,7 +28,11 @@ const FoundFormPage = () => {
         <h1 className='mt-5'>Report Found Item:</h1>
         {/*FoundBaseForm*/}
         <div>
-          <FoundBaseForm formData={formData} onChange={handleChange}/>
+          <FoundBaseForm 
+            formData={formData} 
+            onChange={handleChange} 
+            onImageSelect={handleImageSelect}
+          />
         </div>
 
         {/*BUtton Functions*/}
