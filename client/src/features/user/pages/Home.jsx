@@ -1,11 +1,20 @@
 import React from 'react'
 import UserNavBar from '../../../components/ui/layout/UserNavBar'
+import HomeButton from '../../../components/ui/HomeButton'
 
 const Home = () => {
   return (
     <div>
-      <UserNavBar/>
-      <h1>This is Home</h1>
+      <UserNavBar />
+      <div className='flex flex-col items-center mt-15'>
+        <HomeButton to='/user/lost-form' color='green' onClick={() => alert('Going to Report Lost Submission Form...')}>
+          Report Lost Item
+        </HomeButton>
+        
+        <HomeButton to='/user/found-form' color='blue'>
+          Report Found Item
+        </HomeButton>
+      </div>
     </div>
   )
 }
