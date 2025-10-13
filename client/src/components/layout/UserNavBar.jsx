@@ -12,7 +12,7 @@ const UserNavBar = ({ name = "Username", profile }) => {
       <div className="flex items-center justify-between sm:justify-start sm:space-x-4 w-full sm:w-auto">
         <div className="flex items-center space-x-3">
           <img
-            src={profile || "https://via.placeholder.com/50"}
+            src={profile}
             alt="Profile"
             className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-white"
           />
