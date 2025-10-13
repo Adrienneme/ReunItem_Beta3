@@ -9,6 +9,7 @@ function App() {
   return (
     <>
       <Routes>
+        <Route path='/' element={<Home/>}/>
         <Route path='/user/home' element={<Home/>}/>
         <Route path='/user/lost-form' element={<LostFormPage/>}/>
         <Route path='/user/found-form' element={<FoundFormPage/>}/>
