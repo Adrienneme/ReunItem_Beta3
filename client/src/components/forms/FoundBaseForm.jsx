@@ -36,6 +36,7 @@ const FoundBaseForm = ({
         value={formData.item_name}
         onChange={onChange}
         required={true}
+        aria-required={true}
       />
 
       <div className='flex flex-row items-center gap-5'>
