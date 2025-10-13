@@ -18,6 +18,10 @@ const FoundFormPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    if (!formData.description || !formData.item_name || !formData.photo || !formData.pickup_location){
+      alert("Please fill all inputs")
+      return
+    }
     console.log("Final submitted data:", formData);
   }
 
@@ -72,7 +76,7 @@ const FoundFormPage = () => {
           </div>
           <div>
             <ButtonUI variant='solid' color='success' onClick={handleSubmit}>
-              Submit
+              Submit Entry
             </ButtonUI>
           </div>
         </div>
