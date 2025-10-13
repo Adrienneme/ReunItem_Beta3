@@ -1,6 +1,6 @@
 import React from 'react'
 import Input from '../ui/Input'
-import MultilineInput from '../ui/MultiLineInput'
+import MultilineInput from '../ui/MultilineInput'
 import ImageUpload from '../ui/ImageUpload'
 import StatusBadge from '../ui/StatusBadge'
 import GenerateButton from '../ui/GenerateButton'
