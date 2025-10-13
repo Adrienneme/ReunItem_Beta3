@@ -56,6 +56,9 @@ const FoundFormPage = () => {
             onImageSelect={handleImageSelect}
             loading={loading}
             onGenerate={handleGenerate}
+            onPickupChange={(val) =>
+              setFormData(prev => ({ ...prev, pickup_location: val }))
+            }
           />
         </div>
         {/*BUtton Functions*/}

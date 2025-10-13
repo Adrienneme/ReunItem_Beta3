@@ -13,7 +13,9 @@ const FoundBaseForm = ({
   onChange,
   onImageSelect,
   loading = false,
-  onGenerate }) => {
+  onGenerate,
+  onPickupChange
+}) => {
 
   return (
     <div className='flex flex-col items-center'>
@@ -63,7 +65,11 @@ const FoundBaseForm = ({
       />
 
       <div className='mt-5'>
-        <DropDownSelect/>
+        <DropDownSelect
+          name='pickup_location'
+          value={formData.pickup_location}
+          onChange={onPickupChange}
+        />
       </div>
     </div>
   )
