@@ -19,7 +19,8 @@ const FoundBaseForm = ({
 
   return (
     <div className='flex flex-col items-center'>
-
+      
+      {/*Title Page w/ badge?*/}
       <div className='mb-5'>
         <h1 className='mt-5'><b>{title}</b></h1>
         {status && (
