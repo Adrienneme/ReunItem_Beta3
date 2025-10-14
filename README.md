@@ -15,3 +15,7 @@ Development Guide:
   -cmd: .venv\Scripts\Activate
   -cmd: pip install -r requirements.txt
   -cmd: uvicorn app.main:app --reload **check if nagana ang backned**
+
+
+  Notes:
+  - before merging to main, ignore .env
