@@ -7,7 +7,7 @@ import logo from "../../assets/icons/logo.png";
 
 const UserNavBar = ({ name = "Username", profile }) => {
   return (
-    <nav className="bg-gradient-to-t from-[#134E5E] to-[#71B280] text-white flex flex-col sm:flex-row sm:items-center sm:justify-between px-6 sm:px-10 py-3 sm:h-24 shadow-lg">
+    <nav className="bg-gradient-to-t from-[#283c86] to-[#45a247] text-white flex flex-col sm:flex-row sm:items-center sm:justify-between px-6 sm:px-10 py-3 sm:h-24 shadow-lg">
       {/* Top Section (User Info on small screens) */}
       <div className="flex items-center justify-between sm:justify-start sm:space-x-4 w-full sm:w-auto">
         <div className="flex items-center space-x-3">
@@ -42,7 +42,7 @@ const UserNavBar = ({ name = "Username", profile }) => {
           className="flex flex-col items-center hover:text-yellow-300 transition-colors duration-200"
         >
           <img src={home} alt="Home" className="w-6 h-6 sm:w-8 sm:h-8" />
-          <span className="text-sm sm:text-base mt-1">Home</span>
+          <span className="text-sm sm:text-base mt-0">Home</span>
         </Link>
 
         <Link
@@ -50,7 +50,7 @@ const UserNavBar = ({ name = "Username", profile }) => {
           className="flex flex-col items-center hover:text-yellow-300 transition-colors duration-200"
         >
           <img src={folder} alt="Entries" className="w-6 h-6 sm:w-8 sm:h-8" />
-          <span className="text-sm sm:text-base mt-1">My Entries</span>
+          <span className="text-sm sm:text-base mt-0">My Entries</span>
         </Link>
 
         <Link
@@ -58,7 +58,7 @@ const UserNavBar = ({ name = "Username", profile }) => {
           className="flex flex-col items-center hover:text-yellow-300 transition-colors duration-200"
         >
           <img src={settings} alt="Settings" className="w-6 h-6 sm:w-8 sm:h-8" />
-          <span className="text-sm sm:text-base mt-1">Settings</span>
+          <span className="text-sm sm:text-base mt-0">Settings</span>
         </Link>
       </div>
     </nav>
