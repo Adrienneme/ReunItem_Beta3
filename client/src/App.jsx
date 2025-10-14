@@ -9,10 +9,15 @@ function App() {
   return (
     <>
       <Routes>
+
+        {/* Default route */}
         <Route path='/' element={<Home/>}/>
+
+        {/* User routes */}
         <Route path='/user/home' element={<Home/>}/>
         <Route path='/user/lost-form' element={<LostFormPage/>}/>
         <Route path='/user/found-form' element={<FoundFormPage/>}/>
+        
       </Routes>
     </>
   )
