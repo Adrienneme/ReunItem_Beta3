@@ -7,7 +7,7 @@ import GenerateButton from '../ui/GenerateButton'
 import DropDownSelect from '../ui/DropDownSelect'
 
 const FoundBaseForm = ({
-  title,
+  title, //
   status = null,
   formData,
   onChange,
@@ -37,7 +37,6 @@ const FoundBaseForm = ({
         value={formData.item_name}
         onChange={onChange}
         required={true}
-        aria-required={true}
       />
 
       <div className='flex flex-row items-center gap-5'>

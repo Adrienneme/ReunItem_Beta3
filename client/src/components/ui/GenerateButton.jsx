@@ -1,7 +1,11 @@
 import React from 'react';
 import Button from '@mui/joy/Button';
 
-const GenerateButton = ({ loading = false, onClick, disabled = false }) => {
+const GenerateButton = ({ 
+  loading = false, 
+  onClick, 
+  disabled = false }) => {
+    
   return (
     <div className="flex justify-center my-5">
       <Button
