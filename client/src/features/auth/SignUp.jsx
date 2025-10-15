@@ -1,26 +1,36 @@
 import { useState } from "react";
-import logo from '../../assets/icons/logo.png'
+import { registerUser } from "../../api/users";
+import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
-  const [form, setForm] = useState({
+  const [form, setForm] = useState({ //should match backend schema
     first_name: "",
     last_name: "",
     email: "",
     password_hash: "",
   });
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.first_name || !form.last_name || !form.email || !form.password_hash) {
       setError("Please fill out all fields.");
-    } else {
-      setError("");
-      alert("Account created successfully!");
+    } 
+    else {
+      try{
+        const response = await registerUser({...form, role:"user"});
+        console.log("User created: ", response);
+        navigate('/login');
+        alert("Account created successfully!")
+      }catch(error){
+        setError(error.response?.data?.detail || "Something went wrong.");
+        console.error(err.detail);
+      }
     }
   };
 
