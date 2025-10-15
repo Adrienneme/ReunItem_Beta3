@@ -1,20 +1,30 @@
 import { useState } from "react";
+import { loginUser } from "../../api/users";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [form, setForm] = useState({ email: "", password_hash: "" });
+  const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.email || !form.password_hash) {
+    if (!form.email || !form.password) {
       setError("Please enter both email and password.");
     } else {
-      setError("");
-      alert("Logged in successfully!");
+      try{
+        const response = await loginUser(form);
+        console.log("User Logged in", response);
+        alert("successfully logged in!");
+        navigate('/user/home');
+      }catch(error){
+        setError(error.response?.data?.detail || "Login failed. Please try again.");
+      }
     }
   };
 
@@ -36,8 +46,8 @@ const Login = () => {
         <label className="text-sm mt-3 text-white">Password</label>
         <input
           type="password"
-          name="password_hash"
-          value={form.password_hash}
+          name="password"
+          value={form.password}
           onChange={handleChange}
           placeholder="Enter password"
           className="w-full p-2 mt-1 border border-black rounded text-gray-900 placeholder-gray-300"
