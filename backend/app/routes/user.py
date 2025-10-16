@@ -10,6 +10,6 @@ def create_user_route(user: UserCreate):
 
 @router.post('/login', response_model=User)
 def login_user_route(credentials: UserLogin):
-  return login_user(credentials.email, credentials.password)
+  return login_user(credentials)
 
 #other CRUD operations here
