@@ -1,5 +1,5 @@
 from app.db import supabase
-from app.schemas.user import User, UserCreate
+from app.schemas.user import User, UserCreate, UserLogin
 from app.utils.security import hash_password, verify_password
 from fastapi import HTTPException
 
@@ -24,14 +24,14 @@ def create_user(user: UserCreate):
 
 
 #Log In Logic
-def login_user(email: str, password: str):
-      response = supabase.table("users").select("*").eq("email", email).execute()
+def login_user(user: UserLogin):
+      response = supabase.table("users").select("*").eq("email", user.email).execute()
       if not response.data:
           raise HTTPException(status_code=401, detail="User is not yet Registered")
       
       user_data = response.data[0]
 
-      if not verify_password(password, user_data["password_hash"]):
+      if not verify_password(user.password, user_data["password_hash"]):
           raise HTTPException(status_code=401, detail="Incorrect password. Try Again")
       
       user_data.pop("password_hash", None)
