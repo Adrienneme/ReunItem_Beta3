@@ -45,7 +45,9 @@ const LostFormPage = () => {
         onChange={handleChange}
         loading={loading}
         onGenerate={handleGenerate}
-      /> 
+      />
+
+     
     </div>
   )
 }
