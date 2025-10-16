@@ -1,89 +1,97 @@
-import React, { useState } from 'react'
-import UserNavBar from '../../../components/layout/UserNavBar'
-import FoundBaseForm from '../../../components/forms/FoundBaseForm'
-import ButtonUI from '../../../components/ui/ButtonUI'
-import { Link } from 'react-router-dom'
-
-//Found Entry Subsmission Page (Creating Entries)
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import UserNavBar from '../../../components/layout/UserNavBar';
+import FoundBaseForm from '../../../components/forms/FoundBaseForm';
+import ButtonUI from '../../../components/ui/ButtonUI';
 
 const FoundFormPage = () => {
   const [formData, setFormData] = useState({
-    item_name: "",
-    description: "",
+    item_name: '',
+    description: '',
     photo: null,
-    pickup_location: "",
-  })
+    pickup_location: '',
+  });
 
   const [loading, setLoading] = useState(false);
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    if (!formData.description || !formData.item_name || !formData.photo || !formData.pickup_location){
-      alert("Please fill all inputs")
-      return
-    }
-    console.log("Final submitted data:", formData);
-  }
+  const [err, setErr] = useState('');
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  }
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
   const handleImageSelect = (file) => {
-    setFormData({ ...formData, photo: file })
-  }
+    setFormData(prev => ({ ...prev, photo: file }));
+  };
+
+  const handlePickupChange = (val) => {
+    setFormData(prev => ({ ...prev, pickup_location: val }));
+  };
 
   const handleGenerate = async () => {
+    if (!formData.photo) {
+      alert("Please select a photo first.");
+      return;
+    }
+
     setLoading(true);
-    // Simulate AI generation - call API 
-    setTimeout(() => {
-      setFormData({
-        ...formData,
-        description:
-          'Black wallet with a silver zipper found near the library steps around 4 PM.',
-      });
+
+    try {
+      const response = await APIforDescriptionGenerator(formData.photo);
+      setFormData(prev => ({
+        ...prev, description: response.description,
+      }));
+
+    } catch (error) {
+      const errMsg = error.response?.data?.detail || "Failed to generate description.";
+      alert(errMsg);
+    } finally {
       setLoading(false);
-    }, 1500);
-  }
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const { item_name, description, photo, pickup_location } = formData;
+    if (!item_name || !description || !photo || !pickup_location) {
+      alert('Please fill all inputs');
+      return;
+    }
+    console.log('Final submitted data:', formData);
+    // TODO: Submit inputs to backend
+  };
 
   return (
     <div>
       <UserNavBar />
-      <div className='flex flex-col items-center'>
+      <div className="flex flex-col items-center">
 
-        {/*FoundBaseForm*/}
-        <div>
-          <FoundBaseForm
-            title='Report Found Item Form:'
-            formData={formData}
-            onChange={handleChange}
-            onImageSelect={handleImageSelect}
-            loading={loading}
-            onGenerate={handleGenerate}
-            onPickupChange={(val) =>
-              setFormData(prev => ({ ...prev, pickup_location: val }))
-            }
-          />
-        </div>
-        {/*BUtton Functions*/}
-        <div className='flex flex-row items-center mt-5 mb-10 gap-20'>
-          <div>
-            <Link to='/user/home'>
-              <ButtonUI variant='solid' color='neutral'>
-                Go Back
-              </ButtonUI>
-            </Link>
-          </div>
-          <div>
-            <ButtonUI variant='solid' color='success' onClick={handleSubmit}>
-              Submit Entry
+        {/* FoundBaseForm */}
+        <FoundBaseForm
+          title="Report Found Item Form:"
+          formData={formData}
+          onChange={handleChange}
+          onImageSelect={handleImageSelect}
+          loading={loading}
+          onGenerate={handleGenerate}
+          onPickupChange={handlePickupChange}
+        />
+
+        {/* Buttons */}
+        <div className="flex flex-row items-center mt-5 mb-10 gap-20">
+          <Link to="/user/home">
+            <ButtonUI variant="solid" color="neutral">
+              Go Back
             </ButtonUI>
-          </div>
+          </Link>
+          <ButtonUI variant="solid" color="success" onClick={handleSubmit}>
+            Submit Entry
+          </ButtonUI>
         </div>
-
       </div>
+      
     </div>
-  )
-}
+  );
+};
 
-export default FoundFormPage
+export default FoundFormPage;
