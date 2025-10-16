@@ -2,15 +2,17 @@ import React from "react";
 import Button from "@mui/joy/Button";
 
 export default function ButtonUI({
-  variant,
-  color = "primary",
-  children,
-  loading = false,
-  onClick,
-  disabled= false
+  type="button", //or submit for when submitting a form
+  variant, //button design
+  color = "primary", //button color
+  children, //text inside the button
+  loading = false, //shows spinner if true indicating its loading
+  onClick, //function executed when clicked
+  disabled= false //disables the button if true
 }) {
   return (
       <Button
+        type={type}
         variant={variant}
         color={color}
         loading={loading}
@@ -40,14 +42,4 @@ export default function ButtonUI({
 // "warning"   → yellow/orange tone, for caution actions
 // "context"   → inherits color from parent container (Sheet/Card)
 
-
-// 🔹 OTHER USEFUL PROPS
-// ------------------------------
-// loading          → shows spinner/loading state
-// loadingIndicator → custom text or icon while loading
-// disabled         → disables button interaction
-// fullWidth        → stretches button to container width
-// onClick          → click handler
-// variant          → choose from the above variants
-// color            → choose from the above colors
 // size             → "sm" | "md" | "lg"

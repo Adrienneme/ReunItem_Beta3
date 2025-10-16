@@ -2,8 +2,9 @@ import React from 'react';
 import Button from '@mui/joy/Button';
 
 const GenerateButton = ({ 
+  type="button",
   loading = false, 
-  onClick, 
+  onClick, //generate function for generating the description
   disabled = false }) => {
     
   return (

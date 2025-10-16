@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 
 const ImageUpload = ({
-  photo_url = null,
-  disabled = false,
-  onImageSelect,
-  message = "Upload Item Photo",
-  required = false
+  photo_url = null, //for display
+  disabled = false, //true if for display
+  onImageSelect, //to change the photo(submission and editing) also to handle the generation (passing the file object)
+  message = "Upload Item Photo", //message inside the photo
+  required = false //true for 
 }) => {
   const [preview, setPreview] = useState(null);
 

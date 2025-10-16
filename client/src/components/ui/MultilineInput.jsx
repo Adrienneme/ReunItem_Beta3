@@ -3,21 +3,23 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 
 export default function MultilineInput({
-  name,
-  label,
-  type = 'text',
-  value,
-  onChange,
-  placeholder,
+  name, //target name for changing value
+  label, //label ngani
+  type = 'text', 
+  value, 
+  onChange, //passed function for changing the value
+  placeholder = '', 
   required = false,
-  disable = false,
+  disabled = false,     
+  rows = 3,            
+  width = '45ch',       
+  inputColor = 'white',
+  labelColor = 'gray',
+  borderColor = 'white',
+  variant = 'outlined' 
 }) {
   return (
-    <Box
-      sx={{'& .MuiTextField-root': { m: 1, width: '45ch' },}}
-      noValidate
-      autoComplete="off"
-    >
+    <Box sx={{ '& .MuiTextField-root': { m: 1, width } }}>
       <TextField
         name={name}
         label={label}
@@ -26,17 +28,17 @@ export default function MultilineInput({
         onChange={onChange}
         placeholder={placeholder}
         required={required}
-        disabled={disable}
+        disabled={disabled}
         multiline
-        rows={4}
-        variant="outlined"
-        InputProps={{style: { color: 'white' },}}
-        InputLabelProps={{style: { color: 'gray' },}}
+        rows={rows}
+        variant={variant}
+        InputProps={{ style: { color: inputColor } }}
+        InputLabelProps={{ style: { color: labelColor } }}
         sx={{
           '& .MuiOutlinedInput-root': {
-            '& fieldset': { borderColor: 'white' }, 
-            '&:hover fieldset': { borderColor: 'white' }, 
-            '&.Mui-focused fieldset': { borderColor: 'white' }, 
+            '& fieldset': { borderColor: borderColor }, 
+            '&:hover fieldset': { borderColor: borderColor }, 
+            '&.Mui-focused fieldset': { borderColor: borderColor },
           },
         }}
       />
