@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import UserNavBar from '../../../components/layout/UserNavBar'
 import LostBaseForm from '../../../components/forms/LostBaseForm'
+import ButtonUI from '../../../components/ui/ButtonUI'
+import {Link} from 'react-router-dom'
 
 //Lost Entry Subsmission Page (Creating Entries)
 
@@ -34,20 +36,38 @@ const LostFormPage = () => {
     }, 1500);
   }
 
-  
+  const handleSubmit = () => {
+
+  }
+
   return (
     <div>
       <UserNavBar />
-      <LostBaseForm 
-        title="Report Lost Item:"
-        onImageSelect={handleImageSelect}
-        formData={formData}
-        onChange={handleChange}
-        loading={loading}
-        onGenerate={handleGenerate}
-      />
 
-     
+      <div className='flex flex-col items-center'>
+        <LostBaseForm
+          title="Report Lost Item:"
+          onImageSelect={handleImageSelect}
+          formData={formData}
+          onChange={handleChange}
+          loading={loading}
+          onGenerate={handleGenerate}
+        />
+
+        {/* Buttons */}
+        <div className="flex flex-row items-center mt-5 mb-10 gap-35">
+          <Link to="/user/home">
+            <ButtonUI variant="solid" color="neutral">
+              Go Back
+            </ButtonUI>
+          </Link>
+          <ButtonUI variant="solid" color="success" onClick={handleSubmit}>
+            Submit Entry
+          </ButtonUI>
+        </div>
+      </div>
+
+
     </div>
   )
 }

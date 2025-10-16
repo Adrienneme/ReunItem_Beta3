@@ -49,7 +49,7 @@ export default function DropDownSelect({
         indicator={<KeyboardArrowDown />}
         disabled={disabled}
         sx={{
-          width: 240,
+          width: 300,
           [`& .${selectClasses.indicator}`]: {
             transition: "0.2s",
             [`&.${selectClasses.expanded}`]: { transform: "rotate(-180deg)" },
@@ -69,7 +69,7 @@ export default function DropDownSelect({
           placeholder="Specify location"
           value={otherValue}
           onChange={handleOtherChange}
-          sx={{ width: 240 }}
+          sx={{ width: 300 }}
           required={true}
         />
       )}

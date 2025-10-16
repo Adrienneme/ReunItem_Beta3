@@ -78,7 +78,7 @@ const FoundFormPage = () => {
         />
 
         {/* Buttons */}
-        <div className="flex flex-row items-center mt-5 mb-10 gap-20">
+        <div className="flex flex-row items-center mt-5 mb-10 gap-35">
           <Link to="/user/home">
             <ButtonUI variant="solid" color="neutral">
               Go Back
