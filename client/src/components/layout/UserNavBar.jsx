@@ -5,6 +5,7 @@ import home from "../../assets/icons/home.png";
 import settings from "../../assets/icons/setting.png";
 import logo from "../../assets/icons/logo.png";
 
+
 const UserNavBar = ({ name = "Username", profile }) => {
   return (
     <nav className="bg-gradient-to-t from-[#283c86] to-[#45a247] text-white flex flex-col sm:flex-row sm:items-center sm:justify-between px-6 sm:px-10 py-3 sm:h-24 shadow-lg">
