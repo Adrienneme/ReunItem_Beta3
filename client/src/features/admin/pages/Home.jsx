@@ -1,11 +1,16 @@
 import React from 'react'
 import UserNavBar from '../../../components/layout/UserNavBar'
 import HomeButton from '../../../components/ui/HomeButton'
+import ButtonUI from '../../../components/ui/ButtonUI'
+import { Link } from 'react-router-dom'
 
-const AdminHome = () => {
+const AdminHome = ({
+   name = "Admin"
+  }) => {
   return (
     <div>
-      <UserNavBar />
+
+      <UserNavBar name = {name} />
       
       <div className='flex flex-row items-center justify-center mt-15 gap-8'>
         <HomeButton color='red'>
@@ -16,16 +21,19 @@ const AdminHome = () => {
           Lost/Found Entries 
         </HomeButton>
       </div>
+
       <div className='flex flex-row items-center justify-center mt-10 gap-8'>
         <HomeButton color='red'>
           Claim Requests
         </HomeButton>
 
+        <Link to="/admin/archived"> 
         <HomeButton>
           Archived 
         </HomeButton>
-      </div>
+        </Link>
 
+      </div>
     </div>
   )
 }

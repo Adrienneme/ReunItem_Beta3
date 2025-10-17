@@ -6,6 +6,7 @@ import FoundFormPage from './features/user/pages/FoundFormPage'
 import Login from './features/auth/Login'
 import SignUp from './features/auth/SignUp'
 import AdminHome from './features/admin/pages/Home'
+import Archived from './features/admin/pages/Archived'
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
         <Route path='/user/lost-form' element={<LostFormPage/>}/>
         <Route path='/user/found-form' element={<FoundFormPage/>}/>
         <Route path='/admin/home' element={<AdminHome/>}/>
+        <Route path='/admin/archived' element={<Archived/>}/>
       </Routes>
     </>
   )
