@@ -7,6 +7,8 @@ import Login from './features/auth/Login'
 import SignUp from './features/auth/SignUp'
 import AdminHome from './features/admin/pages/Home'
 import Archived from './features/admin/pages/Archived'
+import ClaimRequest from './features/admin/pages/Claimreq'
+import FoundEntry from './features/admin/pages/FoundEntry'
 
 function App() {
 
@@ -21,6 +23,8 @@ function App() {
         <Route path='/user/found-form' element={<FoundFormPage/>}/>
         <Route path='/admin/home' element={<AdminHome/>}/>
         <Route path='/admin/archived' element={<Archived/>}/>
+        <Route path='/admin/claimrequest' element={<ClaimRequest/>}/>
+        <Route path='/admin/foundentries' element={<FoundEntry/>}/>
       </Routes>
     </>
   )
