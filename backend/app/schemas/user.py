@@ -25,4 +25,16 @@ class UserSchemas:
   class UserLogin(BaseModel):
     email: str
     password: str
+  
+  # Token Schemas
+  class Token(BaseModel):
+    access_token: str
+    token_type: str
+    
+  class LoginResponse(BaseModel):
+    access_token: str
+    token_type: str
+    user: 'UserSchemas.User'
+
+
 
