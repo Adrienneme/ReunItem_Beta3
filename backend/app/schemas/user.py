@@ -31,10 +31,8 @@ class UserSchemas:
     access_token: str
     token_type: str
     
-  class LoginResponse(BaseModel):
-    access_token: str
-    token_type: str
+  class LoginResponse(Token):
     user: 'UserSchemas.User'
 
-
+UserSchemas.LoginResponse.update_forward_refs()
 
