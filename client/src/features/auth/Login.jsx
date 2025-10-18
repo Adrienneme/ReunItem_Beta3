@@ -17,12 +17,22 @@ const Login = () => {
     if (!form.email || !form.password) {
       setError("Please enter both email and password.");
     } else {
-      try{
+      try {
         const response = await loginUser(form);
+
+        localStorage.setItem("token", response.access_token)
+        localStorage.setItem("user", JSON.stringify(response.user))
+
         console.log("User Logged in", response);
         alert("successfully logged in!");
-        navigate('/user/home');
-      }catch(error){
+        
+        if (response.user.role === 'user') {
+          navigate('/user/home');
+        } else if (response.user.role === 'admin') {
+          navigate('/admin/home');
+        }
+
+      } catch (error) {
         setError(error.response?.data?.detail || "Login failed. Please try again.");
       }
     }
