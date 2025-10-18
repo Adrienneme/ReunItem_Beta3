@@ -1,3 +1,4 @@
+#Handles dile upload and sorting
 from app.db import supabase
 from app.schemas.user import ImageUpload
 from fastapi import HTTPException
@@ -5,6 +6,7 @@ import uuid
 
 def upload_user_image(image: ImageUpload, file):
     try:
+        #Genereate unique filename
         file_extension = file.filename.split(".")[-1]
         unique_filename = f"{uuid.uuid4()}.{file_extension}"
 

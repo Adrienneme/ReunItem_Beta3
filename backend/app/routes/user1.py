@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Form, UploadFile, File
-from app.models.user1 import upload_user_image  # ✅ make sure this matches your actual file name
+from app.models.user1 import upload_user_image  
 from app.schemas.user import ImageUpload, ImageType
 
 router = APIRouter()
