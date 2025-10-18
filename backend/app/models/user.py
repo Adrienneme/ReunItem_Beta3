@@ -1,17 +1,16 @@
-from app.db import supabase
+from app.core import supabase, ACCESS_TOKEN_EXPIRE_MINUTES
 from app.schemas import UserSchemas
 from app.utils import Security
 from fastapi import HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
 from datetime import timedelta
-from jwt.exceptions import InvalidTokenError  # You missed this import
-from app.config import ACCESS_TOKEN_EXPIRE_MINUTES
+from jwt.exceptions import InvalidTokenError
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
-class UserFunctions:
+class UserModels:
 
     @staticmethod
     def create_user(user: UserSchemas.UserCreate) -> UserSchemas.User:
@@ -33,6 +32,7 @@ class UserFunctions:
 
         return UserSchemas.User(**created_user)
 
+
     @staticmethod
     def login_user(user: UserSchemas.UserLogin):
         response = supabase.table("user").select("*").eq("email", user.email).execute()
@@ -44,17 +44,17 @@ class UserFunctions:
         if not Security.verify_password(user.password, user_data["password_hash"]):
             raise HTTPException(status_code=401, detail="Incorrect password. Try Again")
 
-        user_data.pop("password_hash", None)
+        del user_data["password_hash"]
         
         token = Security.create_user_token(
             data={"sub": str(user_data["email"])},
             expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
 
-        return {
-            "access_token": token,
-            "token_type": "bearer",
-            "user": user_data  # includes email, id, etc.
-        }
+        return UserSchemas.LoginResponse(
+            access_token=token,
+            token_type="bearer",
+            user=user_data
+        )
 
     
     @staticmethod
