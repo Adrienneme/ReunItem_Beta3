@@ -1,16 +1,19 @@
 import UserNavBar from '../../../components/layout/UserNavBar'
-import HomeButton from '../../../components/ui/HomeButton'
 import Cards from '../../../components/ui/Cards'
-import { Link } from 'react-router-dom';
 
 const Archived = ({
-    status = null
+   
 }) => {
   return (
     <div>
      <UserNavBar />
-     <div>
+     <div className =  "flex justify-center gap-12 mt-10">
+      <Cards 
+
+      />
       <Cards />
+      <Cards />
+     
       </div>
     </div>
   )

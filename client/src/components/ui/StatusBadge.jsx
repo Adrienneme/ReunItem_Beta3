@@ -1,7 +1,7 @@
 import React from "react";
 
 const statusColors = {
-  "Pending Admin Approval": "bg-yellow-100 text-yellow-700",
+  "Pending Approval": "bg-yellow-100 text-yellow-700",
   "Pending Claim": "bg-yellow-300 text-yellow-700",
   "Approved": "bg-green-100 text-green-700",
   "Rejected": "bg-red-100 text-red-700",
