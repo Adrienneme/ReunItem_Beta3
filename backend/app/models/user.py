@@ -5,14 +5,14 @@ from fastapi import HTTPException
 
 class UserFunctions:
   def create_user(user: UserSchemas.UserCreate):
-    existing_user = supabase.table("users").select("*").eq("email", user.email).execute()
+    existing_user = supabase.table("user").select("*").eq("email", user.email).execute()
     if existing_user.data: #if not empty then it exists
       raise HTTPException(status_code=400, detail="Email already Registered")
     
     user_data = user.model_dump() #converts pydantic model to dictionary
     user_data["password_hash"] = Security.hash_password(user_data["password_hash"]) #hashing password
     user_data["role"] = user.role.value #convert enum to string for DB
-    response = supabase.table('users').insert(user_data).execute()
+    response = supabase.table('user').insert(user_data).execute()
     
     if not response.data:
         raise HTTPException(status_code=500, detail="Failed to create user.")
@@ -26,7 +26,7 @@ class UserFunctions:
 
   #Log In Logic
   def login_user(user: UserSchemas.UserLogin):
-        response = supabase.table("users").select("*").eq("email", user.email).execute()
+        response = supabase.table("user").select("*").eq("email", user.email).execute()
         if not response.data:
             raise HTTPException(status_code=401, detail="User is not yet Registered")
         
