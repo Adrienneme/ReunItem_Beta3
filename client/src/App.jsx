@@ -9,6 +9,8 @@ import AdminHome from './features/admin/pages/Home'
 import Archived from './features/admin/pages/Archived'
 import ClaimRequest from './features/admin/pages/Claimreq'
 import FoundEntry from './features/admin/pages/FoundEntry'
+import MyEntriesPage from './features/user/pages/MyEntriesPage'
+import Settings from './features/user/pages/Settings'
 
 function App() {
 
@@ -21,6 +23,8 @@ function App() {
         <Route path='/user/home' element={<Home/>}/>
         <Route path='/user/lost-form' element={<LostFormPage/>}/>
         <Route path='/user/found-form' element={<FoundFormPage/>}/>
+        <Route path='/user/entries' element={<MyEntriesPage/>}/>
+        <Route path='/user/settings' element={<Settings/>}/>
         <Route path='/admin/home' element={<AdminHome/>}/>
         <Route path='/admin/archived' element={<Archived/>}/>
         <Route path='/admin/claimrequest' element={<ClaimRequest/>}/>
