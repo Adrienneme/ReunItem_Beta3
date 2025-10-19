@@ -1,6 +1,6 @@
 import React from 'react'
 
-function Pendsub() {
+function Pendingsub() {
   return (
     <div>
       
@@ -8,4 +8,4 @@ function Pendsub() {
   )
 }
 
-export default Pendsub
+export default Pendingsub
