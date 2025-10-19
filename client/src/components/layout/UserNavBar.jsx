@@ -4,11 +4,12 @@ import folder from "../../assets/icons/folder.png";
 import home from "../../assets/icons/home.png";
 import settings from "../../assets/icons/setting.png";
 import logo from "../../assets/icons/logo.png";
+import usericon from "../../assets/icons/usericon.png"
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
 
-const UserNavBar = ({ name = "Username", profile }) => {
+const UserNavBar = ({ name = "Username", profile = usericon }) => {
   const user = JSON.parse(localStorage.getItem("user" || {}))
   const navigate = useNavigate();
 

@@ -40,7 +40,7 @@ const Cards = ({
 
   return (
     <div className="flex flex-col items-center w-full sm:w-64 md:w-0.5/4">
-      <div className="w-64 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 overflow-hidden border border-gray-200 bg-gray-100">
+      <div className="w-64 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 overflow-hidden border border-black bg-gray-400">
         
         {/* Header: Name + Expand */}
         <div className="flex justify-between items-center px-4 py-2 border-b border-gray-200">
@@ -68,7 +68,7 @@ const Cards = ({
         </div>
 
         {/* Bottom Section */}
-        <div className="px-4 py-3 flex justify-center items-center bg-gray-50">
+        <div className="px-4 py-2 mt-2 flex justify-center items-center bg-gray-400">
           {renderBottom()}
         </div>
       </div>

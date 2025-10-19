@@ -68,7 +68,7 @@ const FoundFormPage = () => {
 
         {/* FoundBaseForm */}
         <FoundBaseForm
-          title="Report Found Item Form:"
+          title="Report Found Item:"
           formData={formData}
           onChange={handleChange}
           onImageSelect={handleImageSelect}
