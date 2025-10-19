@@ -6,6 +6,7 @@ const ClaimRequest = () => {
 
         <div>
          <UserNavBar />
+         <span className="flex justify-center gap-12 mt-10"> Claim Requests </span>
           <div className= "flex justify-center gap-12 mt-10">
             <Cards  />
              <Cards  />
