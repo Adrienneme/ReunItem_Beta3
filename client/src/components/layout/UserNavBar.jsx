@@ -4,11 +4,22 @@ import folder from "../../assets/icons/folder.png";
 import home from "../../assets/icons/home.png";
 import settings from "../../assets/icons/setting.png";
 import logo from "../../assets/icons/logo.png";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 
 const UserNavBar = ({ name = "Username", profile }) => {
   const user = JSON.parse(localStorage.getItem("user" || {}))
-  
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
+  if (!user) return null;
+
   return (
     <nav className="bg-gradient-to-t from-[#283c86] to-[#45a247] text-white flex flex-col sm:flex-row sm:items-center sm:justify-between px-6 sm:px-10 py-3 sm:h-24 shadow-lg">
       {/* Top Section (User Info on small screens) */}
@@ -19,7 +30,7 @@ const UserNavBar = ({ name = "Username", profile }) => {
             alt="Profile"
             className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-white"
           />
-          <h3 className="font-semibold text-lg sm:text-xl">Welcome {user.first_name || name}!</h3>
+          <h3 className="font-semibold text-lg sm:text-xl">Welcome {user.first_name || name || "Guest"}!</h3>
         </div>
         {/* Hide ReunItem on mobile top row */}
         <div className="flex sm:hidden items-center space-x-2">
