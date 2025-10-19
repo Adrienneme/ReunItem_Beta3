@@ -7,10 +7,9 @@ const Archived = ({
   return (
     <div>
      <UserNavBar />
-     <div className =  "flex justify-center gap-12 mt-10">
-      <Cards 
-
-      />
+     <div className="flex flex-wrap justify-center gap-10 mt-10">
+      <Cards />
+      <Cards />
       <Cards />
       <Cards />
      
