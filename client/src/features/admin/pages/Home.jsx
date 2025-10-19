@@ -23,17 +23,13 @@ const AdminHome = ({
       </div>
 
       <div className='flex flex-row items-center justify-center mt-10 gap-8'>
-        <Link to="/admin/claimrequest"> 
-        <HomeButton color='red'>
+        <HomeButton to="/admin/claimrequest" color='red'>
           Claim Requests
         </HomeButton>
-        </Link>
 
-        <Link to="/admin/archived"> 
-        <HomeButton>
+        <HomeButton to="/admin/archived">
           Archived 
         </HomeButton>
-        </Link>
 
 
 
