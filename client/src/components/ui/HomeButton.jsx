@@ -23,7 +23,7 @@ const Button = ({ to, children, color = "green", size = "lg" }) => {
 
   const sizeStyle =
     size === "lg"
-      ? "w-60 px-5 py-3 text-lg mb-10"
+      ? "w-60 px-5 py-7 text-lg mb-10"
       : size === "md"
       ? "w-40 px-4 py-2 text-base"
       : "w-32 px-3 py-1 text-sm";
