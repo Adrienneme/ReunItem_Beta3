@@ -8,6 +8,8 @@ class UserRole(str, Enum):
   user = "user"
 
 class UserSchemas:
+  
+  
   class UserCreate(BaseModel):
     first_name: str
     last_name: str
