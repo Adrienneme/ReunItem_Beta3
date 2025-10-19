@@ -19,6 +19,7 @@ export default function ButtonUI({
         loadingIndicator="Loading..."
         onClick={onClick}
         disabled={disabled}
+        className="transition transform hover:scale-105 active:scale-95 duration-150"
       >
         {children}
       </Button>

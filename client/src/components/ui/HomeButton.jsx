@@ -29,7 +29,10 @@ const Button = ({ to, children, color = "green", size = "lg" }) => {
       : "w-32 px-3 py-1 text-sm";
 
   return (
-    <Link to={to} className={`${baseStyle} ${colorStyle} ${sizeStyle}`}>
+    <Link to={to} 
+          className={`${baseStyle} ${colorStyle} ${sizeStyle} 
+          transition transform hover:scale-105 active:scale-95 duration-150`
+          }>
       {children}
     </Link>
   );
