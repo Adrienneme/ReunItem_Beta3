@@ -9,7 +9,10 @@ const Archived = ({
      <UserNavBar />
      {/* Filter Dropdown */}
            <div className="flex flex-wrap justify-center mt-10">
-             <FilterDropdown />
+             <FilterDropdown 
+              label="Filter "
+              options={["All", "Returned", "Discarded", "Donated"]}
+             />
            </div>
 
      {/* Card Item */}
