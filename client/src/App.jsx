@@ -16,8 +16,10 @@ import SignUp from './features/auth/SignUp';
 // Admin pages
 import AdminHome from './features/admin/pages/Home';
 import Archived from './features/admin/pages/Archived';
-import ClaimRequest from './features/admin/pages/Claimreq';
-import FoundEntry from './features/admin/pages/FoundEntry';
+import ClaimRequest from './features/admin/pages/ClaimReq';
+import Pendingsub from './features/admin/pages/PendingSub';
+import LostFoundRep from './features/admin/pages/Lost&FoundRep';
+import FoundCardView from './features/admin/pages/FoundCardView';
 
 function App() {
 
@@ -53,8 +55,10 @@ function App() {
               <Route path="home" element={<AdminHome />} />
               <Route path="archived" element={<Archived />} />
               <Route path="claimrequest" element={<ClaimRequest />} />
-              <Route path="foundentries" element={<FoundEntry />} />
-            </Routes>
+              <Route path="pendingsubmissions" element={<Pendingsub />} />
+              <Route path="lostandfoundrep" element={<LostFoundRep />} />
+              <Route path="foundcardview" element={<FoundCardView />} />
+            </Routes> 
           </ProtectedRoutes>
         }
       />
