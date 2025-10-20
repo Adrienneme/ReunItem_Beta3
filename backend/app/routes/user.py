@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends
 from typing import Annotated, Union
-from app.models import UserFunctions
-from app.schemas import UserSchemas
+from backend.app.models import UserFunctions
+from backend.app.schemas import UserSchemas
+
 
 router = APIRouter(prefix='/users') #all routes start with /users
 

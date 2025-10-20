@@ -1,11 +1,11 @@
-from app.db import supabase
-from app.schemas import UserSchemas
-from app.utils import Security
+from backend.app.db import supabase
+from backend.app.schemas import UserSchemas
+from backend.app.utils import Security
 from fastapi import HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
 from datetime import timedelta
-from jwt.exceptions import InvalidTokenError  # You missed this import
-from app.config import ACCESS_TOKEN_EXPIRE_MINUTES
+from jwt.exceptions import InvalidTokenError  
+from backend.app.config import ACCESS_TOKEN_EXPIRE_MINUTES
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")

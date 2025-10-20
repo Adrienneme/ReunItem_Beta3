@@ -1,5 +1,5 @@
 from passlib.context import CryptContext
-from app.config import SECRET_KEY, ALGORITHM
+from backend.app.config import SECRET_KEY, ALGORITHM
 from datetime import datetime, timedelta, timezone
 import jwt
 from jwt.exceptions import InvalidTokenError

@@ -1,17 +1,22 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes.user import router as user_router
-from app.db import supabase
 
+# Import routers
+from backend.app.routes.user import router as user_router
+from backend.app.routes.user1 import router as upload_user_router
+from backend.app.routes.upload import router as upload_router
+from backend.app.routes.image_caption import router as caption_router
+
+# Import Supabase
+from backend.app.db import supabase
 
 app = FastAPI(title="Lost & Found API")
 
-
+# Allow frontend
 origins = [
-    "http://localhost:5173",  # React app URL
+    "http://localhost:5173",
     "http://127.0.0.1:5173"
 ]
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -20,24 +25,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include user routes (from backend/app/routes/user.py)
-app.include_router(user_router, prefix="/user", tags=["User"])
+# Register routers
+app.include_router(user_router, prefix="/user", tags=["User Account"])
+app.include_router(upload_user_router, prefix="/user_image", tags=["User Image Upload"])
+app.include_router(upload_router, prefix="/upload", tags=["Upload"])
+app.include_router(caption_router, prefix="/caption", tags=["AI Caption"])
 
-# test connection to Supabase
+# Root route
 @app.get("/")
 def root():
     return {"message": "API is running!"}
-
-# Temporary test route for Supabase connection
-@app.get("/test_db")
-def test_db():
-    try:
-        data = supabase.table("users").select("*").limit(1).execute()
-        return {"message": "Connected to Supabase!", "data": data.data}
-    except Exception as e:
-        return {"error": str(e)}
-
-# test 
-@app.get("/upload_image")
-def upload_image_page():
-    return {"message": "Image upload page placeholder"}

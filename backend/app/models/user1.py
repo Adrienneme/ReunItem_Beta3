@@ -1,44 +1,48 @@
-#Handles dile upload and sorting
-from app.db import supabase
-from app.schemas.user import ImageUpload
+from backend.app.db import supabase  # Make sure this uses the service role key
+from backend.app.schemas.user import ImageUpload
 from fastapi import HTTPException
 import uuid
 
 def upload_user_image(image: ImageUpload, file):
+    """
+    Uploads a user image to Supabase Storage and stores its info in the database.
+    """
     try:
-        #Genereate unique filename
+        # 1️⃣ Generate a unique filename
         file_extension = file.filename.split(".")[-1]
-        unique_filename = f"{uuid.uuid4()}.{file_extension}"
+        file_path = f"public/{uuid.uuid4()}.{file_extension}"  # inside uploads bucket
 
-        # Upload image to Supabase storage
-        response = supabase.storage.from_("image-upload").upload(unique_filename, file.file)
+        # 2️⃣ Read file bytes
+        file_bytes = file.file.read()
 
-        if not response:
-            raise HTTPException(status_code=500, detail="Failed to upload image to storage.")
+        # 3️⃣ Upload file to Supabase Storage bucket 'uploads'
+        response = supabase.storage.from_("uploads").upload(
+            file_path, file_bytes, {"upsert": True}
+        )
 
-        # Get public URL
-        public_url = supabase.storage.from_("image-upload").get_public_url(unique_filename)
+        # Check for upload errors
+        if hasattr(response, "error") and response.error is not None:
+            raise HTTPException(status_code=500, detail=f"Upload error: {response.error.message}")
 
-        # Determine which table to store the record in
-        if image.image_type == "lost":
-            table_name = "found_items"  # store in opposite table
-        elif image.image_type == "found":
-            table_name = "lost_items"   # store in opposite table
-        else:
-            raise HTTPException(status_code=400, detail="Invalid image type. Must be 'lost' or 'found'.")
+        # 4️⃣ Get the public URL of uploaded file
+        public_url = supabase.storage.from_("uploads").get_public_url(file_path)
 
-        # Insert record into Supabase table
-        response = supabase.table(table_name).insert({
+        # 5️⃣ Determine database table based on image type
+        table_name = "found_items" if image.image_type == "lost" else "lost_items"
+
+        # 6️⃣ Insert record into Supabase table
+        db_response = supabase.table(table_name).insert({
             "first_name": image.first_name,
             "last_name": image.last_name,
             "image_url": public_url,
             "image_type": image.image_type
         }).execute()
 
-        if not response.data:
+        if not db_response.data:
             raise HTTPException(status_code=500, detail="Failed to save image info to database.")
 
-        return {"message": "Image uploaded successfully", "image_url": public_url}
+        # 7️⃣ Return success message
+        return {"message": "✅ Image uploaded successfully", "image_url": public_url}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

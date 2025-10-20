@@ -37,4 +37,13 @@ class UserSchemas:
     user: 'UserSchemas.User'
 
 
+#image schema
+class ImageType(str, Enum):
+    lost = "lost"
+    found = "found"
+
+class ImageUpload(BaseModel):
+    first_name: str
+    last_name: str
+    image_type: ImageType
 

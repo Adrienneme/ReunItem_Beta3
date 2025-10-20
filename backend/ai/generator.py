@@ -1,20 +1,39 @@
-import requests
-from PIL import Image
+# backend/ai/generator.py
 from transformers import BlipProcessor, BlipForConditionalGeneration
+from PIL import Image
+import requests
+from io import BytesIO
 
+# Load BLIP model once
 processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
-model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base").to("cpu")
+model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base")
 
-img_url = 'https://i5.walmartimages.com/seo/Fashion-Women-Wallets-Female-PU-Leather-Wallet-Mini-Ladies-Purse-Zipper-Clutch-Bag-Money-Card-Holder-for-Women-Girl-Pink_41d2d2bf-c634-435d-8569-e423deac00ca_1.1486f2ec5b0988c92120f1a8f0fd7e5b.jpeg' 
-raw_image = Image.open(requests.get(img_url, stream=True).raw).convert('RGB')
+def generate_caption(image_input):
+    """
+    Generate caption from:
+    - a URL string, or
+    - image bytes (uploaded file)
+    """
+    try:
+        # If it's a URL
+        if isinstance(image_input, str) and image_input.startswith("http"):
+            response = requests.get(image_input)
+            image = Image.open(BytesIO(response.content)).convert("RGB")
 
-inputs = processor(raw_image, return_tensors="pt").to("cpu")
+        # If it's bytes (e.g., UploadFile)
+        elif isinstance(image_input, (bytes, bytearray)):
+            image = Image.open(BytesIO(image_input)).convert("RGB")
 
-out = model.generate(**inputs)
-print(processor.decode(out[0], skip_special_tokens=True))
+        else:
+            raise ValueError("Invalid input — expected image URL or bytes")
 
-# unconditional image captioning
-inputs = processor(raw_image, return_tensors="pt").to("cpu")
+        # Generate caption
+        inputs = processor(images=image, return_tensors="pt")
+        out = model.generate(**inputs)
+        caption = processor.decode(out[0], skip_special_tokens=True)
 
-out = model.generate(**inputs)
-print(processor.decode(out[0], skip_special_tokens=True))
+        return caption
+
+    except Exception as e:
+        print(f"❌ Caption generation failed: {e}")
+        return None
