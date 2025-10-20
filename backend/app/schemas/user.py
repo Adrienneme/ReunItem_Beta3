@@ -1,4 +1,3 @@
-#sample lang muna
 from pydantic import BaseModel
 from enum import Enum
 import uuid
@@ -8,7 +7,6 @@ class UserRole(str, Enum):
   user = "user"
 
 class UserSchemas:
-  
   
   class UserCreate(BaseModel):
     first_name: str

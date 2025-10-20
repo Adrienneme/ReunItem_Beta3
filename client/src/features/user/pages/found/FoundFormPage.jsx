@@ -1,19 +1,24 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import UserNavBar from '../../../components/layout/UserNavBar';
-import FoundBaseForm from '../../../components/forms/FoundBaseForm';
-import ButtonUI from '../../../components/ui/ButtonUI';
+import { useNavigate } from "react-router-dom";
+import { createItem } from '../../../../api/items';
+import UserNavBar from '../../../../components/layout/UserNavBar';
+import FoundBaseForm from '../../../../components/forms/FoundBaseForm';
+import ButtonUI from '../../../../components/ui/ButtonUI';
 
 const FoundFormPage = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    item_name: '',
-    description: '',
+    item_name: "",
+    description: "",
     photo: null,
-    pickup_location: '',
+    pickup_location: "",
+    item_type: 'found',
+    status: "Pending Approval"
   });
 
   const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState('');
+  const [buttonLoading, setbuttonLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -37,6 +42,7 @@ const FoundFormPage = () => {
     setLoading(true);
 
     try {
+      //pass ung AI for desciption generation if meron
       const response = await APIforDescriptionGenerator(formData.photo);
       setFormData(prev => ({
         ...prev, description: response.description,
@@ -50,15 +56,42 @@ const FoundFormPage = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const { item_name, description, photo, pickup_location } = formData;
-    if (!item_name || !description || !photo || !pickup_location) {
+
+    setbuttonLoading(true);
+
+   const allData = new FormData();
+    allData.append("item_name", formData.item_name);
+    allData.append("description", formData.description);
+    allData.append("pickup_location", formData.pickup_location);
+    const typeValue = formData.item_type === "lost" ? "lost" : "found";
+    allData.append("type", typeValue);
+    allData.append("status", formData.status || "Pending Approval")
+    if (formData.photo) allData.append("photo", formData.photo);
+
+    for (let pair of allData.entries()) {
+      console.log(pair[0] + ': ' + pair[1]);
+    }
+
+    if (!formData.item_name || !formData.description || !formData.photo || !formData.pickup_location) {
       alert('Please fill all inputs');
+      setbuttonLoading(false);
       return;
     }
-    console.log('Final submitted data:', formData);
-    // TODO: Submit inputs to backend
+    try {
+      const response = await createItem(allData);
+      console.log("Successfully created Item:", response)
+      alert('Entry Submitted!')
+      navigate('/user/home')
+
+    } catch (error) {
+      const errMsg = error.response?.data?.detail || "Failed to submit entry.";
+      console.log(error.response?.data.detail);
+      alert(errMsg);
+    } finally {
+      setbuttonLoading(false)
+    }
   };
 
   return (
@@ -84,12 +117,18 @@ const FoundFormPage = () => {
               Go Back
             </ButtonUI>
           </Link>
-          <ButtonUI variant="solid" color="success" onClick={handleSubmit}>
+          <ButtonUI
+            variant="solid"
+            color="success"
+            onClick={handleSubmit}
+            loading={buttonLoading}
+            disabled={buttonLoading}
+          >
             Submit Entry
           </ButtonUI>
         </div>
       </div>
-      
+
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import UserNavBar from '../../../components/layout/UserNavBar'
-import LostBaseForm from '../../../components/forms/LostBaseForm'
-import ButtonUI from '../../../components/ui/ButtonUI'
+import UserNavBar from '../../../../components/layout/UserNavBar'
+import LostBaseForm from '../../../../components/forms/LostBaseForm'
+import ButtonUI from '../../../../components/ui/ButtonUI'
 import {Link} from 'react-router-dom'
 
 //Lost Entry Subsmission Page (Creating Entries)
