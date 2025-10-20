@@ -2,7 +2,20 @@ import formClient from "./formClient";
 import jsonClient from "./jsonClient"
 
 export const createItem = async (formData) => {
-  const response = await formClient.post("/items/report", formData);
+  const allData = new FormData();
+  allData.append("item_name", formData.item_name);
+  allData.append("description", formData.description);
+  allData.append("pickup_location", formData.pickup_location);
+  const typeValue = formData.item_type === "lost" ? "lost" : "found";
+  allData.append("type", typeValue);
+  allData.append("status", formData.status || "Pending Approval");
+
+  if (formData.photo) allData.append("photo", formData.photo);
+
+  const response = await formClient.post("/items/report", allData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+
   return response.data;
 };
 

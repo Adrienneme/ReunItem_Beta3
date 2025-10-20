@@ -61,26 +61,13 @@ const FoundFormPage = () => {
 
     setbuttonLoading(true);
 
-   const allData = new FormData();
-    allData.append("item_name", formData.item_name);
-    allData.append("description", formData.description);
-    allData.append("pickup_location", formData.pickup_location);
-    const typeValue = formData.item_type === "lost" ? "lost" : "found";
-    allData.append("type", typeValue);
-    allData.append("status", formData.status || "Pending Approval")
-    if (formData.photo) allData.append("photo", formData.photo);
-
-    for (let pair of allData.entries()) {
-      console.log(pair[0] + ': ' + pair[1]);
-    }
-
     if (!formData.item_name || !formData.description || !formData.photo || !formData.pickup_location) {
-      alert('Please fill all inputs');
+      alert('Please fill all inputs, Image of Item is required');
       setbuttonLoading(false);
       return;
     }
     try {
-      const response = await createItem(allData);
+      const response = await createItem(formData);
       console.log("Successfully created Item:", response)
       alert('Entry Submitted!')
       navigate('/user/home')
