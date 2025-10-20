@@ -17,10 +17,15 @@ const Archived = ({
 
      {/* Card Item */}
      <div className="flex flex-wrap justify-center gap-10 mt-10">
-      <Cards />
-      <Cards />
-      <Cards />
-      <Cards />
+      <Cards
+        name="Wallet"
+      />
+      <Cards 
+        name="Wallet"
+      />
+      <Cards 
+        name="Wallet"
+      />
      
       </div>
     </div>

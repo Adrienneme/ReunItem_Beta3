@@ -2,41 +2,34 @@ import React from 'react'
 import UserNavBar from '../../../components/layout/UserNavBar'
 import Cards from '../../../components/ui/Cards'
 import FilterDropdown from '../../../components/ui/Filters'
-import wallet from '../../../assets/samples/wallet.jpg'
 
-function Pendingsub() {
+function LostFoundRep() {
   return (
-     <div>
+    <div>
      <UserNavBar />
      {/* Filter Dropdown */}
            <div className="flex flex-wrap justify-center mt-10">
              <FilterDropdown 
               label="Filter "
-              options={["All", "Lost", "Found"]}
+              options={["All", "Returned", "Discarded", "Donated"]}
              />
            </div>
 
      {/* Card Item */}
      <div className="flex flex-wrap justify-center gap-10 mt-10">
-        <Cards
-        name="Wallet"
-         label="Lost"
+        <Cards 
          linkTo="/admin/foundcardview"
         />
-         <Cards 
-         name="Wallet"
-          label="Lost"
-          linkTo="/admin/foundcardview"
-         />
-          <Cards 
-          name="Wallet"
-            label="Found"
-            linkTo="/admin/foundcardview"
-          />
+        <Cards 
+        linkTo="/admin/foundcardview"
+        />
+        <Cards 
+        linkTo="/admin/foundcardview"
+        />
       
       </div>
     </div>
   )
 }
 
-export default Pendingsub
+export default LostFoundRep

@@ -1,7 +1,6 @@
 import React from 'react'
 import UserNavBar from '../../../components/layout/UserNavBar'
 import HomeButton from '../../../components/ui/HomeButton'
-import ButtonUI from '../../../components/ui/ButtonUI'
 import { Link } from 'react-router-dom'
 
 const AdminHome = ({
@@ -12,17 +11,17 @@ const AdminHome = ({
 
       <UserNavBar name = {name} />
       
-      <div className='flex flex-row items-center justify-center mt-15 gap-8'>
-        <HomeButton color='red'>
+      <div className='flex flex-row items-center justify-center mt-60 gap-20'>
+        <HomeButton  to="/admin/pendingsubmissions" color='red'>
           Pending Submissions
         </HomeButton>
 
-        <HomeButton color='green'>
+        <HomeButton to="/admin/lostandfoundrep" color='green'>
           Lost/Found Entries 
         </HomeButton>
       </div>
 
-      <div className='flex flex-row items-center justify-center mt-10 gap-8'>
+      <div className='flex flex-row items-center justify-center mt-10 gap-20'>
         <HomeButton to="/admin/claimrequest" color='red'>
           Claim Requests
         </HomeButton>
@@ -30,10 +29,8 @@ const AdminHome = ({
         <HomeButton to="/admin/archived">
           Archived 
         </HomeButton>
-
-
-
       </div>
+
     </div>
   )
 }
