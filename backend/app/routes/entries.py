@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, UploadFile, Form, File
-from typing import Annotated, Optional
+from typing import Optional
 from app.models import ItemModels, UserModels
-from app.schemas import ItemSchemas, EntryType
+from app.schemas import ItemSchemas, EntryType, EntryStatus
 from typing import List
 
 router = APIRouter(prefix="/items")
@@ -33,7 +33,7 @@ async def create_item_route(
     try:
         item_type = EntryType(type)
     except ValueError:
-        item_type = EntryType.found  # fallback to "found"
+        item_type = EntryType.found 
 
     item_data = ItemSchemas.ItemCreate(
         item_name=item_name,
@@ -73,7 +73,7 @@ async def update_item_route(
   if pickup_location: updates["pickup_location"] = pickup_location
   if type: updates["type"] = type
   
-  updates["status"] = ItemSchemas.EntryStatus.Pending_Approval
+  updates["status"] = EntryStatus.Pending_Approval
 
   return ItemModels.update_item(entry_id, str(current_user.user_id), updates, photo)
 
