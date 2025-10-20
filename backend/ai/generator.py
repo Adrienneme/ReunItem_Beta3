@@ -18,3 +18,7 @@ inputs = processor(raw_image, return_tensors="pt").to("cpu")
 
 out = model.generate(**inputs)
 print(processor.decode(out[0], skip_special_tokens=True))
+
+
+#changes I added
+#Caption generator

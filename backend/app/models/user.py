@@ -5,6 +5,9 @@ from fastapi import HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
 from datetime import timedelta
 from jwt.exceptions import InvalidTokenError
+##
+from backend.app.schema.user import ImageUpload
+import uuid
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -75,4 +78,47 @@ class UserModels:
         user_data.pop("password_hash", None)
 
         return UserSchemas.User(**user_data)
+    
+    #The changes I added
+# Upload Logic
+def upload_user_image(image: ImageUpload, file):
+    # Upload a user image to supabse storage and stores its info in the database"
+    try:
+       
+        # generate a unique filename 
+        file_extension = file.filename.split(".")[-1]
+        file_path = f"public/{uuid.uuid4()}.{file_extension}" #Be inside the upload bucket
 
+        #Read file bytes
+        file_bytes = file.file.read()
+
+        #Upload file to supabase Storage bucket name "Uploads"
+        response = supabase.storage.from_("uploads").upload(
+            file_path, file_bytes, {"upsert": "true"}
+        )
+      
+      #Error checking
+        if hasattr(response, "error") and response.error is not None:
+            raise HTTPException(status_code=500, detail=f"Upload error: {response.error.message}")
+
+    #get public  URL of upload file
+        public_url = supabase.storage.form("uploads").get_public_ur;(file_path)
+
+        #Determine if for lost or founf table
+        table_name = "found_items" if image.image_type == "found" else "lost_items"
+
+        #Store recors into Supabase
+        db_response = supabase.table(table_name).insert({
+            "first_name": image.first_name,
+            "last_name": image.last_name,
+            "image_url": public_url,
+            "image_type": image.image_type
+        }).execute()
+
+        if not db_response.data:
+            raise HTTPException(status_code=500, detail="Failed to save image info to database.")
+
+        return {"message": "✅ Image uploaded successfully", "image_url": public_url}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
