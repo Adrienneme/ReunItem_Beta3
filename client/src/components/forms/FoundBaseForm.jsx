@@ -44,7 +44,7 @@ const FoundBaseForm = ({
         <ImageUpload
           photo_url={existingPhoto}
           onImageSelect={onImageSelect}
-          message="Upload clear photo of Found Item here"
+          message="Upload clear photo of Found Item here (Required)"
           disabled={disabled}
           required
         />

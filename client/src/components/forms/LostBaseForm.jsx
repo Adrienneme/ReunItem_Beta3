@@ -47,7 +47,7 @@ const LostBaseForm = ({
           <ImageUpload
             photo_url={existingPhoto}
             onImageSelect={onImageSelect}
-            message='Upload Clear Photo of Lost Item here'
+            message='Upload Clear Photo of Lost Item here (Optional)'
             disabled={disabled}
             required={false}
           />

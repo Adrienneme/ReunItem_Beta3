@@ -2,43 +2,77 @@ import React, { useState } from 'react'
 import UserNavBar from '../../../../components/layout/UserNavBar'
 import LostBaseForm from '../../../../components/forms/LostBaseForm'
 import ButtonUI from '../../../../components/ui/ButtonUI'
-import {Link} from 'react-router-dom'
+import {Link, useNavigate } from 'react-router-dom'
+import { createItem } from '../../../../api/items'
 
-//Lost Entry Subsmission Page (Creating Entries)
 
 const LostFormPage = () => {
   const [formData, setFormData] = useState({
     item_name: "",
     description: "",
-    photo: null
+    photo: null,
+    item_type: 'lost',
+    status: "Pending Approval"
   });
 
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [buttonLoading, setbuttonLoading] = useState(false);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  }
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
   const handleImageSelect = (file) => {
-    setFormData({ ...formData, photo: file })
-  }
+    setFormData(prev => ({ ...prev, photo: file }));
+  };
 
   const handleGenerate = async () => {
+    if (!formData.photo) {
+      alert("Please select a photo first.");
+      return;
+    }
     setLoading(true);
-    // Simulate AI generation - call API 
-    setTimeout(() => {
-      setFormData({
-        ...formData,
-        description:
-          'Black wallet with a silver zipper found near the library steps around 4 PM.',
-      });
+    try {
+      //pass ung AI for desciption generation if meron
+      const response = await APIforDescriptionGenerator(formData.photo);
+      setFormData(prev => ({
+        ...prev, description: response.description,
+      }));
+
+    } catch (error) {
+      const errMsg = error.response?.data?.detail || "Failed to generate description.";
+      alert(errMsg);
+    } finally {
       setLoading(false);
-    }, 1500);
-  }
+    }
+  };
 
-  const handleSubmit = () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  }
+    setbuttonLoading(true);
+
+    if (!formData.item_name || !formData.description) {
+      alert('Please fill item name and description');
+      setbuttonLoading(false);
+      return;
+    }
+    try {
+      const response = await createItem(formData);
+      console.log("Successfully created Item:", response)
+      alert('Entry Submitted!')
+      navigate('/user/home')
+
+    } catch (error) {
+      const errMsg = error.response?.data?.detail || "Failed to submit entry.";
+      console.log(error.response?.data.detail);
+      alert(errMsg);
+    } finally {
+      setbuttonLoading(false)
+    }
+  };
 
   return (
     <div>
@@ -61,7 +95,13 @@ const LostFormPage = () => {
               Go Back
             </ButtonUI>
           </Link>
-          <ButtonUI variant="solid" color="success" onClick={handleSubmit}>
+          <ButtonUI 
+            variant="solid" 
+            color="success" 
+            onClick={handleSubmit} 
+            loading={buttonLoading}
+            disabled={buttonLoading}
+            >
             Submit Entry
           </ButtonUI>
         </div>

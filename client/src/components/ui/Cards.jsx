@@ -2,11 +2,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 import StatusBadge from "./StatusBadge"; // your existing badge component
 import expand from '../../assets/icons/expand.png';
-import wallet from '../../assets/samples/wallet.jpg';
+import noimage from '../../assets/icons/noimage.jpg'
 
 const Cards = ({
   name = "Item Name",
-  imageUrl = wallet,
+  imageUrl = noimage,
   status,        // optional
   percentage,    // optional
   label,         // optional
@@ -26,7 +26,7 @@ const Cards = ({
   const renderBottom = () => {
     if (percentage !== undefined) return (
       <div className={`font-semibold ${getPercentageColor(percentage)}`}>
-        {percentage}% Complete
+        {percentage}% Match
       </div>
     );
     if (label) return (
@@ -38,6 +38,12 @@ const Cards = ({
     return null;
   };
 
+  const handleExpandClick = () => {
+    if (stateData?.entry_id) {
+      localStorage.setItem("entry_id", stateData.entry_id);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center w-full sm:w-64 md:w-0.5/4">
       <div className="w-64 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 overflow-hidden border border-black bg-gray-400">
@@ -45,7 +51,7 @@ const Cards = ({
         {/* Header: Name + Expand */}
         <div className="flex justify-between items-center px-4 py-2 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-800 truncate">{name}</h2>
-            <Link to={linkTo} state={stateData}>
+             <Link to={linkTo} onClick={handleExpandClick}>
               <img 
                 src={expand} 
                 alt="Expand" 
