@@ -4,10 +4,13 @@ import ProtectedRoutes from './utils/ProtectedRoutes';
 
 // User pages
 import Home from './features/user/pages/Home';
-import LostFormPage from './features/user/pages/LostFormPage';
-import FoundFormPage from './features/user/pages/FoundFormPage';
+import LostFormPage from './features/user/pages/lost/LostFormPage';
+import FoundFormPage from './features/user/pages/found/FoundFormPage';
 import MyEntriesPage from './features/user/pages/MyEntriesPage';
 import Settings from './features/user/pages/Settings';
+import LostEntriesPage from './features/user/pages/lost/LostEntriesPage';
+import FoundEntriesPage from './features/user/pages/found/FoundEntriesPage';
+import FoundViewPage from './features/user/pages/found/FoundViewPage';
 
 // Auth pages
 import Login from './features/auth/Login';
@@ -18,6 +21,7 @@ import AdminHome from './features/admin/pages/Home';
 import Archived from './features/admin/pages/Archived';
 import ClaimRequest from './features/admin/pages/Claimreq';
 import FoundEntry from './features/admin/pages/FoundEntry';
+
 
 function App() {
 
@@ -39,6 +43,9 @@ function App() {
               <Route path="found-form" element={<FoundFormPage />} />
               <Route path="entries" element={<MyEntriesPage />} />
               <Route path="settings" element={<Settings />} />
+              <Route path='lost-entries' element={<LostEntriesPage/>}/>
+              <Route path='found-entries' element={<FoundEntriesPage/>}/>
+              <Route path='found-entries-detail' element={<FoundViewPage/>}/>
             </Routes>
           </ProtectedRoutes>
         }

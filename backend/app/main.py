@@ -1,12 +1,14 @@
 from fastapi import FastAPI
-from app.routes import router as user_router
+from app.routes.user import router as user_router
+from app.routes.entries import router as item_router
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="ReunItem")
 
 origin = [
     "http://localhost:5173",
-    "http://localhost:5174"
+    "http://localhost:5174",
+    
 ]
 
 app.add_middleware(
@@ -18,6 +20,7 @@ app.add_middleware(
 )
 
 app.include_router(user_router)
+app.include_router(item_router)
 
 @app.get("/")
 def root():

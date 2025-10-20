@@ -9,7 +9,7 @@ const Cards = ({
   imageUrl = wallet,
   status,        // optional
   percentage,    // optional
-  label = "Found",         // optional
+  label,         // optional
   linkTo,        // path to navigate on expand
   stateData      // data to pass via Link state
 }) => {
