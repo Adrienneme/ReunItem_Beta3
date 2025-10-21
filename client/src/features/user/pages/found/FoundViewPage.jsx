@@ -49,6 +49,14 @@ export default function FoundViewPage() {
     );
   }
 
+  const handleDelete = async (e) => {
+
+  }
+
+  const handleEdit = async (e) => {
+    
+  }
+
   return (
     <div>
       <UserNavBar />
@@ -61,11 +69,14 @@ export default function FoundViewPage() {
             existingPhoto={entry.photo_url}
           />
         </div>
-        <div className="flex flex-row items-center mt-5 mb-10 gap-50">
+        <div className="flex flex-row items-center mt-10 mb-10 gap-10">
           <ButtonUI variant="solid" color="neutral">
             <Link to="/user/found-entries">Go Back</Link>
           </ButtonUI>
-          <ButtonUI variant="solid" color="warning">
+          <ButtonUI variant="solid" color="danger" onClick={handleDelete}>
+            Delete Entry
+          </ButtonUI>
+          <ButtonUI variant="solid" color="warning" onClick={handleEdit}>
             Edit Entry
           </ButtonUI>
         </div>
