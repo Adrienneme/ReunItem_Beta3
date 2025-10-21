@@ -14,7 +14,6 @@ export default function Input({
   variant = "standard", // now customizable
   width = "30ch",       // customizable width
   inputColor = "white", // customizable text color
-  labelColor = "gray",  // customizable label color
   underlineColor = "white" // customizable underline color
 }) {
   return (
@@ -35,7 +34,7 @@ export default function Input({
         disabled={disabled}
         sx={{
           '& .MuiInputBase-input': { color: inputColor },
-          '& .MuiInputLabel-root': { color: labelColor },
+          '& .MuiInputLabel-root': { color: "gray" },
           '& .MuiInput-underline:before': { borderBottomColor: underlineColor },
           '& .MuiInput-underline:hover:before': { borderBottomColor: underlineColor },
           '& .MuiInput-underline:after': { borderBottomColor: underlineColor },

@@ -5,13 +5,13 @@ import Input from "@mui/joy/Input";
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
 
 export default function DropDownSelect({
-  name = 'pickup_location',
+  name = "pickup_location",
   options = [],
   value,
   onChange,
   placeholder = "Select an Option",
-  disabled = false }) {
-  
+  disabled = false,
+}) {
   const [showOtherInput, setShowOtherInput] = useState(false);
   const [otherValue, setOtherValue] = useState("");
 
@@ -23,7 +23,7 @@ export default function DropDownSelect({
       setShowOtherInput(false);
       setOtherValue("");
     }
-  }, [value]);
+  }, [value, options]);
 
   const handleSelectChange = (event, newValue) => {
     if (newValue === "other") {
@@ -41,6 +41,16 @@ export default function DropDownSelect({
 
   return (
     <div className="flex flex-col gap-2">
+        <label
+        htmlFor={name}
+        className="text-sm font-semibold text-gray-100"
+        style={{
+          opacity: disabled ? 0.6 : 1,
+          cursor: disabled ? "not-allowed" : "default",
+        }}
+      >
+        Pickup Location:
+      </label>
       <Select
         name={name}
         value={showOtherInput ? "other" : value || ""}
@@ -50,18 +60,49 @@ export default function DropDownSelect({
         disabled={disabled}
         sx={{
           width: 300,
+          backgroundColor: "#eaeaea", // light gray
+          color: "black",
+          "--Select-placeholderColor": "#555",
+          "--Select-focusedHighlight": "black",
+          "--Select-focusedBorderColor": "#999",
           [`& .${selectClasses.indicator}`]: {
             transition: "0.2s",
             [`&.${selectClasses.expanded}`]: { transform: "rotate(-180deg)" },
           },
+          "&:hover": {
+            backgroundColor: "#dcdcdc",
+          },
+          // ✅ Keep black text even when disabled
+          "&.Mui-disabled": {
+            opacity: 1,
+            color: "black",
+            backgroundColor: "#e0e0e0",
+          },
         }}
       >
         {options.map((option) => (
-          <Option key={option} value={option}>
+          <Option
+            key={option}
+            value={option}
+            sx={{
+              backgroundColor: "#f0f0f0",
+              color: "black",
+              "&:hover": { backgroundColor: "#dcdcdc" },
+            }}
+          >
             {option}
           </Option>
         ))}
-        <Option value="other">Other/Specify</Option>
+        <Option
+          value="other"
+          sx={{
+            backgroundColor: "#f0f0f0",
+            color: "black",
+            "&:hover": { backgroundColor: "#dcdcdc" },
+          }}
+        >
+          Other / Specify
+        </Option>
       </Select>
 
       {showOtherInput && (
@@ -69,9 +110,22 @@ export default function DropDownSelect({
           placeholder="Specify location"
           value={otherValue}
           onChange={handleOtherChange}
-          sx={{ width: 300 }}
-          required={true}
+          required
           disabled={disabled}
+          sx={{
+            width: 300,
+            backgroundColor: "#eaeaea",
+            color: "black",
+            "&::placeholder": { color: "#555" },
+            "&:hover": { backgroundColor: "#dcdcdc" },
+            // ✅ Keep black text even when disabled
+            "&.Mui-disabled": {
+              opacity: 1,
+              color: "black",
+              WebkitTextFillColor: "black",
+              backgroundColor: "#e0e0e0",
+            },
+          }}
         />
       )}
     </div>

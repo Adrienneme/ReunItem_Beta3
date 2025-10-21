@@ -36,13 +36,12 @@ export default function MultilineInput({
         InputLabelProps={{ style: { color: labelColor } }}
         sx={{
           '& .MuiOutlinedInput-root': {
-            '& fieldset': { borderColor: borderColor },
-            '&:hover fieldset': { borderColor: borderColor },
+            '& fieldset': { borderColor: borderColor },          
             '&.Mui-focused fieldset': { borderColor: borderColor },
             '& .MuiInputBase-input.Mui-disabled': {
               color: 'white',
-              WebkitTextFillColor: 'white', // For Safari to apply white color properly
-              opacity: 1,                    // To prevent default opacity dimming
+              WebkitTextFillColor: 'white', 
+              opacity: 1,                   
             },
           },
         }}
