@@ -71,6 +71,7 @@ export default function DropDownSelect({
           onChange={handleOtherChange}
           sx={{ width: 300 }}
           required={true}
+          disabled={disabled}
         />
       )}
     </div>

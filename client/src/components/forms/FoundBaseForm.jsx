@@ -58,10 +58,11 @@ const FoundBaseForm = ({
       {/* Description */}
       <MultilineInput
         name="description"
-        label="Short Item Description"
+        label="Item Description"
         placeholder="e.g. iPhone 12 with a black case and small crack on the upper-right corner of the screen. It was found near the cafeteria table around 2:30 PM."
         value={formData.description}
         onChange={onChange}
+        disabled={disabled}
       />
 
       {/* Pickup Location Dropdown */}
@@ -71,7 +72,7 @@ const FoundBaseForm = ({
           options={["Gate1", "Gate2", "Gate3", "ADSAS Office", "Tonus Gym"]}
           value={formData.pickup_location}
           onChange={onPickupChange}
-          disabled={disablePickupSelect}
+          disabled={disabled || disablePickupSelect}
         />
       </div>
     </div>

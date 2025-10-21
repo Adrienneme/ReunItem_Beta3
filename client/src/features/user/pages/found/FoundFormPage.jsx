@@ -68,7 +68,7 @@ const FoundFormPage = () => {
     }
     try {
       const response = await createItem(formData);
-      console.log("Successfully created Item:", response)
+      console.log("Successfully created Item:", response.photo)
       alert('Entry Submitted!')
       navigate('/user/home')
 

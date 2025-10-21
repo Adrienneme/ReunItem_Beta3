@@ -47,7 +47,7 @@ function App() {
               <Route path="settings" element={<Settings />} />
               <Route path='lost-entries' element={<LostEntriesPage/>}/>
               <Route path='found-entries' element={<FoundEntriesPage/>}/>
-              <Route path='found-entries-detail' element={<FoundViewPage/>}/>
+              <Route path='found-entries-detail' element={<FoundViewPage/>}/>            
             </Routes>
           </ProtectedRoutes>
         }
