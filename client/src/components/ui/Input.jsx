@@ -5,7 +5,7 @@ import TextField from '@mui/material/TextField';
 export default function Input({
   name, //targets the name when changing the value
   label, //label niya duhdoy
-  type = "text", 
+  type = "text",
   value, //ano na nasulat
   onChange, //calls the onChange in the parent
   placeholder = "",
@@ -25,20 +25,25 @@ export default function Input({
     >
       <TextField
         name={name}
-        label={label}              
-        variant={variant}       
-        type={type}               
-        value={value}              
-        onChange={onChange}          
-        placeholder={placeholder}  
-        required={required}          
-        disabled={disabled}         
+        label={label}
+        variant={variant}
+        type={type}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        required={required}
+        disabled={disabled}
         sx={{
-          '& .MuiInputBase-input': { color: inputColor },                 
-          '& .MuiInputLabel-root': { color: labelColor },                  
-          '& .MuiInput-underline:before': { borderBottomColor: underlineColor }, 
-          '& .MuiInput-underline:hover:before': { borderBottomColor: underlineColor }, 
-          '& .MuiInput-underline:after': { borderBottomColor: underlineColor },  
+          '& .MuiInputBase-input': { color: inputColor },
+          '& .MuiInputLabel-root': { color: labelColor },
+          '& .MuiInput-underline:before': { borderBottomColor: underlineColor },
+          '& .MuiInput-underline:hover:before': { borderBottomColor: underlineColor },
+          '& .MuiInput-underline:after': { borderBottomColor: underlineColor },
+          '& .MuiInputBase-input.Mui-disabled': {
+            color: 'white',
+            WebkitTextFillColor: 'white', // For Safari to apply white color properly
+            opacity: 1,                    // To prevent default opacity dimming
+          },
         }}
       />
     </Box>

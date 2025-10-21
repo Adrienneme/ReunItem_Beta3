@@ -5,18 +5,18 @@ import TextField from '@mui/material/TextField';
 export default function MultilineInput({
   name, //target name for changing value
   label, //label ngani
-  type = 'text', 
-  value, 
+  type = 'text',
+  value,
   onChange, //passed function for changing the value
-  placeholder = '', 
+  placeholder = '',
   required = false,
-  disabled = false,     
-  rows = 3,            
-  width = '45ch',       
+  disabled = false,
+  rows = 3,
+  width = '45ch',
   inputColor = 'white',
   labelColor = 'gray',
   borderColor = 'white',
-  variant = 'outlined' 
+  variant = 'outlined'
 }) {
   return (
     <Box sx={{ '& .MuiTextField-root': { m: 1, width } }}>
@@ -36,9 +36,14 @@ export default function MultilineInput({
         InputLabelProps={{ style: { color: labelColor } }}
         sx={{
           '& .MuiOutlinedInput-root': {
-            '& fieldset': { borderColor: borderColor }, 
-            '&:hover fieldset': { borderColor: borderColor }, 
+            '& fieldset': { borderColor: borderColor },
+            '&:hover fieldset': { borderColor: borderColor },
             '&.Mui-focused fieldset': { borderColor: borderColor },
+            '& .MuiInputBase-input.Mui-disabled': {
+              color: 'white',
+              WebkitTextFillColor: 'white', // For Safari to apply white color properly
+              opacity: 1,                    // To prevent default opacity dimming
+            },
           },
         }}
       />
