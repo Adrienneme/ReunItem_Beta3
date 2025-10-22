@@ -20,14 +20,7 @@ export const createItem = async (formData) => {
 };
 
 export const generateDescription = async (photoFile) => {
-  const photo = photoFile.photo;
-   if (photo) allData.append("photo", photo);
-
-  const response = await formClient.post("/items/report", photo, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
-
-  return response.data;
+ 
 };
 
 export const updateItem = async (entry_id, data) => {

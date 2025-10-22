@@ -51,7 +51,7 @@ const FoundBaseForm = ({
         <GenerateButton
           loading={loading}
           onClick={onGenerate}
-          disabled={!formData.photo || existingPhoto}
+          disabled={!formData.photo ||disabled}
         />
       </div>
 

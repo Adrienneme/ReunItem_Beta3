@@ -10,6 +10,7 @@ const GenerateButton = ({
   return (
     <div className="flex justify-center my-5">
       <Button
+        type={type}
         variant="soft"
         color="warning"
         loading={loading}

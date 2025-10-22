@@ -71,6 +71,7 @@ const LostBaseForm = ({
           value={formData.description}
           onChange={onChange}
           required={true}
+          disabled={disabled}
         />
       </div>
 

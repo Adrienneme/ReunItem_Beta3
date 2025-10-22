@@ -79,7 +79,7 @@ async def update_item_route(
 
 
 @router.delete("/delete/{entry_id}")
-async def delete_item(entry_id: str, current_user = Depends(UserModels.get_current_active_user)):
+async def delete_item_route(entry_id: str, current_user = Depends(UserModels.get_current_active_user)):
   return ItemModels.delete_item(entry_id, str(current_user.user_id))
 
 

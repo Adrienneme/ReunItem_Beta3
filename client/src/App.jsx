@@ -9,6 +9,7 @@ import FoundFormPage from './features/user/pages/found/FoundFormPage';
 import MyEntriesPage from './features/user/pages/MyEntriesPage';
 import Settings from './features/user/pages/Settings';
 import LostEntriesPage from './features/user/pages/lost/LostEntriesPage';
+import LostViewPage from './features/user/pages/lost/LostViewPage';
 import FoundEntriesPage from './features/user/pages/found/FoundEntriesPage';
 import FoundViewPage from './features/user/pages/found/FoundViewPage';
 
@@ -46,6 +47,7 @@ function App() {
               <Route path="entries" element={<MyEntriesPage />} />
               <Route path="settings" element={<Settings />} />
               <Route path='lost-entries' element={<LostEntriesPage/>}/>
+              <Route path='lost-entries-detail' element={<LostViewPage/>}/> 
               <Route path='found-entries' element={<FoundEntriesPage/>}/>
               <Route path='found-entries-detail' element={<FoundViewPage/>}/>            
             </Routes>

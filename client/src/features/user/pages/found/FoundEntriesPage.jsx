@@ -14,6 +14,7 @@ export default function FoundEntriesPage() {
       try {
         const response = await getItems()
         setEntries(response)
+        console.log(response)
       } catch (error) {
         const errMsg = error.response?.data?.detail || "No entries yet."
         console.error(error)
@@ -45,22 +46,29 @@ export default function FoundEntriesPage() {
         </div>
 
         <FilterDropdown
-          options={["All", "Pending Approval", "Approved",
-            "Rejected", "Claimed", "Archived"
+          options={[
+            "All", 
+            "Pending Approval", 
+            "Approved",
+            "Rejected", 
+            "Claimed", 
+            "Archived"
           ]} />
 
         <div className="flex flex-wrap justify-center gap-10 mt-10">
 
-          {entries.map((item) => (
-            <Card
-              key={item.id}
-              name={item.item_name}
-              imageUrl={item.photo_url}
-              status={item.status}
-              linkTo="/user/found-entries-detail"
-              stateData={item} // 👈 pass entire item data
-            />
-          ))}
+          {entries
+            .filter((item) => item.type === "found")
+            .map((item) => (
+              <Card
+                key={item.entry_id}
+                name={item.item_name}
+                imageUrl={item.photo_url}
+                status={item.status}
+                linkTo="/user/found-entries-detail"
+                stateData={item}
+              />
+            ))}
 
         </div>
 
