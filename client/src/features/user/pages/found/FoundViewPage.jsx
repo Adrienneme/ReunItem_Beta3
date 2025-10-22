@@ -141,7 +141,7 @@ export default function FoundViewPage() {
   return (
     <div>
       <UserNavBar />
-      <div className="flex flex-col items-center justify-center mt-10 mx-5">
+      <div className="flex flex-col items-center justify-center mt-5 mx-5">
         <div>
           <FoundBaseForm
             title="Found Item Details:"
