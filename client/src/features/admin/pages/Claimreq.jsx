@@ -11,15 +11,12 @@ const ClaimRequest = () => {
          <span className="flex justify-center gap-12 mt-10"> Claim Requests From Finders</span>
           <div className= "flex justify-center gap-12 mt-10">
             <Cards  
-            name="Wallet"
             linkTo={"/admin/foundcardview"}
             />
              <Cards  
-             name="Wallet"
              linkTo={"/admin/foundcardview"}
              />
               <Cards  
-              name="Wallet"
               linkTo={"/admin/foundcardview"}
               />
           </div>

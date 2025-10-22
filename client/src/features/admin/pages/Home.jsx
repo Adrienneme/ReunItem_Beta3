@@ -1,7 +1,6 @@
 import React from 'react'
 import UserNavBar from '../../../components/layout/UserNavBar'
 import HomeButton from '../../../components/ui/HomeButton'
-import { Link } from 'react-router-dom'
 
 const AdminHome = ({
    name = "Admin"
@@ -30,7 +29,6 @@ const AdminHome = ({
           Archived 
         </HomeButton>
       </div>
-
     </div>
   )
 }

@@ -20,10 +20,13 @@ import SignUp from './features/auth/SignUp';
 // Admin pages
 import AdminHome from './features/admin/pages/Home';
 import Archived from './features/admin/pages/Archived';
-import ClaimRequest from './features/admin/pages/ClaimReq';
+import ClaimRequest from './features/admin/pages/Claimreq';
 import Pendingsub from './features/admin/pages/PendingSub';
 import LostFoundRep from './features/admin/pages/Lost&FoundRep';
-import FoundCardView from './features/admin/pages/FoundCardView';
+import FoundCardView from './features/adminfound/FoundCardView';
+import FoundEntriesView from './features/adminfound/FoundEntriesAdmin';
+import LostCardView from './features/adminlost/LostCardView';
+import LostEntriesView from './features/adminlost/LostEntriesAdmin';
 
 
 function App() {
@@ -67,6 +70,9 @@ function App() {
               <Route path="pendingsubmissions" element={<Pendingsub />} />
               <Route path="lostandfoundrep" element={<LostFoundRep />} />
               <Route path="foundcardview" element={<FoundCardView />} />
+              <Route path="foundentryadmin" element={<FoundEntriesView />} />
+              <Route path="lostentryadmin" element={<LostEntriesView />} />
+              <Route path="lostcardview" element={<LostCardView />} />
             </Routes> 
           </ProtectedRoutes>
         }
