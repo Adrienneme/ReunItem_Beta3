@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import UserNavBar from '../../../../components/layout/UserNavBar'
 import LostBaseForm from '../../../../components/forms/LostBaseForm'
 import ButtonUI from '../../../../components/ui/ButtonUI'
-import {Link, useNavigate } from 'react-router-dom'
-import { createItem } from '../../../../api/items'
+import { Link, useNavigate } from 'react-router-dom'
+import { createItem, generateDescription } from '../../../../api/items'
 
 
 const LostFormPage = () => {
@@ -29,19 +29,22 @@ const LostFormPage = () => {
   };
 
   const handleGenerate = async () => {
+
     if (!formData.photo) {
-      alert("Please select a photo first.");
+      alert("No photo found!");
       return;
     }
     setLoading(true);
+
     try {
-      //pass ung AI for desciption generation if meron
-      const response = await APIforDescriptionGenerator(formData.photo);
+      const response = await generateDescription(formData.photo);
+      console.log("Backend response:", response);
       setFormData(prev => ({
-        ...prev, description: response.description,
+        ...prev, description: response.description
       }));
 
     } catch (error) {
+      console.error("Error generating description:", error);
       const errMsg = error.response?.data?.detail || "Failed to generate description.";
       alert(errMsg);
     } finally {
@@ -95,13 +98,13 @@ const LostFormPage = () => {
               Go Back
             </ButtonUI>
           </Link>
-          <ButtonUI 
-            variant="solid" 
-            color="success" 
-            onClick={handleSubmit} 
+          <ButtonUI
+            variant="solid"
+            color="success"
+            onClick={handleSubmit}
             loading={buttonLoading}
             disabled={buttonLoading}
-            >
+          >
             Submit Entry
           </ButtonUI>
         </div>

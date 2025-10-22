@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, UploadFile, Form, File
+from fastapi import APIRouter, Depends, UploadFile, Form, File, HTTPException
 from typing import Optional
 from app.models import ItemModels, UserModels
 from app.schemas import ItemSchemas, EntryType, EntryStatus
@@ -45,6 +45,18 @@ async def create_item_route(
 
     return ItemModels.create_item(item_data, str(current_user.user_id), photo)
 
+@router.post('/generate')
+async def generate_desc_router(
+  photo: UploadFile = File(...), 
+  current_user: dict = Depends(UserModels.get_current_active_user)
+  ):
+  try: 
+    description = await ItemModels.gen_desc(photo)
+    return {"description": description}
+  except Exception as e:
+      raise HTTPException(status_code=500, detail=f"Error generating description: {e}")
+  
+  
 
 @router.get("/list", response_model=List[ItemSchemas.ItemResponse])
 async def get_items_route(current_user = Depends(UserModels.get_current_active_user)):

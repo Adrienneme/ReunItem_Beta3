@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import UserNavBar from "../../../../components/layout/UserNavBar";
 import LostBaseForm from "../../../../components/forms/LostBaseForm";
-import { getItem, deleteItem, updateItem } from "../../../../api/items";
+import { getItem, deleteItem, updateItem, generateDescription } from "../../../../api/items";
 import { useNavigate } from "react-router-dom";
 import ButtonUI from "../../../../components/ui/ButtonUI";
 import MessageBox from "../../../../components/ui/MessageBox";
@@ -70,21 +70,22 @@ export default function LostViewPage() {
   };
 
   const handleGenerate = async () => {
+
     if (!entry.photo) {
-      alert("Please select a photo first.");
+      alert("No photo found!");
       return;
     }
-
     setGenerateloading(true);
 
     try {
-      // pass AI description generator if available
-      const response = await APIforDescriptionGenerator(entry.photo);
+      const response = await generateDescription(entry.photo);
+      console.log("Backend response:", response);
       setEntry(prev => ({
-        ...prev, description: response.description,
+        ...prev, description: response.description
       }));
 
     } catch (error) {
+      console.error("Error generating description:", error);
       const errMsg = error.response?.data?.detail || "Failed to generate description.";
       alert(errMsg);
     } finally {
@@ -174,7 +175,7 @@ export default function LostViewPage() {
               Confirm Edit
             </ButtonUI>
 
-            
+
           )}
         </div>
       </div>

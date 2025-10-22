@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
-import { createItem } from '../../../../api/items';
+import { createItem, generateDescription } from '../../../../api/items';
 import UserNavBar from '../../../../components/layout/UserNavBar';
 import FoundBaseForm from '../../../../components/forms/FoundBaseForm';
 import ButtonUI from '../../../../components/ui/ButtonUI';
@@ -34,21 +34,22 @@ const FoundFormPage = () => {
   };
 
   const handleGenerate = async () => {
+
     if (!formData.photo) {
-      alert("Please select a photo first.");
+      alert("No photo found!");
       return;
     }
-
     setLoading(true);
 
     try {
-      //pass ung AI for desciption generation if meron
-      const response = await APIforDescriptionGenerator(formData.photo);
+      const response = await generateDescription(formData.photo);
+      console.log("Backend response:", response);
       setFormData(prev => ({
-        ...prev, description: response.description,
+        ...prev, description: response.description
       }));
 
     } catch (error) {
+      console.error("Error generating description:", error);
       const errMsg = error.response?.data?.detail || "Failed to generate description.";
       alert(errMsg);
     } finally {
@@ -68,7 +69,7 @@ const FoundFormPage = () => {
     }
     try {
       const response = await createItem(formData);
-      console.log("Successfully created Item:", response.photo)
+      console.log("Successfully created Item:", response.data)
       alert('Entry Submitted!')
       navigate('/user/home')
 
@@ -95,6 +96,7 @@ const FoundFormPage = () => {
           loading={loading}
           onGenerate={handleGenerate}
           onPickupChange={handlePickupChange}
+          disabled={false}
         />
 
         {/* Buttons */}

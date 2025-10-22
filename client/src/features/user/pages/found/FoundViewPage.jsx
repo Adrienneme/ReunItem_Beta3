@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import UserNavBar from "../../../../components/layout/UserNavBar";
 import FoundBaseForm from "../../../../components/forms/FoundBaseForm";
-import { getItem, deleteItem, updateItem } from "../../../../api/items"; // make sure you have deleteItem
+import { getItem, deleteItem, updateItem, generateDescription } from "../../../../api/items"; // make sure you have deleteItem
 import { useNavigate } from "react-router-dom";
 import ButtonUI from "../../../../components/ui/ButtonUI";
 import MessageBox from "../../../../components/ui/MessageBox";
@@ -74,21 +74,22 @@ export default function FoundViewPage() {
   };
 
   const handleGenerate = async () => {
+
     if (!entry.photo) {
-      alert("Please select a photo first.");
+      alert("No photo found!");
       return;
     }
-
     setGenerateloading(true);
 
     try {
-      //pass ung AI for desciption generation if meron
-      const response = await APIforDescriptionGenerator(entry.photo);
+      const response = await generateDescription(entry.photo);
+      console.log("Backend response:", response);
       setEntry(prev => ({
-        ...prev, description: response.description,
+        ...prev, description: response.description
       }));
 
     } catch (error) {
+      console.error("Error generating description:", error);
       const errMsg = error.response?.data?.detail || "Failed to generate description.";
       alert(errMsg);
     } finally {

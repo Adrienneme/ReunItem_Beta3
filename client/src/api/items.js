@@ -19,8 +19,20 @@ export const createItem = async (formData) => {
   return response.data;
 };
 
-export const generateDescription = async (photoFile) => {
- 
+export const generateDescription = async (photo) => {
+  if (!photo) throw new Error("No photo provided to generateDescription");
+
+  const photoFile = new FormData();
+  photoFile.append("photo", photo);
+
+  try {
+    const response = await formClient.post("/items/generate", photoFile);
+    console.log("Backend response inside generateDescription:", response.data);
+    return response.data;
+  } catch (err) {
+    console.error("Error in generateDescription:", err);
+    throw err; // rethrow so handleGenerate can catch
+  }
 };
 
 export const updateItem = async (entry_id, data) => {

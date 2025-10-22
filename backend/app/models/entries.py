@@ -1,7 +1,10 @@
 from app.core import supabase
 from app.schemas import ItemSchemas
+from PIL import Image
 from fastapi import HTTPException, UploadFile
 import uuid 
+from io import BytesIO
+from ai.generator import description_generator
 
 class ItemModels:
     @staticmethod
@@ -32,6 +35,20 @@ class ItemModels:
         created_item = response.data[0]
         return ItemSchemas.ItemResponse(**created_item)
 
+    @staticmethod
+    async def gen_desc(photo: UploadFile):
+        allowed_type = ["image/jpeg", "image/png", "image/jpg"]
+        if photo.content_type not in allowed_type:
+            raise ValueError("Only image files are allowed!")
+        
+        try:
+            contents = await photo.read()
+            description = description_generator(contents)
+            return description
+        
+        except Exception as e:
+            raise Exception(f"Error generating description: {e}")
+        
 
     @staticmethod
     def get_items(user_id: str):
