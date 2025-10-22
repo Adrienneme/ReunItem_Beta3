@@ -18,13 +18,14 @@ function LostFoundRep() {
      {/* Card Item */}
      <div className="flex flex-wrap justify-center gap-10 mt-10">
         <Cards 
-         linkTo="/admin/foundcardview"
+          status="Lost"
+          linkTo="/admin/lostentryadmin"
         />
         <Cards 
-        linkTo="/admin/foundcardview"
+        status="Found"
+        linkTo="/admin/foundentryadmin"
         />
         <Cards 
-        linkTo="/admin/foundcardview"
         />
       
       </div>

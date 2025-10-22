@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import UserNavBar from '../../../components/layout/UserNavBar';
-import FoundBaseForm from '../../../components/forms/FoundBaseForm';
-import ButtonUI from '../../../components/ui/ButtonUI';
+import UserNavBar from '../../components/layout/UserNavBar';
+import FoundBaseForm from '../../components/forms/FoundBaseForm';
+import ButtonUI from '../../components/ui/ButtonUI';
 
-const FoundCardView = () => {
+const LostCardView = () => {
   const [formData, setFormData] = useState({
     item_name: '',
     description: '',
@@ -67,7 +67,7 @@ const FoundCardView = () => {
       <div className="flex flex-col items-center">
 
         {/* FoundBaseForm */}
-        <FoundBaseForm 
+        <LostBaseForm 
           title="Pending Submission"
           status={null}
           formData={formData}
@@ -82,17 +82,16 @@ const FoundCardView = () => {
         <div className="flex flex-row items-center mt-5 mb-5 gap-30">
           <Link to="/user/home">
             <ButtonUI variant="solid" color="neutral">
-              Reject
+                Reject
             </ButtonUI>
           </Link>
           <ButtonUI variant="solid" color="success" onClick={handleSubmit}>
-            Accept
+               Accept
           </ButtonUI>
         </div>
-        {/* Buttons */}
       </div>
       
     </div>
   );
 };
-export default FoundCardView
+export default LostCardView
