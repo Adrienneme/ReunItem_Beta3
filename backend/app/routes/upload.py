@@ -45,6 +45,7 @@ async def commit_record(data: dict): # Receive the data from the preview step
     public_url = data.get("url")
     caption = data.get("caption")
     item_type = data.get("item_type")
+  
 
     if not all([public_url, caption, item_type]):
         return {"error": "Missing required data for commit."}

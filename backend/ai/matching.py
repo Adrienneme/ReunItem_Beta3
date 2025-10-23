@@ -6,10 +6,16 @@ def similarity(a: str, b: str) -> float:
     ##Return similarity score between two strings
     return SequenceMatcher(None, a.lower(), b.lower()).ratio()
 
-def get_items_from_supabase(table_name: str):
-    ##Fetch all items from a Supabase table
-    res = supabase.table(table_name).select("id, caption").execute()
+def get_items_from_supabase(table_name: str, user_id: str = None):
+    #Fetch all items from a Supabase table, optionally filtered by user_id
+    query = supabase.table(table_name).select("id, caption")
+
+    if user_id:
+        query = query.eq("user_id", user_id)  # Filter items uploaded by that user
+
+    res = query.execute()
     return res.data if res.data else []
+
 
 def find_top_matches(new_caption: str, table_name: str = "found_items", top_n: int = 3):
     #Find the top N most similar captions in the target Supabase table
@@ -32,9 +38,9 @@ def find_top_matches(new_caption: str, table_name: str = "found_items", top_n: i
 
     return {"matches": scored_items[:top_n], "count": len(scored_items[:top_n])}
 
-def compare_lost_to_found(top_n: int = 3):
-    ##Compare every lost item to found_items and get the best matches
-    lost_items = get_items_from_supabase("lost_items")
+def compare_lost_to_found(user_id: str, top_n: int = 3):
+    """Compare only this user's lost items to found_items"""
+    lost_items = get_items_from_supabase("lost_items", user_id=user_id)
     results = []
 
     for lost in lost_items:
@@ -47,3 +53,4 @@ def compare_lost_to_found(top_n: int = 3):
         })
 
     return results
+
