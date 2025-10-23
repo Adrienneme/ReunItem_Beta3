@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { registerUser } from "../../api/users";
 import { useNavigate } from "react-router-dom";
+import logo from '../../assets/icons/logo.png'
 
 const Signup = () => {
   const [form, setForm] = useState({ //should match backend schema
@@ -20,14 +21,14 @@ const Signup = () => {
     e.preventDefault();
     if (!form.first_name || !form.last_name || !form.email || !form.password_hash) {
       setError("Please fill out all fields.");
-    } 
+    }
     else {
-      try{
-        const response = await registerUser({...form, role:"user"});
+      try {
+        const response = await registerUser({ ...form, role: "user" });
         console.log("User created: ", response);
         navigate('/login');
         alert("Account created successfully!")
-      }catch(error){
+      } catch (error) {
         setError(error.response?.data?.detail || "Something went wrong.");
         console.error(err.detail);
       }
@@ -36,9 +37,17 @@ const Signup = () => {
 
   return (
     <div className="w-[350px] mx-auto my-12 p-8 border-2 border-black rounded-lg text-center bg-gradient-to-b from-[#E6DADA] to-[#274046] shadow-md text-black">
-      <h2 className="mb-5 text-2xl font-semibold text-black">
-        Create Account
-      </h2>
+      <div>
+        <div className="flex flex-row items-center justify-center mb-5">
+          <img className="w-15" src={logo}></img>
+          <h1 className="text-4xl"><b>ReunItem</b></h1>
+        </div>
+        <h2 className="text-2xl font-semibold text-black">
+          <b>Create an Account!</b>
+        </h2>
+      </div>
+
+
 
       <form onSubmit={handleSubmit} className="flex flex-col items-start">
         <label className="text-sm mt-2 text-white">First Name</label>

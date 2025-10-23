@@ -7,6 +7,6 @@
     "**/Thumbs.db": true,
     "**/node_modules": true,
     "**/eslint.config.js": true,
-    "**/index.html": true
+    "**/index.html": false
   }
 }

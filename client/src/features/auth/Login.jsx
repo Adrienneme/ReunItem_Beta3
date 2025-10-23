@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { loginUser } from "../../api/users";
 import { useNavigate } from "react-router-dom";
+import logo from '../../assets/icons/logo.png'
 
 const Login = () => {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -25,7 +26,7 @@ const Login = () => {
 
         console.log("User Logged in", response);
         alert("successfully logged in!");
-        
+
         if (response.user.role === 'user') {
           navigate('/user/home');
         } else if (response.user.role === 'admin') {
@@ -40,7 +41,13 @@ const Login = () => {
 
   return (
     <div className="w-[350px] mx-auto my-12 p-8 border-2 border-black rounded-lg text-center bg-gradient-to-b from-[#E6DADA] to-[#274046] shadow-md text-gray-900">
-      <h2 className="mb-5 text-2xl font-semibold text-gray-900">Log in</h2>
+      <div>
+        <div className="flex flex-row items-center justify-center mb-5">
+          <img className="w-15" src={logo}></img>
+          <h1 className="text-4xl"><b>ReunItem</b></h1>
+        </div>
+        <h2 className="text-2xl font-semibold text-gray-900"><b>Welcome Back!</b></h2>
+      </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col items-start">
         <label className="text-sm mt-2 text-white">Email</label>
@@ -69,7 +76,7 @@ const Login = () => {
           type="submit"
           className="mt-5 w-full py-2 bg-black text-white rounded hover:bg-gray-800 transition"
         >
-          Log In
+          Login
         </button>
       </form>
 

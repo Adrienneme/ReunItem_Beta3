@@ -25,6 +25,5 @@ def match(lost_item: str, found_items: list):
     
     return output
 
-output = match()
 
 

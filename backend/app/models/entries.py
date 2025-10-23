@@ -130,3 +130,7 @@ class ItemModels:
             raise HTTPException(status_code=500, detail="Failed to delete item.")
 
         return {"message": "Item deleted successfully"}
+
+    @staticmethod
+    def find_match(entry_id: str):
+        pass 
