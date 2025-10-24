@@ -10,7 +10,7 @@ headers = {
     "Authorization": f"Bearer {HF_TOKEN}",
 }
 
-def match(lost_item: str, found_items: list):
+def match(lost_item: str, found_item: str):
   
     def query(payload):
       response = requests.post(API_URL, headers=headers, json=payload)
@@ -19,11 +19,12 @@ def match(lost_item: str, found_items: list):
     output = query({
         "inputs": {
         "source_sentence": lost_item,
-        "sentences": found_items
+        "sentences": found_item
     },
     })
-    
-    return output
+    if output > 0.4:
+        return output
+    return None
 
 
 

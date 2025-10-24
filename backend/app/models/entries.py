@@ -5,6 +5,7 @@ from fastapi import HTTPException, UploadFile
 import uuid 
 from io import BytesIO
 from ai.generator import description_generator
+from ai.matching import match
 
 class ItemModels:
     @staticmethod
@@ -133,15 +134,29 @@ class ItemModels:
 
     @staticmethod
     def find_match(entry_id: str):
-        response = supabase.table("items").select("*").eq("entry_id", entry_id).execute()
-        if not response.data:
+        lost = supabase.table("items").select("*").eq("entry_id", entry_id).execute()
+        if not lost.data:
             raise HTTPException(status_code=404, detail="Item not found")
 
-        item = response.data[0]
-        item_description = item.get("description", "")
+        lostItemInfo = lost.data[0]
+        lost_description = lostItemInfo.get("description", "")
 
-        match_response = supabase.rpc("find_similar_items", {"item_desc": item_description}).execute()
-        if not match_response.data:
-            return []  # No matches found
+        found = supabase.table("items").select("*").eq("type", "found").execute()
+        foundItems = found.data
+        potential_matches = []
+        for i in foundItems:
+            found_description = i.get("description", "")
+            similarity = match(lost_description, found_description)
+            if similarity:
+                potential_matches.append({
+                    "item": ItemSchemas.ItemResponse(**i),
+                    "similarity": similarity
+                })
 
-        return [ItemSchemas.ItemResponse(**match) for match in match_response.data]
+        return potential_matches
+
+
+
+
+
+        
