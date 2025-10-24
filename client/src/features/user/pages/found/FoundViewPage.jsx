@@ -145,6 +145,7 @@ export default function FoundViewPage() {
         <div>
           <FoundBaseForm
             title="Found Item Details:"
+            status={entry.status}
             formData={entry}
             disabled={disabled}
             existingPhoto={entry.photo_url}

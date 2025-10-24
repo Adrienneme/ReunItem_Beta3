@@ -141,6 +141,7 @@ export default function LostViewPage() {
         <div>
           <LostBaseForm
             title="Lost Item Details:"
+            status={entry.status}
             formData={entry}
             disabled={disabled}
             existingPhoto={entry.photo_url}

@@ -133,4 +133,15 @@ class ItemModels:
 
     @staticmethod
     def find_match(entry_id: str):
-        pass 
+        response = supabase.table("items").select("*").eq("entry_id", entry_id).execute()
+        if not response.data:
+            raise HTTPException(status_code=404, detail="Item not found")
+
+        item = response.data[0]
+        item_description = item.get("description", "")
+
+        match_response = supabase.rpc("find_similar_items", {"item_desc": item_description}).execute()
+        if not match_response.data:
+            return []  # No matches found
+
+        return [ItemSchemas.ItemResponse(**match) for match in match_response.data]

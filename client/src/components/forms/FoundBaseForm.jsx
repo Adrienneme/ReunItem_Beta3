@@ -24,7 +24,7 @@ const FoundBaseForm = ({
 
       {/* Title and Status Badge */}
       <div className="mb-5 text-center">
-        <h1 className="mt-5 text-xl font-bold">{title}</h1>
+        <h1 className="mt-5 mb-3 text-xl font-bold">{title}</h1>
         {status && <StatusBadge status={status} />}
       </div>
 

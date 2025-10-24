@@ -21,7 +21,7 @@ const LostBaseForm = ({
     <div className='flex flex-col items-center '>
       {/*Title Page w/ badge?*/}
       <div className='mb-5 flex flex-col items-center'>
-        <h1 className='mt-5 text-xl font-bold'><b>{title}</b></h1>
+        <h1 className='mt-5 mb-3 text-xl font-bold'><b>{title}</b></h1>
         {status && (
           <StatusBadge status={status} />
         )}
