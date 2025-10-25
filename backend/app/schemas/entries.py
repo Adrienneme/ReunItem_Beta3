@@ -38,3 +38,6 @@ class ItemSchemas:
 
         class Config:
             from_attributes = True 
+
+    class MatchResponse(ItemResponse):
+        similarity: float

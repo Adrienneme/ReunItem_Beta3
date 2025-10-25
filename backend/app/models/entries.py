@@ -127,7 +127,7 @@ class ItemModels:
 
         # Delete database entry
         response = supabase.table("items").delete().eq("entry_id", entry_id).eq("user_id", user_id).execute()
-        if not getattr(response, "data", None):
+        if not response.data:
             raise HTTPException(status_code=500, detail="Failed to delete item.")
 
         return {"message": "Item deleted successfully"}
@@ -148,10 +148,8 @@ class ItemModels:
             found_description = i.get("description", "")
             similarity = match(lost_description, found_description)
             if similarity:
-                potential_matches.append({
-                    "item": ItemSchemas.ItemResponse(**i),
-                    "similarity": similarity
-                })
+                matched_item = ItemSchemas.MatchResponse(**i, similarity=similarity)
+                potential_matches.append(matched_item)
 
         return potential_matches
 

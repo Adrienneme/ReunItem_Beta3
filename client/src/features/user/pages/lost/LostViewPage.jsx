@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import UserNavBar from "../../../../components/layout/UserNavBar";
 import LostBaseForm from "../../../../components/forms/LostBaseForm";
 import { getItem, deleteItem, updateItem, generateDescription } from "../../../../api/items";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ButtonUI from "../../../../components/ui/ButtonUI";
 import MessageBox from "../../../../components/ui/MessageBox";
 
@@ -152,32 +152,44 @@ export default function LostViewPage() {
           />
         </div>
 
-        <div className="flex flex-row items-center mt-10 mb-10 gap-10">
-          <ButtonUI variant="solid" color="neutral" onClick={() => navigate("/user/lost-entries")}>
-            Go Back
-          </ButtonUI>
-
-          <ButtonUI variant="solid" color="danger" onClick={handleDelete}>
-            Delete Entry
-          </ButtonUI>
-
-          {replace ? (
-            <ButtonUI variant="solid" color="warning" onClick={handleEdit}>
-              Edit Entry
-            </ButtonUI>
-          ) : (
-            <ButtonUI
-              variant="solid"
-              color="success"
-              onClick={handleSubmit}
-              loading={buttonLoading}
-              disabled={buttonLoading}
-            >
-              Confirm Edit
+        <div className="flex flex-col items-center mb-10 gap-10">
+          <div className="flex flex-row items-center mt-10 gap-10">
+            <ButtonUI variant="solid" color="neutral" onClick={() => navigate("/user/lost-entries")}>
+              Go Back
             </ButtonUI>
 
+            <ButtonUI variant="solid" color="danger" onClick={handleDelete}>
+              Delete Entry
+            </ButtonUI>
 
-          )}
+            {replace ? (
+              <ButtonUI variant="solid" color="warning" onClick={handleEdit}>
+                Edit Entry
+              </ButtonUI>
+            ) : (
+              <ButtonUI
+                variant="solid"
+                color="success"
+                onClick={handleSubmit}
+                loading={buttonLoading}
+                disabled={buttonLoading}
+              >
+                Confirm Edit
+              </ButtonUI>
+            )}
+
+          </div>
+          <div>
+            {entry.status === "Pending Approval" && (
+              <ButtonUI 
+                color="primary"
+                onClick={() => navigate("/user/matched-entries")}
+              >
+                View Potential Matches
+              </ButtonUI>
+            )}
+          </div>
+
         </div>
       </div>
 

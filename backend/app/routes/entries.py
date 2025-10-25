@@ -27,7 +27,7 @@ async def create_item_route(
 
     # Ensure pickup_location is not None
     if not pickup_location:
-        pickup_location = "Unknown"
+        pickup_location = "Not Specified"
 
     # Validate type against Enum
     try:
@@ -48,7 +48,7 @@ async def create_item_route(
 @router.post('/generate')
 async def generate_desc_router(
   photo: UploadFile = File(...), 
-  current_user: dict = Depends(UserModels.get_current_active_user)
+  _: dict = Depends(UserModels.get_current_active_user)
   ):
   try: 
     description = await ItemModels.gen_desc(photo)
@@ -95,3 +95,6 @@ async def delete_item_route(entry_id: str, current_user = Depends(UserModels.get
   return ItemModels.delete_item(entry_id, str(current_user.user_id))
 
 
+@router.post("/generate/{entry_id}", response_model = List[ItemSchemas.MatchResponse])
+async def generate_desc_route(entry_id: str, _=Depends(UserModels.get_current_active_user)):
+  return ItemModels.gen_desc(entry_id)

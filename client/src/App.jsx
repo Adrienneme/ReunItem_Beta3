@@ -13,6 +13,7 @@ import LostViewPage from './features/user/pages/lost/LostViewPage';
 import FoundEntriesPage from './features/user/pages/found/FoundEntriesPage';
 import FoundViewPage from './features/user/pages/found/FoundViewPage';
 
+
 // Auth pages
 import Login from './features/auth/Login';
 import SignUp from './features/auth/SignUp';
