@@ -4,7 +4,8 @@ from app.routes.entries import router as item_router
 from fastapi.middleware.cors import CORSMiddleware
 ##
 from app.admin.image_accept import router as admin_image_router
-from app.admin.routes import router as admin_claims_router
+from app.admin.routes import admin_claims_router
+
 
 app = FastAPI(title="ReunItem")
 

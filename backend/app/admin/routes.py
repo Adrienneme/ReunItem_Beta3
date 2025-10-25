@@ -16,6 +16,7 @@ def get_current_admin(user_id: str = Header(...)):
 
 
 #View Pending Claims 
+
 @admin_claims_router.get("/claims/pending")
 async def admin_claims_pending(admin=Depends(get_current_admin)):
 
