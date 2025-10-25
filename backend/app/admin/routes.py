@@ -4,16 +4,12 @@ from app.core.db import supabase
 admin_claims_router = APIRouter(prefix="/admin", tags=["Admin Claims & Items"])
 
 
-#Header to specify which user is making the request
-def get_current_admin(user_id: str = Header(...)):
-    
-    user = supabase.table("user").select("*").eq("id", user_id).execute().data
-    if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-    if user[0]["role"] != "admin":
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized")
-    return user[0]
 
+#Header to specify which user is making the request
+def get_current_admin(role: str = Header(...)):
+    if role.lower() != "admin":
+        raise HTTPException(status_code=403, detail="Not authorized")
+    return {"role": "admin"}
 
 #View Pending Claims 
 
