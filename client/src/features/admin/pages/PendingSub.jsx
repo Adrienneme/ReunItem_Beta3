@@ -1,39 +1,56 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import UserNavBar from '../../../components/layout/UserNavBar'
-import Cards from '../../../components/ui/Cards'
+import Card from '../../../components/ui/Cards'
 import FilterDropdown from '../../../components/ui/Filters'
-import wallet from '../../../assets/samples/wallet.jpg'
+import { getPendingItems } from '../../../api/admin'
+
 
 function Pendingsub() {
-  return (
-     <div>
-     <UserNavBar />
-     {/* Filter Dropdown */}
-           <div className="flex flex-wrap justify-center mt-10">
-             <FilterDropdown 
-              label="Filter "
-              options={["All", "Lost", "Found"]}
-             />
-           </div>
+  const [entries, setEntries] = useState([]);
 
-     {/* Card Item */}
-     <div className="flex flex-wrap justify-center gap-10 mt-10">
-        <Cards
-        name="Wallet"
-         label="Lost"
-         linkTo="/admin/foundcardview"
+  useEffect(() => {
+    const fetchEntries = async () => {
+      try {
+        const response = await getPendingItems(); // API call to fetch entries
+        setEntries(response); // Store response in state
+        console.log(response);
+      } catch (error) {
+        const errMsg = error.response?.data?.detail || "No Pending Entries.";
+        console.error(error);
+        alert(errMsg); // Show user-friendly error
+      } finally {
+        setLoading(false); // Stop loading indicator
+      }
+    };
+
+    fetchEntries();
+  }, []);
+
+  return (
+    <div>
+      <UserNavBar />
+      {/* Filter Dropdown */}
+      <div className="flex flex-wrap justify-center mt-10">
+        <FilterDropdown
+          label="Filter "
+          options={["All", "Lost", "Found"]}
         />
-         <Cards 
-         name="Wallet"
-          label="Lost"
-          linkTo="/admin/foundcardview"
-         />
-          <Cards 
-          name="Wallet"
-            label="Found"
-            linkTo="/admin/foundcardview"
-          />
-      
+      </div>
+
+      {/* Card Item */}
+      <div className="flex flex-wrap justify-center gap-10 mt-10">
+        {entries
+          .map((item) => (
+            <Card
+              key={item.entry_id}           // Unique key for list rendering
+              name={item.item_name}         // Item name displayed on the card
+              imageUrl={item.photo_url}     // Item image
+              status={item.status}          // Current status of the item
+              linkTo="" // Navigation link to detail page
+              stateData={item}              // Pass full item data for detail page
+            />
+          ))}
+
       </div>
     </div>
   )

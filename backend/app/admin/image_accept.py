@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Header
 from fastapi.responses import JSONResponse
 from app.core.db import supabase
+from app.schemas import ItemSchemas
 
 router = APIRouter(prefix="/admin", tags=["Admin Image Approvals"])
 
@@ -21,7 +22,7 @@ async def admin_pending_uploads(admin=Depends(get_current_admin)):
     pending_uploads = (
         supabase.table("items")
         .select("*")
-        .eq("status", "pending approval")
+        .eq("status", "Pending Approval")
         .execute()
         .data
     )
@@ -32,7 +33,7 @@ async def admin_pending_uploads(admin=Depends(get_current_admin)):
             status_code=status.HTTP_404_NOT_FOUND
         )
 
-    return {"pending_uploads": pending_uploads}
+    return pending_uploads
 
 
 # Approve Entry
