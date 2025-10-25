@@ -40,4 +40,4 @@ class ItemSchemas:
             from_attributes = True 
 
     class MatchResponse(ItemResponse):
-        similarity: float
+        similarity: int

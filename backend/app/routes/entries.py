@@ -91,10 +91,10 @@ async def update_item_route(
 
 
 @router.delete("/delete/{entry_id}")
-async def delete_item_route(entry_id: str, current_user = Depends(UserModels.get_current_active_user)):
+def delete_item_route(entry_id: str, current_user = Depends(UserModels.get_current_active_user)):
   return ItemModels.delete_item(entry_id, str(current_user.user_id))
 
 
-@router.post("/generate/{entry_id}", response_model = List[ItemSchemas.MatchResponse])
-async def generate_desc_route(entry_id: str, _=Depends(UserModels.get_current_active_user)):
-  return ItemModels.gen_desc(entry_id)
+@router.post("/matches/{entry_id}", response_model = List[ItemSchemas.MatchResponse])
+def generate_desc_route(entry_id: str, _=Depends(UserModels.get_current_active_user)):
+  return ItemModels.find_match(entry_id)

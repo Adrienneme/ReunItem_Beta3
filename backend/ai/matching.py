@@ -22,8 +22,11 @@ def match(lost_item: str, found_item: str):
         "sentences": found_item
     },
     })
-    if output > 0.4:
-        return output
+    if isinstance(output, list):
+        output = output[0]
+
+    if output > 0.5:
+        return int(output * 100)
     return None
 
 

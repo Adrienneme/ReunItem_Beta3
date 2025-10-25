@@ -137,7 +137,7 @@ export default function LostViewPage() {
   return (
     <div>
       <UserNavBar />
-      <div className="flex flex-col items-center justify-center mt-10 mx-5">
+      <div className="flex flex-col items-center justify-center mx-5">
         <div>
           <LostBaseForm
             title="Lost Item Details:"
