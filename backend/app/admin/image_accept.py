@@ -7,7 +7,7 @@ router = APIRouter(prefix="/admin", tags=["Admin Image Approvals"])
 #Header to specify which user is making the request
 def get_current_admin(user_id: str = Header(...)):
 
-    user = supabase.table("users").select("*").eq("id", user_id).execute().data
+    user = supabase.table("user").select("*").eq("id", user_id).execute().data
     if not user:
         raise HTTPException(status_code=404, detail="User not found.")
     if user[0]["role"] != "admin":
