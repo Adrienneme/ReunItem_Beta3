@@ -7,12 +7,15 @@ import { getPendingItems } from '../../../api/admin'
 
 function Pendingsub() {
   const [entries, setEntries] = useState([]);
+  const [loading, setLoading] = useState(true); //added######
 
   useEffect(() => {
     const fetchEntries = async () => {
       try {
-        const response = await getPendingItems(); // API call to fetch entries
-        setEntries(response); // Store response in state
+        //const response = await getPendingItems(); // API call to fetch entries
+        //setEntries(response); // Store response in state
+        const data = await getPendingItems(); // now returns data only
+        setEntries(data);
         console.log(response);
       } catch (error) {
         const errMsg = error.response?.data?.detail || "No Pending Entries.";

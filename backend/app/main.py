@@ -7,6 +7,8 @@ from app.admin.image_accept import router as admin_image_router
 from app.admin.routes import admin_claims_router
 
 
+
+
 app = FastAPI(title="ReunItem")
 
 
