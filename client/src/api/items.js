@@ -64,3 +64,8 @@ export const deleteItem = async (entryId) => {
   const response = await jsonClient.delete(`/items/delete/${entryId}`);
   return response.data;
 };
+
+export const getMatches = async (entryId) => {
+  const response = await jsonClient.post(`/items/matches/${entryId}`);
+  return response.data;
+}

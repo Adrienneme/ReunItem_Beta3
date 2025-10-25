@@ -15,4 +15,16 @@ jsonClient.interceptors.request.use((config) => {
   return config;
 });
 
+jsonClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401){
+      alert("Your session has expired. Please log in again.");
+      localStorage.removeItem("token");
+      window.location.href = "/login";
+    }
+    return Promise.reject(error)
+  }
+)
+
 export default jsonClient;

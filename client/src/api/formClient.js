@@ -14,9 +14,20 @@ formClient.interceptors.request.use(config => {
     //If a token exists, attach it to the request headers.
     config.headers.Authorization = `Bearer ${token}`;
   }
-
   //Return the configuration to continue the request.
   return config;
 });
+
+formClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401){
+      alert("Your session has expired. Please log in again.");
+      localStorage.removeItem("token");
+      window.location.href = "/login";
+    }
+    return Promise.reject(error)
+  }
+)
 
 export default formClient;

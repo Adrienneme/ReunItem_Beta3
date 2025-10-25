@@ -49,7 +49,7 @@ const Cards = ({
       <div className="w-64 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 overflow-hidden border border-black bg-gray-400">
         
         {/* Header: Name + Expand */}
-        <div className="flex justify-between items-center px-4 py-2 border-b border-gray-200">
+        <div className="flex justify-between items-center px-4 py-2 border-gray-2">
           <h2 className="text-lg font-semibold text-gray-800 truncate">{name}</h2>
              <Link to={linkTo} onClick={handleExpandClick}>
               <img 
@@ -61,7 +61,7 @@ const Cards = ({
         </div>
 
         {/* Image */}
-        <div className="flex justify-center items-center h-40 bg-gray-50 border-b border-gray-200">
+        <div className="flex justify-center items-center h-40 bg-gray-500 border-gray-20">
           {imageUrl ? (
             <img
               src={imageUrl}
@@ -74,7 +74,7 @@ const Cards = ({
         </div>
 
         {/* Bottom Section */}
-        <div className="px-4 py-2 mt-2 flex justify-center items-center bg-gray-400">
+        <div className="px-5 py-2 pt-4 flex justify-center items-center bg-gray-600">
           {renderBottom()}
         </div>
       </div>
