@@ -1,98 +1,135 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import UserNavBar from '../../components/layout/UserNavBar';
-import FoundBaseForm from '../../components/forms/FoundBaseForm';
-import ButtonUI from '../../components/ui/ButtonUI';
+import React, { useEffect, useState } from "react";
+import UserNavBar from "../../components/layout/UserNavBar";
+import FoundBaseForm from "../../components/forms/FoundBaseForm"; 
+import { useNavigate } from "react-router-dom";
+import ButtonUI from "../../components/ui/ButtonUI";
+import MessageBox from "../../components/ui/MessageBox";
 
-const FoundCardView = () => {
-  const [formData, setFormData] = useState({
-    item_name: '',
-    description: '',
-    photo: null,
-    pickup_location: '',
-  });
+export default function FoundViewPage() {
+  const [entry, setEntry] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [buttonLoading, setButtonloading] = useState(false);
+  const [error, setError] = useState(null);
+  const [showRejectConfirm, setShowRejectConfirm] = useState(false);
+  const entry_id = localStorage.getItem("entry_id");
+  const navigate = useNavigate();
 
-  const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState('');
+  // Fetch entry details
+  useEffect(() => {
+    let isMounted = true;
+    const fetchEntry = async () => {
+      try {
+        const response = await getItem(entry_id);
+        if (isMounted) setEntry(response);
+      } catch (error) {
+        if (isMounted) setError("No Entry Found.");
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+    fetchEntry();
+    return () => { isMounted = false; };
+  }, [entry_id]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  /* 🟥 REJECT ENTRY ---------------------------------- */
+  const handleReject = () => {
+    setShowRejectConfirm(true);
   };
 
-  const handleImageSelect = (file) => {
-    setFormData(prev => ({ ...prev, photo: file }));
-  };
-
-  const handlePickupChange = (val) => {
-    setFormData(prev => ({ ...prev, pickup_location: val }));
-  };
-
-  const handleGenerate = async () => {
-    if (!formData.photo) {
-      alert("Please select a photo first.");
-      return;
-    }
-
-    setLoading(true);
-
+  const confirmReject = async () => {
     try {
-      const response = await APIforDescriptionGenerator(formData.photo);
-      setFormData(prev => ({
-        ...prev, description: response.description,
-      }));
-
+      await deleteItem(entry_id); // backend call to reject/delete
+      alert("Entry rejected successfully!");
+      navigate("/user/found-entries");
     } catch (error) {
-      const errMsg = error.response?.data?.detail || "Failed to generate description.";
-      alert(errMsg);
+      alert("Failed to reject entry.");
+      console.error(error);
     } finally {
-      setLoading(false);
+      setShowRejectConfirm(false);
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const { item_name, description, photo, pickup_location } = formData;
-    if (!item_name || !description || !photo || !pickup_location) {
-      alert('Please fill all inputs');
-      return;
-    }
-    console.log('Final submitted data:', formData);
-    // TODO: Submit inputs to backend
+  const cancelReject = () => {
+    setShowRejectConfirm(false);
   };
+  /* -------------------------------------------------- */
+
+  /* 🟩 ACCEPT ENTRY ----------------------------------- */
+  const handleAccept = async () => {
+    setButtonloading(true);
+    try {
+      // here you can add API logic later if needed (e.g., mark as accepted)
+      alert("Entry accepted successfully!");
+      navigate("/user/found-entries");
+    } catch (error) {
+      alert("Failed to accept entry.");
+      console.error(error);
+    } finally {
+      setButtonloading(false);
+    }
+  };
+  /* -------------------------------------------------- */
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex justify-center items-center text-gray-600 text-lg">
+        Loading entry details...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex justify-center items-center text-red-600 text-lg">
+        {error}
+      </div>
+    );
+  }
 
   return (
     <div>
       <UserNavBar />
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center justify-center mx-5">
+        <div>
+          <FoundBaseForm
+            title="Found Item Details:"
+            status={entry.status}
+            formData={entry}
+            disabled={true} // read-only mode
+            existingPhoto={entry.photo_url}
+          />
+        </div>
 
-        {/* FoundBaseForm */}
-        <FoundBaseForm 
-          title="Pending Submission"
-          status={null}
-          formData={formData}
-          onChange={handleChange}
-          onImageSelect={handleImageSelect}
-          loading={loading}
-          onGenerate={handleGenerate}
-          onPickupChange={handlePickupChange}
-        />
+        <div className="flex flex-row items-center mt-10 mb-10 gap-10">
+          <ButtonUI variant="solid" color="neutral" onClick={() => navigate("/user/found-entries")}>
+            Go Back
+          </ButtonUI>
 
-        {/* Buttons */}
-        <div className="flex flex-row items-center mt-5 mb-5 gap-30">
-          <Link to="/user/home">
-            <ButtonUI variant="solid" color="neutral">
-              Reject
-            </ButtonUI>
-          </Link>
-          <ButtonUI variant="solid" color="success" onClick={handleSubmit}>
-            Accept
+          {/* 🟥 REJECT BUTTON */}
+          <ButtonUI variant="solid" color="danger" onClick={handleReject}>
+            Reject Entry
+          </ButtonUI>
+
+          {/* 🟩 ACCEPT BUTTON */}
+          <ButtonUI
+            variant="solid"
+            color="success"
+            onClick={handleAccept}
+            loading={buttonLoading}
+            disabled={buttonLoading}
+          >
+            Accept Entry
           </ButtonUI>
         </div>
-        {/* Buttons */}
       </div>
-      
+
+      {/* 🟥 REJECT CONFIRMATION POPUP */}
+      <MessageBox
+        show={showRejectConfirm}
+        message="Are you sure you want to reject this entry?"
+        onConfirm={confirmReject}
+        onCancel={cancelReject}
+      />
     </div>
   );
-};
-export default FoundCardView
+}
