@@ -4,7 +4,7 @@ from app.core.db import supabase
 admin_claims_router = APIRouter(prefix="/admin", tags=["Admin Claims & Items"])
 
 
-
+#Update jwt reuse later
 #Header to specify which user is making the request
 def get_current_admin(role: str = Header(...)):
     if role.lower() != "admin":

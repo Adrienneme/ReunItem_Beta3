@@ -1,21 +1,29 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Header
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from app.core.db import supabase
+from app.models.user import UserModels
 from app.schemas import ItemSchemas
 
-router = APIRouter(prefix="/admin", tags=["Admin Image Approvals"])
+router = APIRouter(
+    prefix="/admin",
+    tags=["Admin Image Approvals"]
+)
 
 
+#Reuse existing JWT system
+def get_current_admin(current_user = Depends(UserModels.get_current_active_user)):
+   
+    if current_user.role.lower() != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admnin access required."
+        )
+    return current_user
 
-
-#Header to specify which user is making the request
-def get_current_admin(role: str = Header(...)):
-    if role.lower() != "admin":
-        raise HTTPException(status_code=403, detail="Not authorized")
-    return {"role": "admin"}
 
 
 # View Pending Uploads
+
 @router.get("/uploads/pending")
 async def admin_pending_uploads(admin=Depends(get_current_admin)):
     pending_uploads = (
@@ -35,16 +43,16 @@ async def admin_pending_uploads(admin=Depends(get_current_admin)):
     return pending_uploads
 
 
+
 # Approve Entry
+
 @router.post("/approve_entry/{entry_id}")
 async def approve_entry(entry_id: str, admin=Depends(get_current_admin)):
-    # Fetch the entry by ID
     entry = supabase.table("items").select("*").eq("entry_id", entry_id).execute().data
 
     if not entry:
         raise HTTPException(status_code=404, detail="Entry not found.")
 
-    # Update status to approved
-    supabase.table("items").update({"status": "approved"}).eq("entry_id", entry_id).execute()
+    supabase.table("items").update({"status": "Approved"}).eq("entry_id", entry_id).execute()
 
-    return {"message": "Entry approved successfully!", "entry_id": entry_id}
+    return {"message": f"Entry {entry_id} approved successfully!", "entry_id": entry_id}
