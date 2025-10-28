@@ -62,3 +62,14 @@ export const rejectClaim = async (entry_id) => {
   );
   return response.data;
 };
+
+
+//Fetch Lost and FOund Dashboard
+export const admin_items = async () => {
+   const response = await jsonClient.get('/admin/items', {
+    headers: {
+      role: 'admin',  
+    },
+  });
+  return response.data;
+    }

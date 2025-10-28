@@ -79,7 +79,7 @@ async def reject_claim(entry_id: str, admin=Depends(get_current_admin)):
 
     return {"message": f"Claim {entry_id} rejected successfully!", "entry_id": entry_id}
 
-# Claim Archive
+# Claim Archive not tested
 @admin_claims_router.get("/claims/archive")
 async def admin_claims_archive(admin=Depends(get_current_admin)):
    
@@ -94,21 +94,34 @@ async def admin_claims_archive(admin=Depends(get_current_admin)):
     }
 
 
-#  Lost and Found Dashboard
+#  Lost and Found Dashboard is working
+# Only show items approved by the admin, excluding "Pending Approval" and "Rejected"
 @admin_claims_router.get("/items")
 async def admin_items(admin=Depends(get_current_admin)):
-    
-    lost_items = supabase.table("items").select("*").eq("type", "lost").execute().data
-    found_items = supabase.table("items").select("*").eq("type", "found").execute().data
+    lost_items = (
+        supabase.table("items")
+        .select("*")
+        .eq("type", "lost")
+        .execute()
+        .data
+    )
+    found_items = (
+        supabase.table("items")
+        .select("*")
+        .eq("type", "found")
+        .execute()
+        .data
+    )
 
-    def group_by_status(items):
+    def filter_and_group(items):
         grouped = {}
         for item in items:
-            grouped.setdefault(item.get("status", "unknown"), []).append(item)
-            ##status should be Approved
+            # Exclude Pending Approval and Rejected
+            if item.get("status") not in ["Pending Approval", "Rejected"]:
+                grouped.setdefault(item.get("status", "unknown"), []).append(item)
         return grouped
 
     return {
-        "lost_grouped": group_by_status(lost_items),
-        "found_grouped": group_by_status(found_items)
+        "lost_grouped": filter_and_group(lost_items),
+        "found_grouped": filter_and_group(found_items)
     }
