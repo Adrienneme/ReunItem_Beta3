@@ -1,3 +1,5 @@
+
+//Test function backend, update backend Pending status and approve entry working
 import React, { useState, useEffect } from 'react'
 import UserNavBar from '../../../components/layout/UserNavBar'
 import Card from '../../../components/ui/Cards'
