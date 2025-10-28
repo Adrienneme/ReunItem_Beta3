@@ -67,7 +67,7 @@ function Pendingsub() {
             <Card
               name={item.item_name}         // Item name displayed on the card
               imageUrl={item.photo_url}     // Item image
-              status={item.status}          // Current status of the item
+              status={item.type}          // Current status of the item
               linkTo="/admin/foundcardview" // Navigation link to detail page
               stateData={item}              // Pass full item data for detail page
             />

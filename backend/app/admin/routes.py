@@ -1,17 +1,24 @@
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 from app.core.db import supabase
 
-admin_claims_router = APIRouter(prefix="/admin", tags=["Admin Claims & Items"])
+from fastapi.responses import JSONResponse
+from app.models.user import UserModels
 
+admin_claims_router = APIRouter(
+    prefix="/admin",
+    tags=["Admin Claims & Items"]
+)
 
 #Update jwt reuse later
-#Header to specify which user is making the request
-def get_current_admin(role: str = Header(...)):
-    if role.lower() != "admin":
-        raise HTTPException(status_code=403, detail="Not authorized")
-    return {"role": "admin"}
+def get_current_admin(current_user = Depends(UserModels.get_current_active_user)):
+    if current_user.role.lower() != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin access required."
+        )
+    return current_user
 
-#View Pending Claims 
+#View Pending Claims is working
 
 @admin_claims_router.get("/claims/pending")
 async def admin_claims_pending(admin=Depends(get_current_admin)):
@@ -24,6 +31,12 @@ async def admin_claims_pending(admin=Depends(get_current_admin)):
         .data
     )
 
+    if not pending_items:
+        return JSONResponse(
+            content={"message": "No pending claims found."},
+            status_code=status.HTTP_404_NOT_FOUND
+        )
+    
     claims = []
     for item in pending_items:
         user_lost_items = (
@@ -41,29 +54,30 @@ async def admin_claims_pending(admin=Depends(get_current_admin)):
 
     return {"claims": claims}
 
-
-# Approve Claim 
+# Approve Claim is working
 @admin_claims_router.post("/approve_claim/{entry_id}")
 async def approve_claim(entry_id: str, admin=Depends(get_current_admin)):
+    entry = supabase.table("items").select("*").eq("entry_id", entry_id).execute().data
 
-    updated = supabase.table("items").update({"status": "Matched"}).eq("entry_id", entry_id).execute()
-    if updated.status_code != 200:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to approve claim")
+    if not entry:
+        raise HTTPException(status_code=404, detail="Claim not found.")
 
-    return {"message": "Claim approved", "entry_id": entry_id}
+    supabase.table("items").update({"status": "Approved"}).eq("entry_id", entry_id).execute()
+
+    return {"message": f"Claim {entry_id} approved successfully!", "entry_id": entry_id}
 
 
-# Reject Claim 
+# Reject Claim is working
 @admin_claims_router.post("/reject_claim/{entry_id}")
 async def reject_claim(entry_id: str, admin=Depends(get_current_admin)):
-   
-    updated = supabase.table("items").update({"status": "Rejected"}).eq("entry_id", entry_id).execute()
-    if updated.status_code != 200:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to reject claim")
+    entry = supabase.table("items").select("*").eq("entry_id", entry_id).execute().data
 
-    return {"message": "Claim rejected", "entry_id": entry_id}
+    if not entry:
+        raise HTTPException(status_code=404, detail="Claim not found.")
 
+    supabase.table("items").update({"status": "Rejected"}).eq("entry_id", entry_id).execute()
 
+    return {"message": f"Claim {entry_id} rejected successfully!", "entry_id": entry_id}
 # Claim Archive
 @admin_claims_router.get("/claims/archive")
 async def admin_claims_archive(admin=Depends(get_current_admin)):
