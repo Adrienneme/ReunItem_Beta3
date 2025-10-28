@@ -1,22 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import UserNavBar from "../../components/layout/UserNavBar";
-import FoundBaseForm from "../../components/forms/FoundBaseForm"; 
-import { useNavigate } from "react-router-dom";
-import ButtonUI from "../../components/ui/ButtonUI";
-import MessageBox from "../../components/ui/MessageBox";
+import FoundBaseForm from "../../components/forms/FoundBaseForm";
+import { approveEntry } from "../../api/admin";
+import { getItem } from "../../api/items";
 
 export default function FoundViewPage() {
   const [entry, setEntry] = useState({});
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
-  const [buttonLoading, setButtonloading] = useState(false);
-  const [error, setError] = useState(null);
-  const [showRejectConfirm, setShowRejectConfirm] = useState(false);
   const entry_id = localStorage.getItem("entry_id");
-  const navigate = useNavigate();
 
-  // Fetch entry details
   useEffect(() => {
     let isMounted = true;
+
     const fetchEntry = async () => {
       try {
         const response = await getItem(entry_id);
@@ -27,64 +23,38 @@ export default function FoundViewPage() {
         if (isMounted) setLoading(false);
       }
     };
+
     fetchEntry();
-    return () => { isMounted = false; };
+    return () => {
+      isMounted = false;
+    };
   }, [entry_id]);
 
-  /* 🟥 REJECT ENTRY ---------------------------------- */
-  const handleReject = () => {
-    setShowRejectConfirm(true);
-  };
-
-  const confirmReject = async () => {
+  const handleApprove = async (entryId) => {
+    if (!window.confirm("Are you sure you want to approve this item?")) return;
     try {
-      await deleteItem(entry_id); // backend call to reject/delete
-      alert("Entry rejected successfully!");
-      navigate("/user/found-entries");
+      const response = await approveEntry(entryId);
+      alert(response.message);
     } catch (error) {
-      alert("Failed to reject entry.");
-      console.error(error);
-    } finally {
-      setShowRejectConfirm(false);
+      const errMsg = error.response?.data?.detail || "Failed to approve item.";
+      alert(errMsg);
     }
   };
 
-  const cancelReject = () => {
-    setShowRejectConfirm(false);
+  const handleImageSelect = (file) => {
+    setEntry((prev) => ({ ...prev, photo: file }));
   };
-  /* -------------------------------------------------- */
 
-  /* 🟩 ACCEPT ENTRY ----------------------------------- */
-  const handleAccept = async () => {
-    setButtonloading(true);
-    try {
-      // here you can add API logic later if needed (e.g., mark as accepted)
-      alert("Entry accepted successfully!");
-      navigate("/user/found-entries");
-    } catch (error) {
-      alert("Failed to accept entry.");
-      console.error(error);
-    } finally {
-      setButtonloading(false);
-    }
+  const handlePickupChange = (val) => {
+    setEntry((prev) => ({ ...prev, pickup_location: val }));
   };
-  /* -------------------------------------------------- */
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex justify-center items-center text-gray-600 text-lg">
-        Loading entry details...
-      </div>
-    );
-  }
+  const handleChange = (field, value) => {
+    setEntry((prev) => ({ ...prev, [field]: value }));
+  };
 
-  if (error) {
-    return (
-      <div className="min-h-screen flex justify-center items-center text-red-600 text-lg">
-        {error}
-      </div>
-    );
-  }
+  if (loading) return <div>Loading entry...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div>
@@ -92,44 +62,23 @@ export default function FoundViewPage() {
       <div className="flex flex-col items-center justify-center mx-5">
         <div>
           <FoundBaseForm
-            title="Found Item Details:"
+            title="Item Status:"
             status={entry.status}
             formData={entry}
-            disabled={true} // read-only mode
             existingPhoto={entry.photo_url}
+            onChange={handleChange}
+            onImageSelect={handleImageSelect}
+            onPickupChange={handlePickupChange}
           />
         </div>
 
-        <div className="flex flex-row items-center mt-10 mb-10 gap-10">
-          <ButtonUI variant="solid" color="neutral" onClick={() => navigate("/user/found-entries")}>
-            Go Back
-          </ButtonUI>
-
-          {/* 🟥 REJECT BUTTON */}
-          <ButtonUI variant="solid" color="danger" onClick={handleReject}>
-            Reject Entry
-          </ButtonUI>
-
-          {/* 🟩 ACCEPT BUTTON */}
-          <ButtonUI
-            variant="solid"
-            color="success"
-            onClick={handleAccept}
-            loading={buttonLoading}
-            disabled={buttonLoading}
-          >
-            Accept Entry
-          </ButtonUI>
-        </div>
+        <button
+          onClick={() => handleApprove(entry.entry_id)}
+          className="mt-3 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+        >
+          Approve
+        </button>
       </div>
-
-      {/* 🟥 REJECT CONFIRMATION POPUP */}
-      <MessageBox
-        show={showRejectConfirm}
-        message="Are you sure you want to reject this entry?"
-        onConfirm={confirmReject}
-        onCancel={cancelReject}
-      />
     </div>
   );
 }

@@ -6,9 +6,6 @@ import Card from '../../../components/ui/Cards'
 import FilterDropdown from '../../../components/ui/Filters'
 import { getPendingItems } from '../../../api/admin'
 
-//added approve entry
-import {approveEntry } from '../../../api/admin' 
-
 function Pendingsub() {
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true); //added######
@@ -33,20 +30,7 @@ function Pendingsub() {
     fetchEntries();
   }, []);
 
-  // Approve test
-  const handleApprove = async (entryId) => {
-    if (!window.confirm("Are you sure you want to approve this item?")) return;
-    try {
-      const response = await approveEntry(entryId);
-      alert(response.message);
-
-      // Remove approved item from list
-      setEntries(entries.filter((items) => items.entry_id !== entryId));
-    } catch (error) {
-      const errMsg = error.response?.data?.detail || "Failed to approve item.";
-      alert(errMsg);
-    }
-  };
+ 
 
   //
   return (
@@ -73,14 +57,6 @@ function Pendingsub() {
               linkTo="/admin/foundcardview" // Navigation link to detail page
               stateData={item}              // Pass full item data for detail page
             />
-
-            {/* Approve Button */}
-            <button
-              onClick={() => handleApprove(item.entry_id)}
-              className="mt-3 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
-            >
-              Approve
-            </button>
           </div>
         ))}
       </div>
