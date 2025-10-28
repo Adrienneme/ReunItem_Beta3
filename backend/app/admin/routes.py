@@ -62,10 +62,10 @@ async def approve_claim(entry_id: str, admin=Depends(get_current_admin)):
     if not entry:
         raise HTTPException(status_code=404, detail="Claim not found.")
 
-    supabase.table("items").update({"status": "Approved"}).eq("entry_id", entry_id).execute()
+    #Update status to "Matched"
+    supabase.table("items").update({"status": "Matched"}).eq("entry_id", entry_id).execute()
 
-    return {"message": f"Claim {entry_id} approved successfully!", "entry_id": entry_id}
-
+    return {"message": f"Claim {entry_id} matched successfully!", "entry_id": entry_id}
 
 # Reject Claim is working
 @admin_claims_router.post("/reject_claim/{entry_id}")
@@ -78,6 +78,7 @@ async def reject_claim(entry_id: str, admin=Depends(get_current_admin)):
     supabase.table("items").update({"status": "Rejected"}).eq("entry_id", entry_id).execute()
 
     return {"message": f"Claim {entry_id} rejected successfully!", "entry_id": entry_id}
+
 # Claim Archive
 @admin_claims_router.get("/claims/archive")
 async def admin_claims_archive(admin=Depends(get_current_admin)):
@@ -104,6 +105,7 @@ async def admin_items(admin=Depends(get_current_admin)):
         grouped = {}
         for item in items:
             grouped.setdefault(item.get("status", "unknown"), []).append(item)
+            ##status should be Approved
         return grouped
 
     return {
