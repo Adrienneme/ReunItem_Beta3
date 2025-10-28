@@ -22,9 +22,9 @@ function Pendingsub() {
       } catch (error) {
         const errMsg = error.response?.data?.detail || "No Pending Entries.";
         console.error(error);
-        alert(errMsg); // Show user-friendly error
+        alert(errMsg); 
       } finally {
-        setLoading(false); // Stop loading indicator
+        setLoading(false); 
       }
     };
 
@@ -88,4 +88,3 @@ function Pendingsub() {
 
 export default Pendingsub
 
-//Try approve entry

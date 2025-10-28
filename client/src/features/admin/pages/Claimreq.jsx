@@ -84,7 +84,7 @@ const ClaimRequest = () => {
                   stateData={item}
                 />
 
-                {/* Action Buttons */}
+                {/* Buttons */}
                 <div className="flex gap-3 mt-3">
                   <button
                     onClick={() => handleApprove(item.entry_id)}
