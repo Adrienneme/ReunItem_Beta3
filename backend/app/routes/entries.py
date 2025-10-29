@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, UploadFile, Form, File, HTTPException
 from typing import Optional
 from app.models import ItemModels, UserModels
-from app.schemas import ItemSchemas, EntryType, EntryStatus
+from app.schemas import ItemSchemas, EntryType, EntryStatus, MatchSchemas
 from typing import List
 
 router = APIRouter(prefix="/items")
@@ -16,14 +16,6 @@ async def create_item_route(
     photo: Optional[UploadFile] = File(None),
     current_user=Depends(UserModels.get_current_active_user)
 ):
-    print("=== Received Form Data ===")
-    print("item_name:", item_name)
-    print("description:", description)
-    print("pickup_location:", pickup_location)
-    print("type:", type)
-    print("status:", status)
-    print("photo:", photo)
-    print("==========================")
 
     # Ensure pickup_location is not None
     if not pickup_location:
@@ -95,6 +87,22 @@ def delete_item_route(entry_id: str, current_user = Depends(UserModels.get_curre
   return ItemModels.delete_item(entry_id, str(current_user.user_id))
 
 
-@router.post("/matches/{entry_id}", response_model = List[ItemSchemas.MatchResponse])
+@router.post("/matches/{entry_id}", response_model = List[MatchSchemas.FoundMatchResponse])
 def generate_desc_route(entry_id: str, _=Depends(UserModels.get_current_active_user)):
   return ItemModels.find_match(entry_id)
+
+@router.post("/set_match", response_model = MatchSchemas.MatchResponse)
+def set_match_route(match_data: MatchSchemas.MatchedItems, _=Depends(UserModels.get_current_active_user)):
+  return ItemModels.set_match(
+    lostentry_id=match_data.lost_entry_id,
+    foundentry_id=match_data.found_entry_id,
+    similarity=match_data.similarity
+  )
+  
+@router.get("/get_match/{entry_id}")
+def get_match_route(entry_id: str, _=Depends(UserModels.get_current_active_user)):
+  return ItemModels.get_match(entry_id)
+
+@router.delete("/cancel_claim/{entry_id}")
+def delete_match(entry_id: str, _=Depends(UserModels.get_current_active_user)):
+  return ItemModels.cancel_claim(entry_id)

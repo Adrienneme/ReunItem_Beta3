@@ -4,6 +4,7 @@ from enum import Enum
 import uuid
 
 
+# --- ENUMS ---
 class EntryType(str, Enum):
     lost = "lost"
     found = "found"
@@ -18,8 +19,10 @@ class EntryStatus(str, Enum):
     Rejected = "Rejected"
     Archived = "Archived"
 
+
+# --- ITEM SCHEMAS ---
 class ItemSchemas:
-    
+
     class ItemBase(BaseModel):
         item_name: str
         description: str
@@ -29,7 +32,7 @@ class ItemSchemas:
         status: EntryStatus = EntryStatus.Pending_Approval
 
     class ItemCreate(ItemBase):
-        #nasa JWT ung user_id
+        # user_id will come from JWT
         pass
 
     class ItemResponse(ItemBase):
@@ -37,7 +40,25 @@ class ItemSchemas:
         user_id: uuid.UUID
 
         class Config:
-            from_attributes = True 
+            from_attributes = True
 
-    class MatchResponse(ItemResponse):
+
+# --- MATCH SCHEMAS ---
+class MatchSchemas:
+
+    class MatchedItems(BaseModel):
+        match_id: Optional[uuid.UUID] = None
+        lost_entry_id: uuid.UUID
+        found_entry_id: uuid.UUID
+        similarity: int
+        is_claimed: bool = False
+
+    class MatchResponse(BaseModel):
+        match_id: uuid.UUID
+        similarity: int
+        is_claimed: bool
+        lost_item: ItemSchemas.ItemResponse
+        found_item: ItemSchemas.ItemResponse
+        
+    class FoundMatchResponse(ItemSchemas.ItemResponse):
         similarity: int

@@ -4,6 +4,7 @@ import StatusBadge from '../ui/StatusBadge'
 import ImageUpload from '../ui/ImageUpload'
 import GenerateButton from '../ui/GenerateButton'
 import MultilineInput from '../ui/MultilineInput'
+import PercentageBadge from '../ui/PercentageBadge'
 
 const LostBaseForm = ({
   title, //different titles for each page (submission(post), display(get), editing(put))
@@ -14,7 +15,8 @@ const LostBaseForm = ({
   onImageSelect, //for updates and submission of photo
   disabled = false, //true if for display only
   onGenerate, //logic for generating item description
-  loading = false //indication for generating description
+  loading = false, //indication for generating description
+  percentage = null
 }) => {
 
   return (
@@ -25,6 +27,7 @@ const LostBaseForm = ({
         {status && (
           <StatusBadge status={status} />
         )}
+        {percentage && <PercentageBadge percentage={percentage} />}
       </div>
 
       {/*Item name*/}

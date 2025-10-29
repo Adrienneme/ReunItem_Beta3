@@ -13,6 +13,8 @@ import LostViewPage from './features/user/pages/lost/LostViewPage';
 import FoundEntriesPage from './features/user/pages/found/FoundEntriesPage';
 import FoundViewPage from './features/user/pages/found/FoundViewPage';
 import MatchedItemsSelection from './features/user/pages/lost/MatchedItemsSelection';
+import MatchedItemDetail from './features/user/pages/lost/MatchedItemDetail';
+import MatchedLost from './features/user/pages/found/MatchedLost';
 
 
 // Auth pages
@@ -55,7 +57,9 @@ function App() {
               <Route path='lost-entries-detail' element={<LostViewPage/>}/> 
               <Route path='found-entries' element={<FoundEntriesPage/>}/>
               <Route path='found-entries-detail' element={<FoundViewPage/>}/>   
-              <Route path='matched-entries' element={<MatchedItemsSelection/>}/>         
+              <Route path='matched-entries' element={<MatchedItemsSelection/>}/>  
+              <Route path='matched-entry-detail' element={<MatchedItemDetail/>}/>
+              <Route path='matched-lost-detail' element={<MatchedLost/>}/>       
             </Routes>
           </ProtectedRoutes>
         }

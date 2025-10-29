@@ -69,3 +69,22 @@ export const getMatches = async (entryId) => {
   const response = await jsonClient.post(`/items/matches/${entryId}`);
   return response.data;
 }
+
+export const setMatch = async (lostentryId, foundentryId, similarity) => {
+  const response = await jsonClient.post("/items/set_match", {
+    lost_entry_id: lostentryId,
+    found_entry_id: foundentryId,
+    similarity: similarity
+  })
+  return response.data;
+}
+
+export const getMatch = async (entryId) => {
+  const response = await jsonClient.get(`items/get_match/${entryId}`);
+  return response.data;
+}
+
+export const delClaim = async (entryId) => {
+  const response = await jsonClient.delete(`items/cancel_claim/${entryId}`);
+  return response.data;
+}

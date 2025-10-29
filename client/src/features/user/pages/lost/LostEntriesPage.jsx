@@ -28,8 +28,11 @@ export default function LostEntriesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex justify-center items-center text-gray-600 text-lg">
-        Loading entries...
+      <div>
+        <UserNavBar />
+        <div className="min-h-screen flex justify-center mt-50 text-gray-600 text-lg">
+          Loading entries...
+        </div>
       </div>
     );
   }
@@ -55,14 +58,14 @@ export default function LostEntriesPage() {
 
         <div className="flex flex-wrap justify-center gap-10 mt-10">
           {entries
-            .filter((item) => item.type === "lost") 
+            .filter((item) => item.type === "lost")
             .map((item) => (
               <Card
                 key={item.entry_id}
                 name={item.item_name}
                 imageUrl={item.photo_url}
                 status={item.status}
-                linkTo="/user/lost-entries-detail" 
+                linkTo="/user/lost-entries-detail"
                 stateData={item}
               />
             ))}

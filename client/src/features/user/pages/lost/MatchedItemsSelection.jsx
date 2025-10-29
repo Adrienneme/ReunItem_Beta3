@@ -7,12 +7,14 @@ export default function MatchedItemsSelection() {
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
-  const entry_id = localStorage.getItem("entry_id");
+  const lostentry_id = localStorage.getItem("entry_id");
+  //when expansion button is clicked it will overwrite the entry_id in localstorage so me is saving this current lostentry_id for matching function
+  localStorage.setItem("lostentry_Id", lostentry_id);
 
   useEffect(() => {
     const fetchEntries = async () => {
       try {
-        const response = await getMatches(entry_id);
+        const response = await getMatches(lostentry_id);
         setEntries(response);
         console.log(response);
       } catch (error) {
@@ -29,8 +31,11 @@ export default function MatchedItemsSelection() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex justify-center items-center text-gray-600 text-lg">
-        Loading matched entries...
+      <div>
+        <UserNavBar />
+        <div className="min-h-screen flex justify-center mt-50 text-gray-600 text-lg">
+          Loading Potential Matches...
+        </div>
       </div>
     );
   }
@@ -57,7 +62,7 @@ export default function MatchedItemsSelection() {
               name={item.item_name}
               imageUrl={item.photo_url}
               percentage={item.similarity}
-              linkTo="/user/lost-entries-detail"
+              linkTo="/user/matched-entry-detail"
               stateData={item}
             />
           ))}

@@ -42,6 +42,9 @@ const Cards = ({
     if (stateData?.entry_id) {
       localStorage.setItem("entry_id", stateData.entry_id);
     }
+    if (stateData?.similarity){
+      localStorage.setItem("similarity", stateData.similarity);
+    }
   };
 
   return (

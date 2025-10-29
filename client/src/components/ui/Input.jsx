@@ -34,7 +34,7 @@ export default function Input({
         disabled={disabled}
         sx={{
           '& .MuiInputBase-input': { color: inputColor },
-          '& .MuiInputLabel-root': { color: "gray" },
+          '& .MuiInputLabel-root': { color: "white" },
           '& .MuiInput-underline:before': { borderBottomColor: underlineColor },
           '& .MuiInput-underline:hover:before': { borderBottomColor: underlineColor },
           '& .MuiInput-underline:after': { borderBottomColor: underlineColor },

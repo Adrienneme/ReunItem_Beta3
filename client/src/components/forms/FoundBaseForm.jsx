@@ -5,6 +5,7 @@ import ImageUpload from '../ui/ImageUpload';
 import StatusBadge from '../ui/StatusBadge';
 import GenerateButton from '../ui/GenerateButton';
 import DropDownSelect from '../ui/DropDownSelect';
+import PercentageBadge from '../ui/PercentageBadge';
 
 const FoundBaseForm = ({
   title, //title of page if meron
@@ -18,6 +19,7 @@ const FoundBaseForm = ({
   onPickupChange, //calls function for users to specify pickup location
   disabled = false, //disables all inputs (for display only)
   disablePickupSelect = false, //admins discretion for changing the pickup location 
+  percentage = null
 }) => {
   return (
     <div className="flex flex-col items-center justify-center">
@@ -26,6 +28,7 @@ const FoundBaseForm = ({
       <div className="mb-5 text-center">
         <h1 className="mt-5 mb-3 text-xl font-bold">{title}</h1>
         {status && <StatusBadge status={status} />}
+        {percentage && <PercentageBadge percentage={percentage} />}
       </div>
 
       {/* Item Name */}

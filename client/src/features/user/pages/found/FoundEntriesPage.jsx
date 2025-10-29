@@ -51,8 +51,11 @@ export default function FoundEntriesPage() {
   // Display loading screen while fetching data
   if (loading) {
     return (
-      <div className="min-h-screen flex justify-center items-center text-gray-600 text-lg">
-        Loading entries...
+      <div>
+        <UserNavBar />
+        <div className="min-h-screen flex justify-center mt-50 text-gray-600 text-lg">
+          Loading entries...
+        </div>
       </div>
     );
   }
@@ -71,13 +74,13 @@ export default function FoundEntriesPage() {
         {/* Filter Dropdown */}
         <FilterDropdown
           options={[
-            "All", 
-            "Pending Approval", 
+            "All",
+            "Pending Approval",
             "Approved",
-            "Rejected", 
-            "Claimed", 
+            "Rejected",
+            "Claimed",
             "Archived"
-          ]} 
+          ]}
         />
 
         {/* Display Found Item Cards */}
