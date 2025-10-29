@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import UserNavBar from "../../../../components/layout/UserNavBar";
 import FoundBaseForm from "../../../../components/forms/FoundBaseForm";
-import { getItem, deleteItem, updateItem, generateDescription } from "../../../../api/items"; // make sure you have deleteItem
+import { getItem, deleteItem, updateItem, generateDescription, getMatch } from "../../../../api/items";
 import { useNavigate } from "react-router-dom";
 import ButtonUI from "../../../../components/ui/ButtonUI";
 import MessageBox from "../../../../components/ui/MessageBox";
@@ -122,18 +122,39 @@ export default function FoundViewPage() {
     }
   };
 
+  const handleViewClaim = async () => {
+    try {
+      const response = await getMatch(entry.entry_id);
+      localStorage.setItem("entry_id", response.lost_entry_id);
+      localStorage.setItem("foundentry_id", entry.entry_id);
+      localStorage.setItem("similarity", response.similarity);
+      navigate('/user/matched-lost-detail');
+
+    } catch (error) {
+      const errMsg = error.response?.data?.detail || "Failed to cancel claim.";
+      console.log(error.response?.data.detail);
+      alert(errMsg);
+    }
+  }
+
   if (loading) {
     return (
-      <div className="min-h-screen flex justify-center items-center text-gray-600 text-lg">
-        Loading entry details...
+      <div>
+        <UserNavBar />
+        <div className="min-h-screen flex justify-center mt-50 text-gray-600 text-lg">
+          Loading entry details...
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex justify-center items-center text-red-600 text-lg">
-        {error}
+      <div>
+        <UserNavBar />
+        <div className="min-h-screen flex justify-center mt-50 text-red-600 text-lg">
+          {error}
+        </div>
       </div>
     );
   }
@@ -158,24 +179,49 @@ export default function FoundViewPage() {
         </div>
 
         <div className="flex flex-row items-center mt-10 mb-10 gap-10">
-          <ButtonUI variant="solid" color="neutral" onClick={() => navigate("/user/found-entries")}>
-            Go Back
-          </ButtonUI>
 
-          <ButtonUI variant="solid" color="danger" onClick={handleDelete}>
-            Delete Entry
-          </ButtonUI>
+          {entry.status == "Pending Claim" && (
+            <>
+              <ButtonUI variant="solid" color="neutral" onClick={() => navigate("/user/found-entries")}>
+                Go Back
+              </ButtonUI>
+              <ButtonUI
+                variant="solid"
+                color="success"
+                onClick={handleViewClaim}
+              >
+                View Claimed Match
+              </ButtonUI>
+            </>
+          )}
 
-          {replace ? (
-            <ButtonUI variant="solid" color="warning" onClick={handleEdit}>
-              Edit Entry
-            </ButtonUI>)
-            :
-            (<ButtonUI variant="solid" color="success" onClick={handleSubmit}
-              loading={buttonLoading}
-              disabled={buttonLoading}>
-              Confirm Edit
-            </ButtonUI>)}
+          {["Pending Approval", "Approved"].includes(entry.status) && (
+            <>
+              <ButtonUI variant="solid" color="neutral" onClick={() => navigate("/user/found-entries")}>
+                Go Back
+              </ButtonUI>
+
+              <ButtonUI variant="solid" color="danger" onClick={handleDelete}>
+                Delete Entry
+              </ButtonUI>
+
+              {replace ? (
+                <ButtonUI variant="solid" color="warning" onClick={handleEdit}>
+                  Edit Entry
+                </ButtonUI>
+              ) : (
+                <ButtonUI
+                  variant="solid"
+                  color="success"
+                  onClick={handleSubmit}
+                  loading={buttonLoading}
+                  disabled={buttonLoading}
+                >
+                  Confirm Edit
+                </ButtonUI>
+              )}
+            </>
+          )}
         </div>
       </div>
 

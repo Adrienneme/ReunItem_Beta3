@@ -1,7 +1,8 @@
 from app.core import supabase
-from app.schemas import ItemSchemas
+from app.schemas import ItemSchemas, MatchSchemas
 from PIL import Image
 from fastapi import HTTPException, UploadFile
+import json
 import uuid 
 from io import BytesIO
 from ai.generator import description_generator
@@ -141,20 +142,88 @@ class ItemModels:
         lostItemInfo = lost.data[0]
         lost_description = lostItemInfo.get("description", "")
 
-        found = supabase.table("items").select("*").eq("type", "found").execute()
+        found = supabase.table("items").select("*").eq("type", "found").execute() #add eq for status with approved 
         foundItems = found.data
         potential_matches = []
         for i in foundItems:
             found_description = i.get("description", "")
             similarity = match(lost_description, found_description)
             if similarity:
-                matched_item = ItemSchemas.MatchResponse(**i, similarity=similarity)
+                matched_item = MatchSchemas.FoundMatchResponse(**i, similarity=similarity)
                 potential_matches.append(matched_item)
 
         return potential_matches
 
+    @staticmethod
+    def set_match(lostentry_id: str, foundentry_id: str, similarity: int):
+        #insert matched items
+        lostentry_id = str(lostentry_id)
+        foundentry_id = str(foundentry_id)
+        matched_item = MatchSchemas.MatchedItems(
+            lost_entry_id=lostentry_id,
+            found_entry_id=foundentry_id,
+            similarity=int(similarity)
+        )
+        response = supabase.table("matches_table").insert(json.loads(matched_item.json(exclude_none=True))).execute()
+        if not response.data:
+            raise Exception("Failed to insert match")
+        
+        inserted_match = response.data[0]
+        
+        #update status
+        supabase.table("items").update({"status": "Pending Claim"}).eq("entry_id", lostentry_id).execute()
+        supabase.table("items").update({"status": "Pending Claim"}).eq("entry_id", foundentry_id).execute()
+        
+        lost_item_response = (supabase.table("items").select("*").eq("entry_id", lostentry_id).execute())
+        lost_item = ItemSchemas.ItemResponse(**lost_item_response.data[0])
+        found_item_response = (supabase.table("items").select("*").eq("entry_id", foundentry_id).execute())
+        found_item = ItemSchemas.ItemResponse(**found_item_response.data[0])
+        if not lost_item_response.data or not found_item_response.data:
+            raise Exception("item records were not found.")
 
+        match_response = MatchSchemas.MatchResponse(
+            match_id=inserted_match["match_id"],
+            similarity=inserted_match["similarity"],
+            is_claimed=inserted_match["is_claimed"],
+            lost_item=lost_item,
+            found_item=found_item,
+        )
 
+        return match_response
 
+    @staticmethod
+    def get_match(entry_id: str):
+        #check muna ung lost
+        entry_id = str(entry_id)
+        response = supabase.table("matches_table").select("found_entry_id, similarity").eq("lost_entry_id", entry_id).execute()
+        if response.data:
+            return response.data[0]
+        response = supabase.table("matches_table").select("lost_entry_id, similarity").eq("found_entry_id", entry_id).execute()
+        if response.data:
+            return response.data[0]
+        
+        return None
 
+    @staticmethod
+    def cancel_claim(lostentry_id: str):
+        lostentry_id = str(lostentry_id)
+
+        match_response = supabase.table("matches_table").select("found_entry_id").eq("lost_entry_id", lostentry_id).execute()
+        if not match_response.data or len(match_response.data) == 0:
+            raise HTTPException(status_code=404, detail="Match not found.")
+
+        foundentry_id = match_response.data[0]["found_entry_id"]
+
+        delete_response = supabase.table("matches_table").delete().eq("lost_entry_id", lostentry_id).execute()
+        if not delete_response.data:
+            raise HTTPException(status_code=500, detail="Failed to cancel claim.")
+
+        supabase.table("items").update({"status": "Approved"}).eq("entry_id", lostentry_id).execute()
+        supabase.table("items").update({"status": "Approved"}).eq("entry_id", foundentry_id).execute()
+
+        return {"message": "Claim Canceled Successfully."}
+
+            
+            
+            
         
