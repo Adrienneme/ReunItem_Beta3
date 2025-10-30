@@ -4,6 +4,7 @@ from app.core.db import supabase
 from fastapi.responses import JSONResponse
 from app.models.user import UserModels
 
+
 admin_claims_router = APIRouter(
     prefix="/admin",
     tags=["Admin Claims & Items"]
@@ -18,68 +19,27 @@ def get_current_admin(current_user = Depends(UserModels.get_current_active_user)
         )
     return current_user
 
+#==================Pending Claim Submission =========
 #View Pending Claims is working
+@admin_claims_router.get("/matches")
+async def get_all_matches(admin=Depends(get_current_admin)):
+    matches = supabase.table("matches_table").select("*").execute().data or []
+    return {"matches": matches}
 
-@admin_claims_router.get("/claims/pending")
-async def admin_claims_pending(admin=Depends(get_current_admin)):
+# Approve Claim
+@admin_claims_router.post("/approve_claim/{match_id}")
+async def approve_claim(match_id: str, admin=Depends(get_current_admin)):
+    supabase.table("matches_table").update({"is_claimed": "TRUE"}).eq("match_id", match_id).execute()
+    return {"message": f"Match {match_id} approved successfully!"}
 
-    pending_items = (
-        supabase.table("items")
-        .select("*")
-        .eq("status", "Pending Claim")
-        .execute()
-        .data
-    )
+# Reject Claim
+@admin_claims_router.post("/reject_claim/{match_id}")
+async def reject_claim(match_id: str, admin=Depends(get_current_admin)):
+    supabase.table("matches_table").update({"is_claimed": "FALSE"}).eq("match_id", match_id).execute()
+    return {"message": f"Match {match_id} rejected successfully!"}
 
-    if not pending_items:
-        return JSONResponse(
-            content={"message": "No pending claims found."},
-            status_code=status.HTTP_404_NOT_FOUND
-        )
-    
-    claims = []
-    for item in pending_items:
-        user_lost_items = (
-            supabase.table("items")
-            .select("*")
-            .eq("user_id", item["user_id"])
-            .eq("type", "lost")
-            .execute()
-            .data
-        )
-        claims.append({
-            "pending_item": item,
-            "user_lost_items": user_lost_items or []
-        })
-
-    return {"claims": claims}
-
-# Approve Claim is working
-@admin_claims_router.post("/approve_claim/{entry_id}")
-async def approve_claim(entry_id: str, admin=Depends(get_current_admin)):
-    entry = supabase.table("items").select("*").eq("entry_id", entry_id).execute().data
-
-    if not entry:
-        raise HTTPException(status_code=404, detail="Claim not found.")
-
-    #Update status to "Matched"
-    supabase.table("items").update({"status": "Matched"}).eq("entry_id", entry_id).execute()
-
-    return {"message": f"Claim {entry_id} matched successfully!", "entry_id": entry_id}
-
-# Reject Claim is working
-@admin_claims_router.post("/reject_claim/{entry_id}")
-async def reject_claim(entry_id: str, admin=Depends(get_current_admin)):
-    entry = supabase.table("items").select("*").eq("entry_id", entry_id).execute().data
-
-    if not entry:
-        raise HTTPException(status_code=404, detail="Claim not found.")
-
-    supabase.table("items").update({"status": "Rejected"}).eq("entry_id", entry_id).execute()
-
-    return {"message": f"Claim {entry_id} rejected successfully!", "entry_id": entry_id}
-
-# Claim Archive not tested
+#==================Archived=========
+# Claim Archive not tested, not adjusted
 @admin_claims_router.get("/claims/archive")
 async def admin_claims_archive(admin=Depends(get_current_admin)):
    
@@ -93,35 +53,42 @@ async def admin_claims_archive(admin=Depends(get_current_admin)):
         "matched_claims": matched_claims
     }
 
-
+#==========Lost/Found Entries ======
 #  Lost and Found Dashboard is working
 # Only show items approved by the admin, excluding "Pending Approval" and "Rejected"
 @admin_claims_router.get("/items")
 async def admin_items(admin=Depends(get_current_admin)):
+    # Fetch only APPROVED or MATCHED items
+    valid_statuses = ["Approved", "Matched"]
+
     lost_items = (
         supabase.table("items")
         .select("*")
         .eq("type", "lost")
+        .in_("status", valid_statuses)  
         .execute()
         .data
     )
+
     found_items = (
         supabase.table("items")
         .select("*")
         .eq("type", "found")
+        .in_("status", valid_statuses)  
         .execute()
         .data
     )
 
-    def filter_and_group(items):
+    def group_by_status(items):
         grouped = {}
         for item in items:
-            # Exclude Pending Approval and Rejected
-            if item.get("status") not in ["Pending Approval", "Rejected"]:
-                grouped.setdefault(item.get("status", "unknown"), []).append(item)
+            grouped.setdefault(item.get("status", "unknown"), []).append(item)
         return grouped
 
+    print(f"Lost items: {len(lost_items)}, Found items: {len(found_items)}") 
+
     return {
-        "lost_grouped": filter_and_group(lost_items),
-        "found_grouped": filter_and_group(found_items)
+        "lost_grouped": group_by_status(lost_items),
+        "found_grouped": group_by_status(found_items),
     }
+

@@ -54,7 +54,8 @@ function LostFoundRep() {
           label="Filter"
           options={["All", "Approved", "Matched"]}
           value={filter}
-          onChange={(e) => setFilter(e.target.value)}
+          onChange={setFilter} //CHANGED
+
         />
       </div>
 

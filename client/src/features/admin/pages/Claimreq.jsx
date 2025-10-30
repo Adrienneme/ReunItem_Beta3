@@ -1,22 +1,20 @@
-
-//Test function backend, update backend reject and accept claim working
-import React, { useState, useEffect } from 'react';
-import UserNavBar from '../../../components/layout/UserNavBar';
-import Cards from '../../../components/ui/Cards';
-import { admin_claims_pending, approveClaim, rejectClaim } from '../../../api/admin'; 
+import React, { useState, useEffect } from "react";
+import UserNavBar from "../../../components/layout/UserNavBar";
+import Cards from "../../../components/ui/Cards";
+import { getAllMatches, approveClaim, rejectClaim } from "../../../api/admin"; // updated imports
 
 const ClaimRequest = () => {
   const [pendingClaims, setPendingClaims] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [processing, setProcessing] = useState(null); // track which claim is being processed
+  const [processing, setProcessing] = useState(null);
 
-  // Fetch pending claims
+  // ✅ Fetch all matches and filter unclaimed (is_claimed === false)
   useEffect(() => {
     const fetchClaims = async () => {
       try {
-        const data = await admin_claims_pending();
-        const pendingItems = data.claims.map((claim) => claim.pending_item);
-        setPendingClaims(pendingItems);
+        const data = await getAllMatches();
+        const unclaimed = data.filter((match) => match.is_claimed === false);
+        setPendingClaims(unclaimed);
       } catch (error) {
         console.error("Error fetching pending claims:", error);
         alert("Failed to load pending claims.");
@@ -28,14 +26,16 @@ const ClaimRequest = () => {
     fetchClaims();
   }, []);
 
-  // Approve claim
-  const handleApprove = async (entryId) => {
+  // ✅ Approve claim
+  const handleApprove = async (matchId) => {
     if (!window.confirm("Approve this claim?")) return;
     try {
-      setProcessing(entryId);
-      const response = await approveClaim(entryId);
+      setProcessing(matchId);
+      const response = await approveClaim(matchId);
       alert(response.message);
-      setPendingClaims((prev) => prev.filter((item) => item.entry_id !== entryId));
+      setPendingClaims((prev) =>
+        prev.filter((item) => item.match_id !== matchId)
+      );
     } catch (error) {
       console.error("Error approving claim:", error);
       alert(error.response?.data?.detail || "Failed to approve claim.");
@@ -44,14 +44,16 @@ const ClaimRequest = () => {
     }
   };
 
-  // Reject claim
-  const handleReject = async (entryId) => {
+  // ✅ Reject claim
+  const handleReject = async (matchId) => {
     if (!window.confirm("Reject this claim?")) return;
     try {
-      setProcessing(entryId);
-      const response = await rejectClaim(entryId);
+      setProcessing(matchId);
+      const response = await rejectClaim(matchId);
       alert(response.message);
-      setPendingClaims((prev) => prev.filter((item) => item.entry_id !== entryId));
+      setPendingClaims((prev) =>
+        prev.filter((item) => item.match_id !== matchId)
+      );
     } catch (error) {
       console.error("Error rejecting claim:", error);
       alert(error.response?.data?.detail || "Failed to reject claim.");
@@ -74,40 +76,39 @@ const ClaimRequest = () => {
           {pendingClaims.length === 0 ? (
             <p className="text-center text-gray-500">No pending claims found.</p>
           ) : (
-            pendingClaims.map((item) => (
-              <div key={item.entry_id} className="flex flex-col items-center">
+            pendingClaims.map((match) => (
+              <div key={match.match_id} className="flex flex-col items-center">
                 <Cards
-                  name={item.item_name}
-                  imageUrl={item.photo_url}
-                  status={item.status}
+                  name={`Match ID: ${match.match_id}`}
+                  imageUrl={match.image_url}
+                  status={match.is_claimed ? "Claimed" : "Unclaimed"}
                   linkTo="/admin/foundcardview"
-                  stateData={item}
+                  stateData={match}
                 />
 
-                {/* Buttons */}
                 <div className="flex gap-3 mt-3">
                   <button
-                    onClick={() => handleApprove(item.entry_id)}
-                    disabled={processing === item.entry_id}
+                    onClick={() => handleApprove(match.match_id)}
+                    disabled={processing === match.match_id}
                     className={`px-4 py-2 rounded-lg text-white transition ${
-                      processing === item.entry_id
+                      processing === match.match_id
                         ? "bg-gray-400 cursor-not-allowed"
                         : "bg-black hover:bg-gray-800"
                     }`}
                   >
-                    {processing === item.entry_id ? "Processing..." : "Approve"}
+                    {processing === match.match_id ? "Processing..." : "Approve"}
                   </button>
 
                   <button
-                    onClick={() => handleReject(item.entry_id)}
-                    disabled={processing === item.entry_id}
+                    onClick={() => handleReject(match.match_id)}
+                    disabled={processing === match.match_id}
                     className={`px-4 py-2 rounded-lg text-white transition ${
-                      processing === item.entry_id
+                      processing === match.match_id
                         ? "bg-gray-400 cursor-not-allowed"
                         : "bg-red-600 hover:bg-red-700"
                     }`}
                   >
-                    {processing === item.entry_id ? "Processing..." : "Reject"}
+                    {processing === match.match_id ? "Processing..." : "Reject"}
                   </button>
                 </div>
               </div>
