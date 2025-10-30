@@ -71,7 +71,7 @@ function LostFoundRep() {
               name={item.item_name}
               imageUrl={item.photo_url}
               status={item.status}
-              linkTo="/admin/foundcardview"
+              linkTo="/admin/foundentryadmin"
               stateData={item}
             />
           ))}

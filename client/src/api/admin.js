@@ -10,7 +10,6 @@ export const getPendingItems = async () => {
 };
 
 // test for approve function
-
 export const approveEntry = async (entryId) => {
   const response = await jsonClient.post(
     `/admin/approve_entry/${entryId}`,
@@ -18,6 +17,33 @@ export const approveEntry = async (entryId) => {
     {
       headers: {
         role: 'admin', 
+      },
+    }
+  );
+  return response.data;
+};
+
+// test for reject function
+export const rejectEntry = async (entryId) => {
+  const response = await jsonClient.post(
+    `/admin/reject_entry/${entryId}`,
+    {},
+    {
+      headers: {
+        role: 'admin',
+      },
+    }
+  );
+  return response.data;
+};
+
+// test for Delete Submission
+export const deleteSubmission = async (entryId) => {
+  const response = await jsonClient.delete(
+    `/admin/delete_entry/${entryId}`,
+    {
+      headers: {
+        role: 'admin',
       },
     }
   );
