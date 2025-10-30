@@ -8,7 +8,7 @@ const ClaimRequest = () => {
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(null);
 
-  // ✅ Fetch all matches and filter unclaimed (is_claimed === false)
+  // Fetch all matches and filter unclaimed (is_claimed === false)
   useEffect(() => {
     const fetchClaims = async () => {
       try {
@@ -26,7 +26,7 @@ const ClaimRequest = () => {
     fetchClaims();
   }, []);
 
-  // ✅ Approve claim
+  // Approve claim
   const handleApprove = async (matchId) => {
     if (!window.confirm("Approve this claim?")) return;
     try {
@@ -44,7 +44,7 @@ const ClaimRequest = () => {
     }
   };
 
-  // ✅ Reject claim
+  // Reject claim
   const handleReject = async (matchId) => {
     if (!window.confirm("Reject this claim?")) return;
     try {
