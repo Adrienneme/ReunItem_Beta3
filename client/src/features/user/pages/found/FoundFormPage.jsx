@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import UserNavBar from "../../../../components/layout/UserNavBar";
 import FoundBaseForm from "../../../../components/forms/FoundBaseForm";
 import ButtonUI from "../../../../components/ui/ButtonUI";
-import useCreateItem from "../../../../hooks/useCreateItem"
+import useCreate from "../../../../hooks/useCreate"
 
 export default function FoundFormPage() {
   const {
@@ -15,7 +15,7 @@ export default function FoundFormPage() {
     handlePickupChange,
     handleGenerate,
     handleSubmit,
-  } = useCreateItem("found");
+  } = useCreate("found");
 
   return (
     <div>

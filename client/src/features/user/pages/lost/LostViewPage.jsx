@@ -61,7 +61,7 @@ export default function LostViewPage() {
     setDisabled(false);
     setReplace(false);
   };
-
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setEntry(prev => ({ ...prev, [name]: value })); //form
@@ -143,13 +143,16 @@ export default function LostViewPage() {
       </div>
     );
   }
+
+  //w
   const cancelClaimCancel = () => {
     setshowCancelConfirm(false)
   }
+  //w
   const confirmClaimCancel = () => {
     setshowCancelConfirm(true)
   }
-
+  //w
   const handleClaimCancel = async () => {
     try {
       const response = await delClaim(entry.entry_id);
@@ -162,7 +165,7 @@ export default function LostViewPage() {
       alert(errMsg);
     }
   }
-
+  //w
   const handleViewClaim = async () => {
     try {
       const response = await getMatch(entry.entry_id);

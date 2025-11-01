@@ -46,7 +46,7 @@ const Cards = ({
         <div className="flex justify-between items-center px-4 py-2 border-gray-2">
           <h2 className="text-lg font-semibold text-gray-800 truncate">{name}</h2>
           <Link to={linkTo} state={percentage !== undefined
-            ? { ...stateData, similarity: percentage }
+            ? { ...stateData, similarity: percentage, lostentry_id: stateData.lostentry_id }
             : { ...stateData }
           }>
             <img

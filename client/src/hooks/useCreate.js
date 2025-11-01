@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { createItem, generateDescription } from "../api/items";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 
-export function useCreateItem(defaultType = "found") {
+export default function useCreate(defaultType = "found") {
   const navigate = useNavigate();
   
   const queryClient = useQueryClient();
@@ -92,6 +92,7 @@ export function useCreateItem(defaultType = "found") {
 
   return {
     formData,
+    setFormData,
     loading,
     buttonLoading,
     handleChange,

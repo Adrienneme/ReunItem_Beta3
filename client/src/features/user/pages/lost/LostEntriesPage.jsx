@@ -31,9 +31,10 @@ export default function LostEntriesPage() {
           options={[
             "All",
             "Pending Approval",
+            "Pending Claim",
             "Approved",
             "Rejected",
-            "Found",
+            "Claimed",
             "Archived"
           ]}
         />

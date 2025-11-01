@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import UserNavBar from "../../../../components/layout/UserNavBar";
 import LostBaseForm from "../../../../components/forms/LostBaseForm";
 import ButtonUI from "../../../../components/ui/ButtonUI";
-import useCreateItem from "../../../../hooks/useCreateItem";
+import useCreate from "../../../../hooks/useCreate";
 
 export default function LostFormPage() {
   const {
@@ -14,7 +14,7 @@ export default function LostFormPage() {
     handleImageSelect,
     handleGenerate,
     handleSubmit,
-  } = useCreateItem("lost");
+  } = useCreate("lost");
 
   return (
     <div>

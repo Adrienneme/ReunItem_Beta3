@@ -33,6 +33,8 @@ import FoundCardView from './features/adminfound/FoundCardView';
 import FoundEntriesView from './features/adminfound/FoundEntriesAdmin';
 import LostCardView from './features/adminlost/LostCardView';
 import LostEntriesView from './features/adminlost/LostEntriesAdmin';
+import LostEdit from './features/user/pages/lost/LostEdit';
+import MatchedDetails from './features/user/pages/lost/MatchedDetails';
 
 
 function App() {
@@ -65,6 +67,8 @@ function App() {
 
               <Route path='found-details' element={<FoundDetails/>}/>
               <Route path='lost-details' element={<LostDetails/>}/>
+              <Route path='lost-details-edit' element={<LostEdit/>}/>
+              <Route path='matched-details' element={<MatchedDetails/>}/>
             </Routes>
           </ProtectedRoutes>
         }

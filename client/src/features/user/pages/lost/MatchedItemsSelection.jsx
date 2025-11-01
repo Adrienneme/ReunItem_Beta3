@@ -1,41 +1,23 @@
 import React, { useEffect, useState } from 'react'
 import UserNavBar from '../../../../components/layout/UserNavBar'
 import Card from '../../../../components/ui/Cards'
-import { getMatches } from '../../../../api/items';
+import { useFetchMatches } from '../../../../hooks/useFetch'
+import { useLocation } from 'react-router-dom'
 
 export default function MatchedItemsSelection() {
-  const [entries, setEntries] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const lostentry_id = localStorage.getItem("entry_id");
-  localStorage.setItem("lostentry_Id", lostentry_id);
+  const location = useLocation();
+  const {entry_id} = location.state
+  const {data: entries = [], isPending, error} = useFetchMatches(entry_id)
 
-  useEffect(() => {
-    const fetchEntries = async () => {
-      try {
-        const response = await getMatches(lostentry_id);
-        setEntries(response);
-        console.log(response);
-      } catch (error) {
-        const errMsg = error.response?.data?.detail || "No Found Matches yet :(";
-        console.error(error);
-        alert(errMsg);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchEntries();
-  }, []);
-
-  if (loading) {
+  if (isPending || error) {
     return (
       <div>
         <UserNavBar />
         <div className="min-h-screen flex justify-center mt-50 text-gray-600 text-lg">
-          Loading Potential Matches...
+          {isPending ? "Loading Potential Matches..." : error.message}
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -49,10 +31,11 @@ export default function MatchedItemsSelection() {
 
       <div className="flex flex-wrap justify-center gap-10 mt-10">
         <div>
-          {entries.length === 0 && (
+          {!entries || entries.length === 0 && (
             <p className="text-gray-500 text-lg mt-20">No matched items found, Check again later...</p>
           )}
         </div>
+
         {entries
           .map((item) => (
             <Card
@@ -60,8 +43,8 @@ export default function MatchedItemsSelection() {
               name={item.item_name}
               imageUrl={item.photo_url}
               percentage={item.similarity}
-              linkTo="/user/matched-entry-detail"
-              stateData={item}
+              linkTo="/user/matched-details"
+              stateData={{...item, lostentry_id: entry_id}}
             />
           ))}
       </div>

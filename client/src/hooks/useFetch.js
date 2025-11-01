@@ -1,4 +1,4 @@
-import { getItem, getItems } from '../api/items'
+import { getItem, getItems, getMatches } from '../api/items'
 import { useQuery } from '@tanstack/react-query'
 
 export function useFetchItem(type, entry_id) {
@@ -33,5 +33,20 @@ export function useFetchItems(itemType, queryKey) {
     isPending,
     error,
   };
+}
+
+
+export function useFetchMatches(entry_id){
+  const {data, isPending, error} = useQuery({
+    queryKey: [`match_${entry_id}`],
+    queryFn: () => getMatches(entry_id),
+    staleTime: 10 * 60 * 500,
+  })
+
+  return {
+    data,
+    isPending,
+    error
+  }
 }
 
