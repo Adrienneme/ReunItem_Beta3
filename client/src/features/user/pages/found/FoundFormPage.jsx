@@ -1,93 +1,26 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useNavigate } from "react-router-dom";
-import { createItem, generateDescription } from '../../../../api/items';
-import UserNavBar from '../../../../components/layout/UserNavBar';
-import FoundBaseForm from '../../../../components/forms/FoundBaseForm';
-import ButtonUI from '../../../../components/ui/ButtonUI';
+import React from "react";
+import { Link } from "react-router-dom";
+import UserNavBar from "../../../../components/layout/UserNavBar";
+import FoundBaseForm from "../../../../components/forms/FoundBaseForm";
+import ButtonUI from "../../../../components/ui/ButtonUI";
+import useCreateItem from "../../../../hooks/useCreateItem"
 
-const FoundFormPage = () => {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    item_name: "",
-    description: "",
-    photo: null,
-    pickup_location: "",
-    item_type: 'found',
-    status: "Pending Approval"
-  });
-
-  const [loading, setLoading] = useState(false);
-  const [buttonLoading, setbuttonLoading] = useState(false);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleImageSelect = (file) => {
-    setFormData(prev => ({ ...prev, photo: file }));
-  };
-
-  const handlePickupChange = (val) => {
-    setFormData(prev => ({ ...prev, pickup_location: val }));
-  };
-
-  const handleGenerate = async () => {
-
-    if (!formData.photo) {
-      alert("No photo found!");
-      return;
-    }
-    setLoading(true);
-
-    try {
-      const response = await generateDescription(formData.photo);
-      console.log("Backend response:", response);
-      setFormData(prev => ({
-        ...prev, description: response.description
-      }));
-
-    } catch (error) {
-      console.error("Error generating description:", error);
-      const errMsg = error.response?.data?.detail || "Failed to generate description.";
-      alert(errMsg);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    setbuttonLoading(true);
-
-    if (!formData.item_name || !formData.description || !formData.photo || !formData.pickup_location) {
-      alert('Please fill all inputs, Image of Item is required');
-      setbuttonLoading(false);
-      return;
-    }
-    try {
-      const response = await createItem(formData);
-      console.log("Successfully created Item:", response.data)
-      alert('Entry Submitted!')
-      navigate('/user/home')
-
-    } catch (error) {
-      const errMsg = error.response?.data?.detail || "Failed to submit entry.";
-      console.log(error.response?.data.detail);
-      alert(errMsg);
-    } finally {
-      setbuttonLoading(false)
-    }
-  };
+export default function FoundFormPage() {
+  const {
+    formData,
+    loading,
+    buttonLoading,
+    handleChange,
+    handleImageSelect,
+    handlePickupChange,
+    handleGenerate,
+    handleSubmit,
+  } = useCreateItem("found");
 
   return (
     <div>
       <UserNavBar />
       <div className="flex flex-col items-center">
-
-        {/* FoundBaseForm */}
         <FoundBaseForm
           title="Report Found Item:"
           formData={formData}
@@ -98,9 +31,7 @@ const FoundFormPage = () => {
           onPickupChange={handlePickupChange}
           disabled={false}
         />
-
-        {/* Buttons */}
-        <div className="flex flex-row items-center mt-5 mb-10 gap-35">
+        <div className="flex flex-row items-center mt-5 mb-10 gap-10">
           <Link to="/user/home">
             <ButtonUI variant="solid" color="neutral">
               Go Back
@@ -117,9 +48,6 @@ const FoundFormPage = () => {
           </ButtonUI>
         </div>
       </div>
-
     </div>
   );
-};
-
-export default FoundFormPage;
+}

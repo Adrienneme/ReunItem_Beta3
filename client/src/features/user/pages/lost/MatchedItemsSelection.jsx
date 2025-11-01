@@ -6,9 +6,7 @@ import { getMatches } from '../../../../api/items';
 export default function MatchedItemsSelection() {
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState("");
   const lostentry_id = localStorage.getItem("entry_id");
-  //when expansion button is clicked it will overwrite the entry_id in localstorage so me is saving this current lostentry_id for matching function
   localStorage.setItem("lostentry_Id", lostentry_id);
 
   useEffect(() => {

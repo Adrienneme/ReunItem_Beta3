@@ -31,7 +31,7 @@ export const generateDescription = async (photo) => {
     return response.data;
   } catch (err) {
     console.error("Error in generateDescription:", err);
-    throw err; // rethrow so handleGenerate can catch
+    throw err; 
   }
 };
 

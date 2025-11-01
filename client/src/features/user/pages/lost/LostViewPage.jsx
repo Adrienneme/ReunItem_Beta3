@@ -19,7 +19,7 @@ export default function LostViewPage() {
   const entry_id = localStorage.getItem("entry_id");
   const navigate = useNavigate();
 
-  useEffect(() => {
+  useEffect(() => { //get and transfer formdata here
     let isMounted = true;
     const fetchEntry = async () => {
       try {
@@ -35,10 +35,11 @@ export default function LostViewPage() {
     return () => { isMounted = false; };
   }, [entry_id]);
 
+  //w
   const handleDelete = () => {
     setShowDeleteConfirm(true);
   };
-
+  //w
   const confirmDelete = async () => {
     try {
       await deleteItem(entry_id);
@@ -51,11 +52,11 @@ export default function LostViewPage() {
       setShowDeleteConfirm(false);
     }
   };
-
+  //w
   const cancelDelete = () => {
     setShowDeleteConfirm(false);
   };
-
+  //w
   const handleEdit = () => {
     setDisabled(false);
     setReplace(false);
@@ -63,14 +64,14 @@ export default function LostViewPage() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setEntry(prev => ({ ...prev, [name]: value }));
+    setEntry(prev => ({ ...prev, [name]: value })); //form
   };
 
   const handleImageSelect = (file) => {
-    setEntry(prev => ({ ...prev, photo: file }));
+    setEntry(prev => ({ ...prev, photo: file })); //form
   };
 
-  const handleGenerate = async () => {
+  const handleGenerate = async () => { //form
 
     if (!entry.photo) {
       alert("No photo found!");
@@ -93,8 +94,8 @@ export default function LostViewPage() {
       setGenerateloading(false);
     }
   };
-
-  const handleSubmit = async (e) => {
+//copy
+  const handleSubmit = async (e) => { //form
     e.preventDefault();
     setButtonloading(true);
 
@@ -117,6 +118,8 @@ export default function LostViewPage() {
     } finally {
       setButtonloading(false);
     }
+
+    //mutations
   };
 
   if (loading) {
