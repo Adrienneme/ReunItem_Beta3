@@ -1,5 +1,5 @@
 import { useQueryClient, useMutation } from "@tanstack/react-query"
-import { updateItem, deleteItem } from "../api/items"
+import { updateItem, deleteItem, delClaim } from "../api/items"
 import { useNavigate } from "react-router-dom"
 
 export function useDeleteItem(type) {
@@ -37,6 +37,24 @@ export function useUpdateItem(type) {
     },
     onError: () => {
       alert("Failed to update item.")
+    },
+  })
+}
+
+export function useCancelClaim(type){
+  const queryClient = useQueryClient()
+  const navigate = useNavigate()
+
+  return useMutation({
+    mutationFn: (entry_id) => delClaim(entry_id),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["lost_items"])
+      queryClient.invalidateQueries(["found_items"])
+      alert("Claim Canceled successfully!")
+      navigate(`/user/${type}-entries`)
+    },
+    onError: () => {
+      alert("Failed to Cancel.")
     },
   })
 }

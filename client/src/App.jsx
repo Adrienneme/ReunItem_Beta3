@@ -9,14 +9,15 @@ import FoundFormPage from './features/user/pages/found/FoundFormPage';
 import MyEntriesPage from './features/user/pages/MyEntriesPage';
 import Settings from './features/user/pages/Settings';
 import LostEntriesPage from './features/user/pages/lost/LostEntriesPage';
-import LostViewPage from './features/user/pages/lost/LostViewPage';
 import FoundEntriesPage from './features/user/pages/found/FoundEntriesPage';
 import FoundViewPage from './features/user/pages/found/FoundViewPage';
 import MatchedItemsSelection from './features/user/pages/lost/MatchedItemsSelection';
-import MatchedItemDetail from './features/user/pages/lost/MatchedItemDetail';
 import MatchedLost from './features/user/pages/found/MatchedLost';
 import FoundDetails from './features/user/pages/found/FoundDetails'
 import LostDetails from './features/user/pages/lost/LostDetails'
+import LostEdit from './features/user/pages/lost/LostEdit';
+import MatchedDetails from './features/user/pages/lost/MatchedDetails';
+import MatchedFound from './features/user/pages/lost/MatchedFound';
 
 
 // Auth pages
@@ -33,8 +34,7 @@ import FoundCardView from './features/adminfound/FoundCardView';
 import FoundEntriesView from './features/adminfound/FoundEntriesAdmin';
 import LostCardView from './features/adminlost/LostCardView';
 import LostEntriesView from './features/adminlost/LostEntriesAdmin';
-import LostEdit from './features/user/pages/lost/LostEdit';
-import MatchedDetails from './features/user/pages/lost/MatchedDetails';
+
 
 
 function App() {
@@ -58,17 +58,16 @@ function App() {
               <Route path="entries" element={<MyEntriesPage />} />
               <Route path="settings" element={<Settings />} />
               <Route path='lost-entries' element={<LostEntriesPage/>}/>
-              <Route path='lost-entries-detail' element={<LostViewPage/>}/> 
               <Route path='found-entries' element={<FoundEntriesPage/>}/>
               <Route path='found-entries-detail' element={<FoundViewPage/>}/>   
               <Route path='matched-entries' element={<MatchedItemsSelection/>}/>  
-              <Route path='matched-entry-detail' element={<MatchedItemDetail/>}/>
               <Route path='matched-lost-detail' element={<MatchedLost/>}/>       
 
               <Route path='found-details' element={<FoundDetails/>}/>
               <Route path='lost-details' element={<LostDetails/>}/>
               <Route path='lost-details-edit' element={<LostEdit/>}/>
               <Route path='matched-details' element={<MatchedDetails/>}/>
+              <Route path='matched-found' element={<MatchedFound/>}/>
             </Routes>
           </ProtectedRoutes>
         }

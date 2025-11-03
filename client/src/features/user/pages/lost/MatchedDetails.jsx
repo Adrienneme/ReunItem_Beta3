@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import UserNavBar from '../../../../components/layout/UserNavBar';
 import FoundBaseForm from '../../../../components/forms/FoundBaseForm';
 import ButtonUI from '../../../../components/ui/ButtonUI';
@@ -10,8 +10,10 @@ import { usematchItems } from '../../../../hooks/useMatch';
 export default function MatchedDetails() {
   const location = useLocation();
   const matchMutation = usematchItems();
-  const { entry_id: foundentry_id, lostentry_id, similarity } = location.state
+  const navigate = useNavigate();
+
   const [showClaimConfirm, setShowClaimConfirm] = useState(false);
+  const { entry_id: foundentry_id, lostentry_id, similarity } = location.state
   const { formData, isPending, error } = useFetchItem("found", foundentry_id);
 
   if (isPending || error) {
@@ -52,10 +54,12 @@ export default function MatchedDetails() {
         disabled={true}
       />
       <div className='flex flex-row justify-center mt-5 gap-10'>
-        <ButtonUI variant="solid" color="neutral" onClick={() => navigate("/user/lost-entries")}>
+        <ButtonUI variant="solid" color="neutral" 
+          onClick={() => navigate("/user/matched-entries", {state: {entry_id: lostentry_id}})}>
           Go Back
         </ButtonUI>
-        <ButtonUI variant="solid" color="success" onClick={handleClaim}
+        <ButtonUI variant="solid" color="success" 
+          onClick={handleClaim}
           disabled={matchMutation.isLoading}
         >
           Claim this Item?
