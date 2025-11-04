@@ -27,8 +27,9 @@ export default function useCreate(defaultType = "found") {
   };
 
   const handleImageSelect = (file) => {
-    if (!file.type.startsWith("image/*")) {
-      alert("Only images allowed")
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+    if (!allowedTypes.includes(file.type)) {
+      alert("Only images(png,jpg,jpeg) allowed")
       return
     }
     setFormData((prev) => ({ ...prev, photo: file }));

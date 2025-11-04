@@ -13,8 +13,8 @@ export default function LostDetails() {
   const { entry_id } = location.state;
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const { formData, isPending, error } = useFetchItem("lost", entry_id);
   const deleteMutation = useDeleteItem("lost")
+  const { formData, isPending, error } = useFetchItem("lost", entry_id);
 
   if (isPending || error) {
     return (
@@ -86,11 +86,11 @@ export default function LostDetails() {
 
         {formData.status == "Pending Claim" && (
           <div className='flex flex-row gap-10'>
-            <ButtonUI variant="solid" color="neutral" 
+            <ButtonUI variant="solid" color="neutral"
               onClick={() => navigate("/user/lost-entries")}>
               Go Back
             </ButtonUI>
-            <ButtonUI onClick={() => navigate("/user/matched-found", {state: {entry_id: formData.entry_id}})}>
+            <ButtonUI onClick={() => navigate("/user/matched-found", { state: { entry_id: formData.entry_id } })}>
               View Claimed Match
             </ButtonUI>
           </div>

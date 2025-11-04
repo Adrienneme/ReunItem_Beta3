@@ -37,7 +37,7 @@ const ImageUpload = ({
         {!disabled && (
           <input
             type="file"
-            accept="image/*"
+            accept=".jpg,.jpeg,.png"
             onChange={handleImageChange}
             className="absolute inset-0 opacity-0 cursor-pointer"
             required={required}

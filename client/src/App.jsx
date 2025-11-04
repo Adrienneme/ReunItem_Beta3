@@ -14,6 +14,7 @@ import FoundViewPage from './features/user/pages/found/FoundViewPage';
 import MatchedItemsSelection from './features/user/pages/lost/MatchedItemsSelection';
 import MatchedLost from './features/user/pages/found/MatchedLost';
 import FoundDetails from './features/user/pages/found/FoundDetails'
+import FoundEdit from './features/user/pages/found/FoundEdit';
 import LostDetails from './features/user/pages/lost/LostDetails'
 import LostEdit from './features/user/pages/lost/LostEdit';
 import MatchedDetails from './features/user/pages/lost/MatchedDetails';
@@ -61,13 +62,14 @@ function App() {
               <Route path='found-entries' element={<FoundEntriesPage/>}/>
               <Route path='found-entries-detail' element={<FoundViewPage/>}/>   
               <Route path='matched-entries' element={<MatchedItemsSelection/>}/>  
-              <Route path='matched-lost-detail' element={<MatchedLost/>}/>       
 
               <Route path='found-details' element={<FoundDetails/>}/>
+              <Route path='found-details-edit' element={<FoundEdit/>}/>
               <Route path='lost-details' element={<LostDetails/>}/>
               <Route path='lost-details-edit' element={<LostEdit/>}/>
               <Route path='matched-details' element={<MatchedDetails/>}/>
               <Route path='matched-found' element={<MatchedFound/>}/>
+              <Route path='matched-lost' element={<MatchedLost/>}/>       
             </Routes>
           </ProtectedRoutes>
         }
