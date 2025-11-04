@@ -7,7 +7,7 @@ import { useLocation } from 'react-router-dom'
 export default function MatchedItemsSelection() {
   const location = useLocation();
   const {entry_id} = location.state
-  const {data: entries = [], isPending, error} = useFetchMatches(entry_id)
+  const {formData: entries = [], isPending, error} = useFetchMatches(entry_id)
 
   if (isPending || error) {
     return (

@@ -37,7 +37,7 @@ export function useFetchItems(itemType, queryKey) {
 
 
 export function useFetchMatches(entry_id){
-  const {data: formData, isPending, error} = useQuery({
+  const {data: formData = [], isPending, error} = useQuery({
     queryKey: [`match_${entry_id}`],
     queryFn: () => getMatches(entry_id),
     staleTime: 10 * 60 * 500,

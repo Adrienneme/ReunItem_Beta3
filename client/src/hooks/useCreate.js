@@ -5,7 +5,7 @@ import { useQueryClient, useMutation } from "@tanstack/react-query";
 
 export default function useCreate(defaultType = "found") {
   const navigate = useNavigate();
-  
+
   const queryClient = useQueryClient();
 
   const [formData, setFormData] = useState({
@@ -27,6 +27,10 @@ export default function useCreate(defaultType = "found") {
   };
 
   const handleImageSelect = (file) => {
+    if (!file.type.startsWith("image/*")) {
+      alert("Only images allowed")
+      return
+    }
     setFormData((prev) => ({ ...prev, photo: file }));
   };
 

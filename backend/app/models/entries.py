@@ -151,7 +151,7 @@ class ItemModels:
             if similarity:
                 matched_item = MatchSchemas.FoundMatchResponse(**i, similarity=similarity)
                 potential_matches.append(matched_item)
-
+        print(f"Potential Matches: {potential_matches}")
         return potential_matches
 
     @staticmethod

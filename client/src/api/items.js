@@ -67,6 +67,7 @@ export const deleteItem = async (entryId) => {
 
 export const getMatches = async (entryId) => {
   const response = await jsonClient.post(`/items/matches/${entryId}`);
+  console.log("Matches response data:", response.data);
   return response.data;
 }
 
