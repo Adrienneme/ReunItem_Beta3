@@ -4,6 +4,7 @@ import LostBaseForm from '../../../../components/forms/LostBaseForm'
 import ButtonUI from '../../../../components/ui/ButtonUI';
 import { useFetchItem, useFetchMatched } from '../../../../hooks/useFetch';
 import { useLocation, useNavigate } from 'react-router-dom';
+import CircularLoad from '../../../../components/ui/CircularLoad';
 
 export default function MatchedLost() {
   const location = useLocation();
@@ -20,7 +21,11 @@ export default function MatchedLost() {
       <div>
         <UserNavBar />
         <div className="min-h-screen flex justify-center mt-50 text-gray-600 text-lg">
-          {isPending ? "Loading Entry Detail..." : error.message}
+          {isPending ?
+            <div className='flex flex-col items-center gap-5'>
+              <span>Loading Entry Details...</span>
+              <CircularLoad />
+            </div> : error.message}
         </div>
       </div>
     )

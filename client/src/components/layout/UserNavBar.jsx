@@ -39,7 +39,7 @@ const UserNavBar = ({ name = "Username", profile = usericon }) => {
       </div>
 
       {/* Menu Links */}
-      <div className="flex flex-wrap justify-center items-center space-x-4 mt-2 w-full sm:w-auto flex-shrink-0">
+      <div className="flex flex-wrap justify-center items-center space-x-4 mt-2 w-full sm:w-auto flex-shrink-0 gap-4">
         <Link
           to="/user/home"
           className="flex flex-col items-center hover:text-yellow-300 transition-colors duration-200 min-w-[60px]"

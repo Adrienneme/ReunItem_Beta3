@@ -3,18 +3,23 @@ import UserNavBar from '../../../../components/layout/UserNavBar'
 import Card from '../../../../components/ui/Cards'
 import { useFetchMatches } from '../../../../hooks/useFetch'
 import { useLocation } from 'react-router-dom'
+import LinearLoad from '../../../../components/ui/LinearLoad'
 
 export default function MatchedItemsSelection() {
   const location = useLocation();
-  const {entry_id} = location.state
-  const {formData: entries = [], isPending, error} = useFetchMatches(entry_id)
+  const { entry_id } = location.state
+  const { formData: entries = [], isPending, error } = useFetchMatches(entry_id)
 
   if (isPending || error) {
     return (
       <div>
         <UserNavBar />
         <div className="min-h-screen flex justify-center mt-50 text-gray-600 text-lg">
-          {isPending ? "Loading Potential Matches..." : error.message}
+          {isPending ?
+            <div className='flex flex-col items-center gap-5'>
+              <span>Loading Potential Matches...</span>
+              <LinearLoad />
+            </div> : error.message}
         </div>
       </div>
     )
@@ -44,7 +49,7 @@ export default function MatchedItemsSelection() {
               imageUrl={item.photo_url}
               percentage={item.similarity}
               linkTo="/user/matched-details"
-              stateData={{...item, lostentry_id: entry_id}}
+              stateData={{ ...item, lostentry_id: entry_id }}
             />
           ))}
       </div>

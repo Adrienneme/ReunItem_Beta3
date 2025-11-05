@@ -1,4 +1,4 @@
-import React, {useState}from 'react'
+import React, { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useFetchItem, useFetchMatched } from '../../../../hooks/useFetch';
 import UserNavBar from '../../../../components/layout/UserNavBar';
@@ -6,6 +6,7 @@ import FoundBaseForm from '../../../../components/forms/FoundBaseForm';
 import ButtonUI from '../../../../components/ui/ButtonUI';
 import MessageBox from '../../../../components/ui/MessageBox';
 import { useCancelClaim } from '../../../../hooks/useEdit';
+import CircularLoad from '../../../../components/ui/CircularLoad';
 
 export default function MatchedFound() {
   const navigate = useNavigate();
@@ -25,7 +26,11 @@ export default function MatchedFound() {
       <div>
         <UserNavBar />
         <div className="min-h-screen flex justify-center mt-50 text-gray-600 text-lg">
-          {isPending ? "Loading Entry Detail..." : error.message}
+          {isPending ?
+            <div className='flex flex-col items-center gap-5'>
+              <span>Loading Entry Details...</span>
+              <CircularLoad />
+            </div> : error.message}
         </div>
       </div>
     )

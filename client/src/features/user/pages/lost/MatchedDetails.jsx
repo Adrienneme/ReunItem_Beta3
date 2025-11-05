@@ -6,6 +6,7 @@ import ButtonUI from '../../../../components/ui/ButtonUI';
 import MessageBox from '../../../../components/ui/MessageBox';
 import { useFetchItem } from '../../../../hooks/useFetch';
 import { usematchItems } from '../../../../hooks/useMatch';
+import CircularLoad from '../../../../components/ui/CircularLoad';
 
 export default function MatchedDetails() {
   const location = useLocation();
@@ -20,8 +21,12 @@ export default function MatchedDetails() {
     return (
       <div>
         <UserNavBar />
-        <div className="min-h-screen flex justify-center items-center text-gray-600 text-lg">
-          {isPending ? "Loading Entry Detail..." : error.message}
+        <div className="min-h-screen flex justify-center mt-50 text-gray-600 text-lg">
+          {isPending ?
+            <div className='flex flex-col items-center gap-5'>
+              <span>Loading Entry Details...</span>
+              <CircularLoad />
+            </div> : error.message}
         </div>
       </div>
     );
@@ -54,11 +59,11 @@ export default function MatchedDetails() {
         disabled={true}
       />
       <div className='flex flex-row justify-center mt-5 gap-10'>
-        <ButtonUI variant="solid" color="neutral" 
-          onClick={() => navigate("/user/matched-entries", {state: {entry_id: lostentry_id}})}>
+        <ButtonUI variant="solid" color="neutral"
+          onClick={() => navigate("/user/matched-entries", { state: { entry_id: lostentry_id } })}>
           Go Back
         </ButtonUI>
-        <ButtonUI variant="solid" color="success" 
+        <ButtonUI variant="solid" color="success"
           onClick={handleClaim}
           disabled={matchMutation.isLoading}
         >

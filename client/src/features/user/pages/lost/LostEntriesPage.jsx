@@ -3,6 +3,7 @@ import UserNavBar from '../../../../components/layout/UserNavBar'
 import FilterDropdown from '../../../../components/ui/Filters'
 import Card from '../../../../components/ui/Cards'
 import { useFetchItems } from '../../../../hooks/useFetch'
+import CircularLoad from '../../../../components/ui/CircularLoad'
 
 export default function LostEntriesPage() {
 
@@ -13,7 +14,11 @@ export default function LostEntriesPage() {
       <div>
         <UserNavBar />
         <div className="min-h-screen flex justify-center mt-50 text-gray-600 text-lg">
-          {isPending ? "Loading Lost Entries..." : error.message}
+          {isPending ?
+            <div className='flex flex-col items-center gap-5'>
+              <span>Loading Lost Entries...</span>
+              <CircularLoad />
+            </div> : error.message}
         </div>
       </div>
     )

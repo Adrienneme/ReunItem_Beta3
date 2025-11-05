@@ -6,6 +6,7 @@ import MessageBox from '../../../../components/ui/MessageBox';
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useFetchItem } from '../../../../hooks/useFetch';
 import { useDeleteItem } from '../../../../hooks/useEdit';
+import CircularLoad from '../../../../components/ui/CircularLoad';
 
 export default function LostDetails() {
   const location = useLocation();
@@ -21,7 +22,11 @@ export default function LostDetails() {
       <div>
         <UserNavBar />
         <div className="min-h-screen flex justify-center mt-50 text-gray-600 text-lg">
-          {isPending ? "Loading Entry Detail..." : error.message}
+          {isPending ?
+            <div className='flex flex-col items-center gap-5'>
+              <span>Loading Entry Details...</span>
+              <CircularLoad />
+            </div> : error.message}
         </div>
       </div>
     )
