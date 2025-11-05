@@ -1,7 +1,7 @@
 
 //Test function backend, update backend Pending status and approve entry working
 import React, { useState, useEffect } from 'react'
-import UserNavBar from '../../../components/layout/UserNavBar'
+import AdminNavBar from '../../../components/layout/AdminNavBar'
 import Card from '../../../components/ui/Cards'
 import FilterDropdown from '../../../components/ui/Filters'
 import { getPendingItems } from '../../../api/admin'
@@ -35,7 +35,7 @@ function Pendingsub() {
   //
   return (
     <div>
-      <UserNavBar />
+      <AdminNavBar />
       {/* Filter Dropdown */}
       <div className="flex flex-wrap justify-center mt-10">
         <FilterDropdown

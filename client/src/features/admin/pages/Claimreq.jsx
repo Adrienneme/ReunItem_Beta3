@@ -1,7 +1,7 @@
 
 //Test function backend, update backend reject and accept claim working
 import React, { useState, useEffect } from 'react';
-import UserNavBar from '../../../components/layout/UserNavBar';
+import AdminNavBar from '../../../components/layout/AdminNavBar';
 import Cards from '../../../components/ui/Cards';
 import { admin_claims_pending, approveClaim, rejectClaim } from '../../../api/admin'; 
 
@@ -62,7 +62,7 @@ const ClaimRequest = () => {
 
   return (
     <div>
-      <UserNavBar />
+      <AdminNavBar />
       <h2 className="flex justify-center text-lg font-semibold mt-10">
         Pending Claim Requests
       </h2>
