@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import UserNavBar from "../../components/layout/UserNavBar";
+import AdminNavBar from "../../components/layout/AdminNavBar";
 import FoundBaseForm from "../../components/forms/FoundBaseForm";
 import { approveEntry } from "../../api/admin";
 import { getItem } from "../../api/items";
@@ -63,7 +63,7 @@ export default function FoundViewPage() {
 
   return (
     <div>
-      <UserNavBar />
+      <AdminNavBar />
       <div className="flex flex-col items-center justify-center mx-5">
         <div>
           <FoundBaseForm
