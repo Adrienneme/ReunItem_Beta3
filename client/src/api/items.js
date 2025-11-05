@@ -12,7 +12,7 @@ export const createItem = async (formData) => {
 
   if (formData.photo) allData.append("photo", formData.photo);
 
-  const response = await formClient.post("/items/report", allData, {
+  const response = await formClient.post("/items/create", allData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
 
