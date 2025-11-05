@@ -10,7 +10,6 @@ import MyEntriesPage from './features/user/pages/MyEntriesPage';
 import Settings from './features/user/pages/Settings';
 import LostEntriesPage from './features/user/pages/lost/LostEntriesPage';
 import FoundEntriesPage from './features/user/pages/found/FoundEntriesPage';
-import FoundViewPage from './features/user/pages/found/FoundViewPage';
 import MatchedItemsSelection from './features/user/pages/lost/MatchedItemsSelection';
 import MatchedLost from './features/user/pages/found/MatchedLost';
 import FoundDetails from './features/user/pages/found/FoundDetails'
@@ -54,21 +53,21 @@ function App() {
           <ProtectedRoutes requiredRole={"user"}>
             <Routes>
               <Route path="home" element={<Home />} />
-              <Route path="lost-form" element={<LostFormPage />} />
-              <Route path="found-form" element={<FoundFormPage />} />
               <Route path="entries" element={<MyEntriesPage />} />
               <Route path="settings" element={<Settings />} />
-              <Route path='lost-entries' element={<LostEntriesPage/>}/>
-              <Route path='found-entries' element={<FoundEntriesPage/>}/>
-              <Route path='found-entries-detail' element={<FoundViewPage/>}/>   
-              <Route path='matched-entries' element={<MatchedItemsSelection/>}/>  
 
-              <Route path='found-details' element={<FoundDetails/>}/>
-              <Route path='found-details-edit' element={<FoundEdit/>}/>
+              <Route path="lost-form" element={<LostFormPage />} />
+              <Route path='lost-entries' element={<LostEntriesPage/>}/>
               <Route path='lost-details' element={<LostDetails/>}/>
               <Route path='lost-details-edit' element={<LostEdit/>}/>
-              <Route path='matched-details' element={<MatchedDetails/>}/>
+              <Route path='matched-entries' element={<MatchedItemsSelection/>}/>  
               <Route path='matched-found' element={<MatchedFound/>}/>
+
+              <Route path="found-form" element={<FoundFormPage />} />
+              <Route path='found-details' element={<FoundDetails/>}/>
+              <Route path='found-entries' element={<FoundEntriesPage/>}/>
+              <Route path='found-details-edit' element={<FoundEdit/>}/> 
+              <Route path='matched-details' element={<MatchedDetails/>}/>
               <Route path='matched-lost' element={<MatchedLost/>}/>       
             </Routes>
           </ProtectedRoutes>

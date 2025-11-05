@@ -38,9 +38,10 @@ export default function Input({
           '& .MuiInput-underline:before': { borderBottomColor: underlineColor },
           '& .MuiInput-underline:hover:before': { borderBottomColor: underlineColor },
           '& .MuiInput-underline:after': { borderBottomColor: underlineColor },
-          '& .MuiInputBase-input.Mui-disabled': {
-            color: 'white',
-            WebkitTextFillColor: 'white', 
+          '& .Mui-disabled': {
+            color: 'white !important',
+            opacity: 1,
+            WebkitTextFillColor: 'white !important'
           },
         }}
       />

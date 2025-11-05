@@ -1,14 +1,16 @@
 import React from 'react'
 import UserNavBar from '../../../../components/layout/UserNavBar'
 import LostBaseForm from '../../../../components/forms/LostBaseForm'
+import ButtonUI from '../../../../components/ui/ButtonUI';
 import { useFetchItem, useFetchMatched } from '../../../../hooks/useFetch';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function MatchedLost() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { entry_id } = location.state;
   const { data } = useFetchMatched(entry_id);
-  const lostentryId = data?.found_entry_id;
+  const lostentryId = data?.lost_entry_id;
   const { formData, isPending, error } = useFetchItem("lost", lostentryId, {
     enabled: !!lostentryId
   });
@@ -25,7 +27,7 @@ export default function MatchedLost() {
   }
 
   return (
-    <div>
+    <div className='mb-10'>
       <UserNavBar />
       <LostBaseForm
         title="Matched Lost Item Details:"
@@ -34,6 +36,12 @@ export default function MatchedLost() {
         disabled={true}
         existingPhoto={formData.photo_url}
       />
+      <div className='flex flex-row justify-center mt-5 gap-10'>
+        <ButtonUI variant="solid" color="neutral"
+          onClick={() => navigate("/user/found-details", { state: { entry_id: entry_id } })}>
+          Go Back
+        </ButtonUI>
+      </div>
     </div>
   )
 }

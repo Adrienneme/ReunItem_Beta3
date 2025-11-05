@@ -43,7 +43,7 @@ export default function MatchedFound() {
     <div className='mb-10'>
       <UserNavBar />
       <FoundBaseForm
-        title="Found Item Details:"
+        title="Matched Found Item Details:"
         percentage={data.similarity}
         formData={formData}
         disabled={true}
