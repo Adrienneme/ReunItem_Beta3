@@ -104,9 +104,7 @@ async def approve_claim(match_id: str):
 # ================== Reject Claim ======================
 @admin_claims_router.post("/reject_claim/{match_id}")
 async def reject_claim(match_id: str):
-    """
-    Reject a claim — mark match as unclaimed again and both items as 'Rejected'
-    """
+   
     match = (
         supabase.table("matches_table")
         .select("*")
@@ -120,7 +118,7 @@ async def reject_claim(match_id: str):
         raise HTTPException(status_code=404, detail="Match not found")
 
     # Set is_claimed back to False (not a string)
-    supabase.table("matches_table").update({"is_claimed": False}).eq("match_id", match_id).execute()
+    supabase.table("matches_table").update({"is_claimed": True}).eq("match_id", match_id).execute()
 
     #  Update both related items
     for entry_id in [match["lost_entry_id"], match["found_entry_id"]]:
