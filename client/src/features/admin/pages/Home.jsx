@@ -1,5 +1,5 @@
 import React from 'react'
-import UserNavBar from '../../../components/layout/UserNavBar'
+import AdminNavBar from '../../../components/layout/AdminNavBar'
 import HomeButton from '../../../components/ui/HomeButton'
 
 const AdminHome = ({
@@ -8,7 +8,7 @@ const AdminHome = ({
   return (
     <div>
 
-      <UserNavBar name = {name} />
+      <AdminNavBar name = {name} />
       
       <div className='flex flex-row items-center justify-center mt-60 gap-20'>
         <HomeButton  to="/admin/pendingsubmissions" color='red'>
