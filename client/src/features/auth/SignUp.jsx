@@ -10,11 +10,20 @@ const Signup = () => {
     email: "",
     password_hash: "",
   });
+
+  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handlePasswordChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+
+    const password = form.password_hash;
+    
   };
 
   const handleSubmit = async (e) => {
@@ -85,13 +94,13 @@ const Signup = () => {
           type="password"
           name="password_hash"
           value={form.password_hash}
-          onChange={handleChange}
+          onChange={handlePasswordChange}
           placeholder="Enter password"
           className="w-full p-2 mt-1 border border-black rounded text-black placeholder-gray-300"
         />
 
         {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
-
+        {message && <p className="text-green-600 text-sm mt-2">{message}</p>}
         <button
           type="submit"
           className="mt-5 w-full py-2 bg-black text-white rounded hover:bg-gray-800 transition"
