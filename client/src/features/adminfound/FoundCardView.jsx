@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import UserNavBar from "../../components/layout/UserNavBar";
 import FoundBaseForm from "../../components/forms/FoundBaseForm";
-import { approveEntry } from "../../api/admin";
+import { approveEntry, rejectEntry } from "../../api/admin";
 import { getItem } from "../../api/items";
 
 export default function FoundViewPage() {
@@ -30,6 +30,7 @@ export default function FoundViewPage() {
     };
   }, [entry_id]);
 
+
   const handleApprove = async (entryId) => {
     if (!window.confirm("Are you sure you want to approve this item?")) return;
     try {
@@ -40,6 +41,23 @@ export default function FoundViewPage() {
       alert(errMsg);
     }
   };
+
+  const handleReject = async (entryId) => {
+  if (!window.confirm("Are you sure you want to reject this item?")) return;
+  try {
+    const response = await rejectEntry(entryId);
+    alert(response.message);
+
+    // optional redirect after reject
+    setTimeout(() => {
+      window.location.href = "/admin/pendingsub";
+    }, 800);
+
+  } catch (error) {
+    const errMsg = error.response?.data?.detail || "Failed to reject item.";
+    alert(errMsg);
+  }
+};
 
   const handleImageSelect = (file) => {
     setEntry((prev) => ({ ...prev, photo: file }));
@@ -69,15 +87,30 @@ export default function FoundViewPage() {
             onChange={handleChange}
             onImageSelect={handleImageSelect}
             onPickupChange={handlePickupChange}
+            disabled={true}
+
           />
         </div>
 
-        <button
-          onClick={() => handleApprove(entry.entry_id)}
-          className="mt-3 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
-        >
-          Approve
-        </button>
+        <div className="flex flex-row gap-10 mt-5">
+
+          <button
+            onClick={() => handleReject(entry.entry_id)}
+            className="mt-3 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+
+          >
+            Reject
+          </button>
+
+          <button
+            onClick={() => handleApprove(entry.entry_id)}
+            className="mt-3 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+
+          >
+            Approve
+          </button>
+        </div>
+
       </div>
     </div>
   );

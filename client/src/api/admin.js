@@ -11,20 +11,35 @@ export const getPendingItems = async (filter = "All") => {
   return response.data;
 };
 
-// test for approve function from image_accept.py
-
+//  Approve Entry
 export const approveEntry = async (entryId) => {
-  const response = await jsonClient.post(
-    `/admin/approve_entry/${entryId}`,
-    {}, 
-    {
-      headers: {
-        role: 'admin', 
-      },
-    }
-  );
-  return response.data;
-};//  Fetch all pending matches
+  try {
+    const response = await jsonClient.post(`/admin/approve_entry/${entryId}`, null, {
+      headers: { role: 'admin' },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(" Failed to approve entry:", error);
+    throw error;
+  }
+};
+
+//  Reject Entry
+export const rejectEntry = async (entryId) => {
+  try {
+    const response = await jsonClient.post(`/admin/reject_entry/${entryId}`, null, {
+      headers: { role: 'admin' },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(" Failed to reject entry:", error);
+    throw error;
+  }
+};
+
+
+//============Pending CLAIM request===================
+//  Fetch all pending matches
 export const getAllMatches = async () => {
   try {
     const response = await jsonClient.get("/admin/matches");

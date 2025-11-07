@@ -1,34 +1,32 @@
-
-//Test function backend, update backend Pending status and approve entry working
-import React, { useState, useEffect } from 'react'
-import UserNavBar from '../../../components/layout/UserNavBar'
-import Card from '../../../components/ui/Cards'
-import FilterDropdown from '../../../components/ui/Filters'
-import { getPendingItems } from '../../../api/admin'
+import React, { useState, useEffect } from 'react';
+import UserNavBar from '../../../components/layout/UserNavBar';
+import Card from '../../../components/ui/Cards';
+import FilterDropdown from '../../../components/ui/Filters';
+import { getPendingItems } from '../../../api/admin';
 
 function Pendingsub() {
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("All"); // Track selected filter
+  const [filter, setFilter] = useState("All");
+
+  const fetchEntries = async () => {
+    try {
+      setLoading(true);
+      const data = await getPendingItems(filter);
+      setEntries(data);
+      console.log("Pending Items:", data);
+    } catch (error) {
+      const errMsg = error.response?.data?.detail || "No Pending Entries.";
+      console.error(error);
+      alert(errMsg);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchEntries = async () => {
-      try {
-        setLoading(true); // Start loading
-        const data = await getPendingItems(filter); // Pass filter to API
-        setEntries(data);
-        console.log(data); // Corrected console log
-      } catch (error) {
-        const errMsg = error.response?.data?.detail || "No Pending Entries.";
-        console.error(error);
-        alert(errMsg);
-      } finally {
-        setLoading(false); // Stop loading
-      }
-    };
-
     fetchEntries();
-  }, [filter]); // Refetch when filter changes
+  }, [filter]);
 
   return (
     <div>
@@ -39,31 +37,32 @@ function Pendingsub() {
         <FilterDropdown
           label="Filter"
           options={["All", "Lost", "Found"]}
-          value={filter}       // current selected value
-          onChange={setFilter} // update filter on change
+          value={filter}
+          onChange={setFilter}
         />
       </div>
 
-      {/* Card Item */}
+      {/* Cards Section */}
       {loading ? (
-        <p className="text-center mt-10">Loading...</p> // Loading indicator
+        <p className="text-center mt-10">Loading...</p>
+      ) : entries.length === 0 ? (
+        <p className="text-center mt-10 text-gray-500">No pending items found.</p>
       ) : (
         <div className="flex flex-wrap justify-center gap-10 mt-10">
           {entries.map((item) => (
-            <div key={item.entry_id} className="flex flex-col items-center">
-              <Card
-                name={item.item_name}          // Item name
-                imageUrl={item.photo_url}      // Item image
-                status={item.status}           // Current status of the item
-                linkTo="/admin/foundcardview" // Navigation link
-                stateData={item}               // Pass full item data
-              />
-            </div>
+            <Card
+              key={item.entry_id}
+              name={item.item_name}
+              imageUrl={item.photo_url}
+              label={item.type}
+              linkTo="/admin/foundcardview"
+              stateData={item}
+            />
           ))}
         </div>
       )}
     </div>
-  )
+  );
 }
 
-export default Pendingsub
+export default Pendingsub;

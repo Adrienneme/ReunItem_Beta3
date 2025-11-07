@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from "react";
 import UserNavBar from "../../../components/layout/UserNavBar";
-import Cards from "../../../components/ui/Cards";
 import {
   getAllMatches,
   approveClaim,
   rejectClaim,
-} from "../../../api/admin"; // your API helpers
+} from "../../../api/admin";
 
 const ClaimRequest = () => {
   const [pendingClaims, setPendingClaims] = useState([]);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(null);
-  const [selectedMatch, setSelectedMatch] = useState(null); //  for popup
+  const [selectedMatch, setSelectedMatch] = useState(null);
 
-  // Fetch all pending claim matches
   useEffect(() => {
     const fetchClaims = async () => {
       try {
@@ -30,7 +28,6 @@ const ClaimRequest = () => {
     fetchClaims();
   }, []);
 
-  // Approve claim
   const handleApprove = async (matchId) => {
     if (!window.confirm("Approve this claim?")) return;
     try {
@@ -49,7 +46,6 @@ const ClaimRequest = () => {
     }
   };
 
-  // Reject claim
   const handleReject = async (matchId) => {
     if (!window.confirm("Reject this claim?")) return;
     try {
@@ -70,72 +66,110 @@ const ClaimRequest = () => {
 
   return (
     <div>
-      <UserNavBar />
-      <h2 className="flex justify-center text-lg font-semibold mt-10">
-        Pending Claim Requests
-      </h2>
+      <div className={selectedMatch ? "blur-sm pointer-events-none" : ""}>
+        <UserNavBar />
+        <h2 className="flex justify-center text-lg font-semibold mt-10 text-white">
+          Pending Claim Requests
+        </h2>
 
-      {loading ? (
-        <p className="text-center mt-10">Loading pending claims...</p>
-      ) : (
-        <div className="flex flex-wrap justify-center gap-10 mt-10">
-          {pendingClaims.length === 0 ? (
-            <p className="text-center text-gray-500">
-              No pending claims found.
-            </p>
-          ) : (
-            pendingClaims.map((match) => (
-              <div key={match.match_id} className="flex flex-col items-center">
-                <Cards
-                  name={`Match ID: ${match.match_id}`}
-                  //  Use photo_url instead of image_url
-                  imageUrl={
-                    match.lost_item?.photo_url || match.found_item?.photo_url
-                  }
-                  status={match.is_claimed ? "Claimed" : "Unclaimed"}
-                />
+        {loading ? (
+          <p className="text-center mt-10 text-gray-400">
+            Loading pending claims...
+          </p>
+        ) : (
+          <div className="flex flex-wrap justify-center gap-10 mt-10">
+            {pendingClaims.length === 0 ? (
+              <p className="text-center text-gray-500">
+                No pending claims found.
+              </p>
+            ) : (
+              pendingClaims.map((match) => {
+                const imageUrl =
+                  match.lost_item?.photo_url || match.found_item?.photo_url;
+                const itemName =
+                  match.lost_item?.item_name ||
+                  match.found_item?.item_name ||
+                  "Unnamed Item";
 
-                <div className="flex gap-3 mt-3">
-                  <button
-                    onClick={() => setSelectedMatch(match)} //  show popup
-                    className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+                return (
+                  <div
+                    key={match.match_id}
+                    className="w-64 bg-gray-900 text-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-transform hover:scale-105 flex flex-col justify-between"
                   >
-                    View Details
-                  </button>
+                    {/* Item Info (Top) */}
+                    <div className="flex flex-col items-center px-3 pt-4 text-center">
+                      <h3 className="font-semibold text-sm mb-1 line-clamp-2 text-white">
+                        {itemName}
+                      </h3>
+                      <p className="text-xs text-gray-400 mb-3 break-words">
+                        ID: {match.match_id}
+                      </p>
 
-                  <button
-                    onClick={() => handleApprove(match.match_id)}
-                    disabled={processing === match.match_id}
-                    className={`px-4 py-2 rounded-lg text-white transition ${
-                      processing === match.match_id
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-black hover:bg-gray-800"
-                    }`}
-                  >
-                    {processing === match.match_id ? "Approving..." : "Approve"}
-                  </button>
+                      {imageUrl ? (
+                        <img
+                          src={imageUrl}
+                          alt="Item"
+                          className="w-full h-44 object-cover rounded-lg shadow-sm"
+                        />
+                      ) : (
+                        <div className="w-full h-44 bg-gray-700 flex items-center justify-center rounded-lg text-gray-400">
+                          No Image
+                        </div>
+                      )}
+                    </div>
 
-                  <button
-                    onClick={() => handleReject(match.match_id)}
-                    disabled={processing === match.match_id}
-                    className={`px-4 py-2 rounded-lg text-white transition ${
-                      processing === match.match_id
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-red-600 hover:bg-red-700"
-                    }`}
-                  >
-                    {processing === match.match_id ? "Rejecting..." : "Reject"}
-                  </button>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      )}
+                    {/* Approve + Reject */}
+                    <div className="flex justify-around bg-gray-800 py-2 px-2 mt-3">
+                      <button
+                        onClick={() => handleApprove(match.match_id)}
+                        disabled={processing === match.match_id}
+                        className={`text-xs px-3 py-1 rounded-md font-semibold transition ${
+                          processing === match.match_id
+                            ? "bg-gray-500 cursor-not-allowed"
+                            : "bg-green-600 hover:bg-green-700"
+                        }`}
+                      >
+                        Approve
+                      </button>
 
-      {/*  Popup Modal for Item Details */}
+                      <button
+                        onClick={() => handleReject(match.match_id)}
+                        disabled={processing === match.match_id}
+                        className={`text-xs px-3 py-1 rounded-md font-semibold transition ${
+                          processing === match.match_id
+                            ? "bg-gray-500 cursor-not-allowed"
+                            : "bg-red-600 hover:bg-red-700"
+                        }`}
+                      >
+                        Reject
+                      </button>
+                    </div>
+
+                    {/* View Details Button */}
+                    <div className="bg-gray-800 py-2 flex justify-center border-t border-gray-700">
+                      <button
+                        onClick={() => setSelectedMatch(match)}
+                        className="text-xs px-4 py-1.5 rounded-md bg-blue-600 hover:bg-blue-700 font-semibold transition"
+                      >
+                        View Details
+                      </button>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Popup Modal */}
       {selectedMatch && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div
+          className="fixed inset-0 flex justify-center items-center z-50 bg-black/30 backdrop-blur-sm"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setSelectedMatch(null);
+          }}
+        >
           <div className="bg-white rounded-2xl shadow-lg w-11/12 md:w-2/3 p-6 relative overflow-y-auto max-h-[90vh] text-black">
             <button
               onClick={() => setSelectedMatch(null)}
@@ -151,7 +185,7 @@ const ClaimRequest = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Lost Item */}
               <div className="border rounded-xl p-4 bg-gray-50 text-black">
-                <h4 className="text-lg font-semibold mb-2 text-black border-b pb-1">
+                <h4 className="text-lg font-semibold mb-2 border-b pb-1">
                   Lost Item
                 </h4>
                 {selectedMatch.lost_item?.photo_url ? (
@@ -181,7 +215,7 @@ const ClaimRequest = () => {
 
               {/* Found Item */}
               <div className="border rounded-xl p-4 bg-gray-50 text-black">
-                <h4 className="text-lg font-semibold mb-2 text-black border-b pb-1">
+                <h4 className="text-lg font-semibold mb-2 border-b pb-1">
                   Found Item
                 </h4>
                 {selectedMatch.found_item?.photo_url ? (

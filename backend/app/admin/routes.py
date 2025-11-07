@@ -1,3 +1,5 @@
+#only "approve" on lost/found entries
+
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 from app.core.db import supabase
 
@@ -116,13 +118,15 @@ async def reject_claim(match_id: str):
 
     if not match:
         raise HTTPException(status_code=404, detail="Match not found")
-
+    
     # Set is_claimed back to False (not a string)
     supabase.table("matches_table").update({"is_claimed": True}).eq("match_id", match_id).execute()
+#Delete Match
+    supabase.table("matches_table").delete().eq("match_id", match_id).execute()
 
     #  Update both related items
     for entry_id in [match["lost_entry_id"], match["found_entry_id"]]:
-        supabase.table("items").update({"status": "Rejected"}).eq("entry_id", entry_id).execute()
+        supabase.table("items").update({"status": "Approved"}).eq("entry_id", entry_id).execute()
 
     return {"message": f" Match {match_id} rejected successfully."}
 
@@ -168,7 +172,7 @@ async def archived_items(admin=Depends(get_current_admin)):
 
 #==========Lost/Found Entries ======
 #  Lost and Found Dashboard is working
-# Only show items approved by the admin, excluding "Pending Approval" and "Rejected"
+# Only show items approved by the admin
 @admin_claims_router.get("/items")
 async def admin_items(admin=Depends(get_current_admin)):
     # Fetch only APPROVED or MATCHED items
