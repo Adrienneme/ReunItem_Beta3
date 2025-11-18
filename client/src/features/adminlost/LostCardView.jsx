@@ -1,97 +1,85 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import UserNavBar from '../../components/layout/UserNavBar';
-import FoundBaseForm from '../../components/forms/FoundBaseForm';
-import ButtonUI from '../../components/ui/ButtonUI';
+import React, { useState, useEffect } from "react";
+import AdminNavBar from "../../components/layout/AdminNavBar";
+import LostBaseForm from "../../components/forms/LostBaseForm";
+import { approveEntry } from "../../api/admin";
+import { getItem } from "../../api/items";
 
-const LostCardView = () => {
-  const [formData, setFormData] = useState({
-    item_name: '',
-    description: '',
-    photo: null,
-    pickup_location: '',
-  });
+export default function LostCardView() {
+  const [entry, setEntry] = useState({});
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+  const entry_id = localStorage.getItem("entry_id");
 
-  const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState('');
+  useEffect(() => {
+    let isMounted = true;
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    const fetchEntry = async () => {
+      try {
+        const response = await getItem(entry_id);
+        if (isMounted) setEntry(response);
+      } catch (error) {
+        if (isMounted) setError("No Entry Found.");
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
+    fetchEntry();
+    return () => {
+      isMounted = false;
+    };
+  }, [entry_id]);
+
+  const handleApprove = async (entryId) => {
+    if (!window.confirm("Are you sure you want to approve this item?")) return;
+    try {
+      const response = await approveEntry(entryId);
+      alert(response.message);
+    } catch (error) {
+      const errMsg = error.response?.data?.detail || "Failed to approve item.";
+      alert(errMsg);
+    }
   };
 
   const handleImageSelect = (file) => {
-    setFormData(prev => ({ ...prev, photo: file }));
-  };
-
-  const handlePickupChange = (val) => {
-    setFormData(prev => ({ ...prev, pickup_location: val }));
-  };
-
-  const handleGenerate = async () => {
-    if (!formData.photo) {
-      alert("Please select a photo first.");
+    // Disable changing photo if one already exists
+    if (entry.photo_url) {
+      alert("You cannot change the existing photo.");
       return;
     }
-
-    setLoading(true);
-
-    try {
-      const response = await APIforDescriptionGenerator(formData.photo);
-      setFormData(prev => ({
-        ...prev, description: response.description,
-      }));
-
-    } catch (error) {
-      const errMsg = error.response?.data?.detail || "Failed to generate description.";
-      alert(errMsg);
-    } finally {
-      setLoading(false);
-    }
+    setEntry((prev) => ({ ...prev, photo: file }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const { item_name, description, photo, pickup_location } = formData;
-    if (!item_name || !description || !photo || !pickup_location) {
-      alert('Please fill all inputs');
-      return;
-    }
-    console.log('Final submitted data:', formData);
-    // TODO: Submit inputs to backend
+  const handleChange = (field, value) => {
+    setEntry((prev) => ({ ...prev, [field]: value }));
   };
+
+  if (loading) return <div>Loading entry...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div>
-      <UserNavBar />
-      <div className="flex flex-col items-center">
-
-        {/* FoundBaseForm */}
-        <LostBaseForm 
-          title="Pending Submission"
-          status={null}
-          formData={formData}
-          onChange={handleChange}
-          onImageSelect={handleImageSelect}
-          loading={loading}
-          onGenerate={handleGenerate}
-          onPickupChange={handlePickupChange}
-        />
-
-        {/* Buttons */}
-        <div className="flex flex-row items-center mt-5 mb-5 gap-30">
-          <Link to="/user/home">
-            <ButtonUI variant="solid" color="neutral">
-                Reject
-            </ButtonUI>
-          </Link>
-          <ButtonUI variant="solid" color="success" onClick={handleSubmit}>
-               Accept
-          </ButtonUI>
+      <AdminNavBar />
+      <div className="flex flex-col items-center justify-center mx-5">
+        <div>
+          <LostBaseForm
+            title="Item Status:"
+            status={entry.status}
+            formData={entry}
+            existingPhoto={entry.photo_url}
+            onChange={handleChange}
+            onImageSelect={handleImageSelect}
+            disableImageUpload={!!entry.photo_url} // 👈 Added flag
+          />
         </div>
+
+        <button
+          onClick={() => handleApprove(entry.entry_id)}
+          className="mt-3 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+        >
+          Approve
+        </button>
       </div>
-      
     </div>
   );
-};
-export default LostCardView
+}

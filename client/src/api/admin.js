@@ -12,6 +12,7 @@ export const getPendingItems = async (filter = "All") => {
 };
 
 //  Approve Entry
+// test for approve function
 export const approveEntry = async (entryId) => {
   try {
     const response = await jsonClient.post(`/admin/approve_entry/${entryId}`, null, {
@@ -24,18 +25,42 @@ export const approveEntry = async (entryId) => {
   }
 };
 
-//  Reject Entry
+// test for reject function
 export const rejectEntry = async (entryId) => {
-  try {
-    const response = await jsonClient.post(`/admin/reject_entry/${entryId}`, null, {
-      headers: { role: 'admin' },
-    });
-    return response.data;
-  } catch (error) {
-    console.error(" Failed to reject entry:", error);
-    throw error;
-  }
+  const response = await jsonClient.post(
+    `/admin/reject_entry/${entryId}`,
+    {},
+    {
+      headers: {
+        role: 'admin',
+      },
+    }
+  );
+  return response.data;
 };
+
+// test for Delete Submission
+export const deleteSubmission = async (entryId) => {
+  const response = await jsonClient.delete(
+    `/admin/delete_entry/${entryId}`,
+    {
+      headers: {
+        role: 'admin',
+      },
+    }
+  );
+  return response.data;
+};
+
+//Fetch Claim
+export const admin_claims_pending = async () => {
+  const response = await jsonClient.get('/admin/claims/pending', {
+    headers: {
+      role: 'admin',  
+    },
+  });
+  return response.data;
+    }
 
 
 //============Pending CLAIM request===================

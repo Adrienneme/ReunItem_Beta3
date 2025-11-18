@@ -1,6 +1,6 @@
 // View all records except Rejected and Pending Approval
 import React, { useState, useEffect } from 'react';
-import UserNavBar from '../../../components/layout/UserNavBar';
+import AdminNavBar from '../../../components/layout/AdminNavBar';
 import Card from '../../../components/ui/Cards';
 import { admin_items } from '../../../api/admin';
 
@@ -37,7 +37,7 @@ function LostFoundRep() {
 
   return (
     <div>
-      <UserNavBar />
+      <AdminNavBar />
 
       {/* Loading / Empty / Cards Display */}
       {loading ? (
@@ -51,7 +51,8 @@ function LostFoundRep() {
               key={item.entry_id}
               name={item.item_name}
               imageUrl={item.photo_url}
-              linkTo="/admin/foundcardview"
+              status={item.status}
+              linkTo="/admin/foundentryadmin"
               stateData={item}
             />
           ))}

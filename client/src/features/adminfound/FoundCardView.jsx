@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import UserNavBar from "../../components/layout/UserNavBar";
+import AdminNavBar from "../../components/layout/AdminNavBar";
 import FoundBaseForm from "../../components/forms/FoundBaseForm";
 import { approveEntry, rejectEntry } from "../../api/admin";
 import { getItem } from "../../api/items";
@@ -60,6 +60,11 @@ export default function FoundViewPage() {
 };
 
   const handleImageSelect = (file) => {
+    // Disable changing photo if one already exists
+    if (entry.photo_url) {
+      alert("You cannot change the existing photo.");
+      return;
+    }
     setEntry((prev) => ({ ...prev, photo: file }));
   };
 
@@ -76,7 +81,7 @@ export default function FoundViewPage() {
 
   return (
     <div>
-      <UserNavBar />
+      <AdminNavBar />
       <div className="flex flex-col items-center justify-center mx-5">
         <div>
           <FoundBaseForm
@@ -88,7 +93,7 @@ export default function FoundViewPage() {
             onImageSelect={handleImageSelect}
             onPickupChange={handlePickupChange}
             disabled={true}
-
+            disableImageUpload={!!entry.photo_url} // 👈 Added flag
           />
         </div>
 
@@ -115,3 +120,4 @@ export default function FoundViewPage() {
     </div>
   );
 }
+

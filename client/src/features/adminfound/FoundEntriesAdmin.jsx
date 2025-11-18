@@ -1,96 +1,98 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import UserNavBar from '../../components/layout/UserNavBar';
-import FoundBaseForm from '../../components/forms/FoundBaseForm';
-import ButtonUI from '../../components/ui/ButtonUI';
+import React, { useState, useEffect } from "react";
+import AdminNavBar from "../../components/layout/AdminNavBar";
+import FoundBaseForm from "../../components/forms/FoundBaseForm";
+import { deleteSubmission } from "../../api/admin";
+import { getItem } from "../../api/items";
 
-const FoundEntriesView = () => {
-  const [formData, setFormData] = useState({
-    item_name: '',
-    description: '',
-    photo: null,
-    pickup_location: '',
-  });
+export default function FoundEntriesView() {
+  const [entry, setEntry] = useState({});
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+  const entry_id = localStorage.getItem("entry_id");
 
-  const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState('');
+  useEffect(() => {
+    let isMounted = true;
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
+    const fetchEntry = async () => {
+      try {
+        const response = await getItem(entry_id);
+        if (isMounted) setEntry(response);
+      } catch (error) {
+        if (isMounted) setError("No Entry Found.");
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
+    fetchEntry();
+    return () => {
+      isMounted = false;
+    };
+  }, [entry_id]);
+
+ const handleDelete = async (entryId) => {
+  if (!window.confirm("Are you sure you want to delete this submission?")) return;
+  try {
+    const response = await deleteSubmission(entryId);
+    alert(response.message);
+  } catch (error) {
+    const errMsg = error.response?.data?.detail || "Failed to delete submission.";
+    alert(errMsg);
+  }
+};
 
   const handleImageSelect = (file) => {
-    setFormData(prev => ({ ...prev, photo: file }));
+    // Disable changing photo if one already exists
+    if (entry.photo_url) {
+      alert("You cannot change the existing photo.");
+      return;
+    }
+    setEntry((prev) => ({ ...prev, photo: file }));
   };
 
   const handlePickupChange = (val) => {
-    setFormData(prev => ({ ...prev, pickup_location: val }));
+    setEntry((prev) => ({ ...prev, pickup_location: val }));
   };
 
-  const handleGenerate = async () => {
-    if (!formData.photo) {
-      alert("Please select a photo first.");
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      const response = await APIforDescriptionGenerator(formData.photo);
-      setFormData(prev => ({
-        ...prev, description: response.description,
-      }));
-
-    } catch (error) {
-      const errMsg = error.response?.data?.detail || "Failed to generate description.";
-      alert(errMsg);
-    } finally {
-      setLoading(false);
-    }
+  const handleChange = (field, value) => {
+    setEntry((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const { item_name, description, photo, pickup_location } = formData;
-    if (!item_name || !description || !photo || !pickup_location) {
-      alert('Please fill all inputs');
-      return;
-    }
-    console.log('Final submitted data:', formData);
-    // TODO: Submit inputs to backend
-  };
+  if (loading) return <div>Loading entry...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div>
-      <UserNavBar />
-      <div className="flex flex-col items-center">
-
-        {/* FoundBaseForm */}
-        <FoundBaseForm 
-          title="Lost&Found Reports"
-          status={null}
-          formData={formData}
-          onChange={handleChange}
-          onImageSelect={handleImageSelect}
-          loading={loading}
-          onGenerate={handleGenerate}
-          onPickupChange={handlePickupChange}
-        />
-
-        {/* Buttons */}
-        <div className="flex flex-row items-center mt-5 mb-5 gap-30">
-          <Link to="/user/home">
-            <ButtonUI variant="solid" color="neutral">
-              Delete Submission
-            </ButtonUI>
-          </Link>
-          <ButtonUI variant="solid" color="success" onClick={handleSubmit}>
-            Item Found
-          </ButtonUI>
+      <AdminNavBar />
+      <div className="flex flex-col items-center justify-center mx-5">
+        <div>
+          <FoundBaseForm
+            title="Item Status:"
+            status={entry.status}
+            formData={entry}
+            existingPhoto={entry.photo_url}
+            onChange={handleChange}
+            onImageSelect={handleImageSelect}
+            onPickupChange={handlePickupChange}
+            disableImageUpload={!!entry.photo_url} // 👈 Added flag
+          />
         </div>
+
+         <button
+          onClick="/admin/home"
+          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition mt-3"
+        >
+          Item Found
+        </button>
+        <button
+          onClick={() => handleDelete(entry.entryId)}
+          className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition mt-3"
+        >
+          Delete Submission
+        </button>
+        
       </div>
     </div>
   );
-};
-export default FoundEntriesView
+}
+

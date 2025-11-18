@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import UserNavBar from "../../../components/layout/UserNavBar";
+import AdminNavBar from '../../../components/layout/AdminNavBar';
 import {
   getAllMatches,
   approveClaim,
@@ -67,7 +67,7 @@ const ClaimRequest = () => {
   return (
     <div>
       <div className={selectedMatch ? "blur-sm pointer-events-none" : ""}>
-        <UserNavBar />
+       <AdminNavBar />
         <h2 className="flex justify-center text-lg font-semibold mt-10 text-white">
           Pending Claim Requests
         </h2>

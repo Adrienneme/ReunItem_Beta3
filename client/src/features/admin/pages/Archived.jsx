@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import UserNavBar from '../../../components/layout/UserNavBar';
-import Card from '../../../components/ui/Cards';
-import FilterDropdown from '../../../components/ui/Filters';
-import { archived_items } from '../../../api/admin'; 
+import React , { useState, useEffect } from 'react'
+import AdminNavBar from '../../../components/layout/AdminNavBar'
+import Card from '../../../components/ui/Cards'
+import FilterDropdown from '../../../components/ui/Filters'
+import { getPendingItems, archived_items } from '../../../api/admin'
 
 function LostFoundRep() {
   const [entries, setEntries] = useState([]);
@@ -44,7 +44,7 @@ function LostFoundRep() {
 
   return (
     <div>
-      <UserNavBar />
+      <AdminNavBar />
 
       {/* Filter Dropdown */}
       <div className="flex flex-wrap justify-center mt-10">
