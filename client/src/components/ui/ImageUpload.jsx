@@ -17,11 +17,16 @@ const ImageUpload = ({
   // When a new image is selected
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const previewURL = URL.createObjectURL(file);
-      setPreview(previewURL);
-      if (onImageSelect) onImageSelect(file);
+    if (!file.type.startsWith("image/")) {
+      alert("Please select a valid image file.");
+      setPreview(null);
+      e.target.value = null; 
+      return;
     }
+
+    const previewURL = URL.createObjectURL(file);
+    setPreview(previewURL);
+    if (onImageSelect) onImageSelect(file);
   };
 
   return (
@@ -37,7 +42,7 @@ const ImageUpload = ({
         {!disabled && (
           <input
             type="file"
-            accept=".jpg,.jpeg,.png"
+            accept="image/*"
             onChange={handleImageChange}
             className="absolute inset-0 opacity-0 cursor-pointer"
             required={required}
