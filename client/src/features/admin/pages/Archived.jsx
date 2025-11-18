@@ -2,59 +2,81 @@ import React , { useState, useEffect } from 'react'
 import AdminNavBar from '../../../components/layout/AdminNavBar'
 import Card from '../../../components/ui/Cards'
 import FilterDropdown from '../../../components/ui/Filters'
-import { getPendingItems } from '../../../api/admin'
+import { getPendingItems, archived_items } from '../../../api/admin'
 
-const Archived = () => {
+function LostFoundRep() {
   const [entries, setEntries] = useState([]);
-    const [loading, setLoading] = useState(true); //added######
-  
-    useEffect(() => {
-      const fetchEntries = async () => {
-        try {
-          //const response = await getPendingItems(); // API call to fetch entries
-          //setEntries(response); // Store response in state
-          const data = await getPendingItems(); // now returns data only
-          setEntries(data);
-          console.log(response);
-        } catch (error) {
-          const errMsg = error.response?.data?.detail || "No Pending Entries.";
-          console.error(error);
-          alert(errMsg); // Show user-friendly error
-        } finally {
-          setLoading(false); // Stop loading indicator
-        }
-      };
-  
-      fetchEntries();
-    }, []);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("All");
+
+  useEffect(() => {
+    const fetchEntries = async () => {
+      try {
+        const data = await archived_items(); 
+        console.log("Archived Items Data:", data);
+
+        // Safely combine items from lost and found groups
+        const lostClaimed = data.lost_grouped?.Claimed || [];
+        const lostRejected = data.lost_grouped?.Rejected || [];
+        const foundClaimed = data.found_grouped?.Claimed || [];
+        const foundRejected = data.found_grouped?.Rejected || [];
+
+        const combined = [...lostClaimed, ...lostRejected, ...foundClaimed, ...foundRejected];
+
+        console.log("Combined Entries:", combined);
+        setEntries(combined);
+      } catch (error) {
+        console.error("Error fetching archived items:", error);
+        alert("Failed to load items.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEntries();
+  }, []);
+
+  // Filter entries by status
+  const filteredEntries =
+    filter === "All"
+      ? entries
+      : entries.filter((item) => item.status === filter);
+
   return (
     <div>
-     <AdminNavBar />
-     {/* Filter Dropdown */}
-           <div className="flex flex-wrap justify-center mt-10">
-             <FilterDropdown 
-              label="Filter "
-              options={["All", "Returned", "Discarded", "Donated"]}
-             />
-           </div>
+      <AdminNavBar />
 
-     {/* Card Item */}
-     <div className="flex flex-wrap justify-center gap-10 mt-10">
-         {entries
-          .map((item) => (
+      {/* Filter Dropdown */}
+      <div className="flex flex-wrap justify-center mt-10">
+        <FilterDropdown
+          label="Filter"
+          options={["All", "Claimed", "Rejected"]}
+          value={filter}
+          onChange={setFilter}
+        />
+      </div>
+
+      {/* Loading or Empty States */}
+      {loading ? (
+        <p className="text-center mt-10 text-gray-500">Loading items...</p>
+      ) : filteredEntries.length === 0 ? (
+        <p className="text-center mt-10 text-gray-500">No items found.</p>
+      ) : (
+        <div className="flex flex-wrap justify-center gap-10 mt-10">
+          {filteredEntries.map((item, index) => (
             <Card
-              key={item.entry_id}           // Unique key for list rendering
-              name={item.item_name}         // Item name displayed on the card
-              imageUrl={item.photo_url}     // Item image
-              status={item.status}          // Current status of the item
-              linkTo="/admin/foundcardview" // Navigation link to detail page
-              stateData={item}              // Pass full item data for detail page
+              key={item.entry_id || item.id || index} // fallback to index if missing
+              name={item.item_name || "Unnamed Item"}
+              imageUrl={item.photo_url || "/placeholder.png"} // fallback image
+              status={item.status || "Unknown"}
+              linkTo="/admin/foundcardview"
+              stateData={item}
             />
           ))}
-
-      </div>
+        </div>
+      )}
     </div>
-  )
+  );
 }
 
-export default Archived
+export default LostFoundRep;

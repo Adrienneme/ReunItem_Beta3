@@ -21,8 +21,11 @@ const Cards = ({
     if (pct >= 40) return "text-yellow-600";
     if (pct >= 20) return "text-orange-600";
     return "text-red-600";
-  };
+  
+    
 
+ 
+  };
   const renderBottom = () => {
     if (percentage !== undefined) return (
       <div className={`font-semibold ${getPercentageColor(percentage)}`}>
@@ -30,7 +33,7 @@ const Cards = ({
       </div>
     );
     if (label) return (
-      <div className={`px-3 py-1 rounded-full text-white font-semibold ${label === "Lost" ? "bg-red-500" : "bg-green-500"}`}>
+      <div className={`px-3 py-1 rounded-full text-white font-semibold ${label === "lost" ? "bg-red-500" : "bg-green-500"}`}>
         {label}
       </div>
     );

@@ -1,26 +1,28 @@
 import jsonClient from "./jsonClient";
 
-export const getPendingItems = async () => {
+//========= Pending Submissions =======
+export const getPendingItems = async (filter = "All") => {
   const response = await jsonClient.get('/admin/uploads/pending', {
+    params: { item_type: filter }, 
     headers: {
-      role: 'admin',  
+      role: 'admin',
     },
   });
   return response.data;
 };
 
+//  Approve Entry
 // test for approve function
 export const approveEntry = async (entryId) => {
-  const response = await jsonClient.post(
-    `/admin/approve_entry/${entryId}`,
-    {}, 
-    {
-      headers: {
-        role: 'admin', 
-      },
-    }
-  );
-  return response.data;
+  try {
+    const response = await jsonClient.post(`/admin/approve_entry/${entryId}`, null, {
+      headers: { role: 'admin' },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(" Failed to approve entry:", error);
+    throw error;
+  }
 };
 
 // test for reject function
@@ -60,42 +62,66 @@ export const admin_claims_pending = async () => {
   return response.data;
     }
 
-// Approve claim request
-export const approveClaim = async (entry_id) => {
-  const token = localStorage.getItem("token"); // adjust if you use a different storage key
-  const response = await jsonClient.post(
-    `/admin/approve_claim/${entry_id}`,
-    {},
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-  return response.data;
-};
-// Reject claim request
-export const rejectClaim = async (entry_id) => {
-  const token = localStorage.getItem("token");
-  const response = await jsonClient.post(
-    `/admin/reject_claim/${entry_id}`,
-    {},
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-  return response.data;
+
+//============Pending CLAIM request===================
+//  Fetch all pending matches
+export const getAllMatches = async () => {
+  try {
+    const response = await jsonClient.get("/admin/matches");
+    return response.data.matches;
+  } catch (error) {
+    console.error("Error fetching matches:", error);
+    throw error;
+  }
 };
 
+//  Approve claim request
+export const approveClaim = async (match_id) => {
+  try {
+    const response = await jsonClient.post(`/admin/approve_claim/${match_id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error approving claim:", error);
+    throw error;
+  }
+};
 
-//Fetch Lost and FOund Dashboard
+//  Reject claim request
+export const rejectClaim = async (match_id) => {
+  try {
+    const response = await jsonClient.post(`/admin/reject_claim/${match_id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error rejecting claim:", error);
+    throw error;
+  }
+};
+
+////////
+
+//========Lost/Found Entries ======
+//Fetch Approved and Match
 export const admin_items = async () => {
-   const response = await jsonClient.get('/admin/items', {
-    headers: {
-      role: 'admin',  
-    },
-  });
-  return response.data;
-    }
+  try {
+    const { data } = await jsonClient.get('/admin/items', {
+      headers: { role: 'admin' },
+    });
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch admin items:", error);
+    throw error;
+  }
+};
+
+////Archived
+export const archived_items = async () => {
+  try {
+    const { data } = await jsonClient.get('/admin/archived_items', {
+      headers: { role: 'admin' },
+    });
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch admin items:", error);
+    throw error;
+  }
+};
