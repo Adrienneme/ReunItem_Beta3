@@ -1,22 +1,22 @@
-
-//Test function backend, update backend reject and accept claim working
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import AdminNavBar from '../../../components/layout/AdminNavBar';
-import Cards from '../../../components/ui/Cards';
-import { admin_claims_pending, approveClaim, rejectClaim } from '../../../api/admin'; 
+import {
+  getAllMatches,
+  approveClaim,
+  rejectClaim,
+} from "../../../api/admin";
 
 const ClaimRequest = () => {
   const [pendingClaims, setPendingClaims] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [processing, setProcessing] = useState(null); // track which claim is being processed
+  const [processing, setProcessing] = useState(null);
+  const [selectedMatch, setSelectedMatch] = useState(null);
 
-  // Fetch pending claims
   useEffect(() => {
     const fetchClaims = async () => {
       try {
-        const data = await admin_claims_pending();
-        const pendingItems = data.claims.map((claim) => claim.pending_item);
-        setPendingClaims(pendingItems);
+        const matches = await getAllMatches();
+        setPendingClaims(matches || []);
       } catch (error) {
         console.error("Error fetching pending claims:", error);
         alert("Failed to load pending claims.");
@@ -28,14 +28,16 @@ const ClaimRequest = () => {
     fetchClaims();
   }, []);
 
-  // Approve claim
-  const handleApprove = async (entryId) => {
+  const handleApprove = async (matchId) => {
     if (!window.confirm("Approve this claim?")) return;
     try {
-      setProcessing(entryId);
-      const response = await approveClaim(entryId);
+      setProcessing(matchId);
+      const response = await approveClaim(matchId);
       alert(response.message);
-      setPendingClaims((prev) => prev.filter((item) => item.entry_id !== entryId));
+      setPendingClaims((prev) =>
+        prev.filter((item) => item.match_id !== matchId)
+      );
+      setSelectedMatch(null);
     } catch (error) {
       console.error("Error approving claim:", error);
       alert(error.response?.data?.detail || "Failed to approve claim.");
@@ -44,14 +46,16 @@ const ClaimRequest = () => {
     }
   };
 
-  // Reject claim
-  const handleReject = async (entryId) => {
+  const handleReject = async (matchId) => {
     if (!window.confirm("Reject this claim?")) return;
     try {
-      setProcessing(entryId);
-      const response = await rejectClaim(entryId);
+      setProcessing(matchId);
+      const response = await rejectClaim(matchId);
       alert(response.message);
-      setPendingClaims((prev) => prev.filter((item) => item.entry_id !== entryId));
+      setPendingClaims((prev) =>
+        prev.filter((item) => item.match_id !== matchId)
+      );
+      setSelectedMatch(null);
     } catch (error) {
       console.error("Error rejecting claim:", error);
       alert(error.response?.data?.detail || "Failed to reject claim.");
@@ -62,57 +66,202 @@ const ClaimRequest = () => {
 
   return (
     <div>
-      <AdminNavBar />
-      <h2 className="flex justify-center text-lg font-semibold mt-10">
-        Pending Claim Requests
-      </h2>
+      <div className={selectedMatch ? "blur-sm pointer-events-none" : ""}>
+       <AdminNavBar />
+        <h2 className="flex justify-center text-lg font-semibold mt-10 text-white">
+          Pending Claim Requests
+        </h2>
 
-      {loading ? (
-        <p className="text-center mt-10">Loading pending claims...</p>
-      ) : (
-        <div className="flex flex-wrap justify-center gap-10 mt-10">
-          {pendingClaims.length === 0 ? (
-            <p className="text-center text-gray-500">No pending claims found.</p>
-          ) : (
-            pendingClaims.map((item) => (
-              <div key={item.entry_id} className="flex flex-col items-center">
-                <Cards
-                  name={item.item_name}
-                  imageUrl={item.photo_url}
-                  status={item.status}
-                  linkTo="/admin/foundcardview"
-                  stateData={item}
-                />
+        {loading ? (
+          <p className="text-center mt-10 text-gray-400">
+            Loading pending claims...
+          </p>
+        ) : (
+          <div className="flex flex-wrap justify-center gap-10 mt-10">
+            {pendingClaims.length === 0 ? (
+              <p className="text-center text-gray-500">
+                No pending claims found.
+              </p>
+            ) : (
+              pendingClaims.map((match) => {
+                const imageUrl =
+                  match.lost_item?.photo_url || match.found_item?.photo_url;
+                const itemName =
+                  match.lost_item?.item_name ||
+                  match.found_item?.item_name ||
+                  "Unnamed Item";
 
-                {/* Buttons */}
-                <div className="flex gap-3 mt-3">
-                  <button
-                    onClick={() => handleApprove(item.entry_id)}
-                    disabled={processing === item.entry_id}
-                    className={`px-4 py-2 rounded-lg text-white transition ${
-                      processing === item.entry_id
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-black hover:bg-gray-800"
-                    }`}
+                return (
+                  <div
+                    key={match.match_id}
+                    className="w-64 bg-gray-900 text-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-transform hover:scale-105 flex flex-col justify-between"
                   >
-                    {processing === item.entry_id ? "Processing..." : "Approve"}
-                  </button>
+                    {/* Item Info (Top) */}
+                    <div className="flex flex-col items-center px-3 pt-4 text-center">
+                      <h3 className="font-semibold text-sm mb-1 line-clamp-2 text-white">
+                        {itemName}
+                      </h3>
+                      <p className="text-xs text-gray-400 mb-3 break-words">
+                        ID: {match.match_id}
+                      </p>
 
-                  <button
-                    onClick={() => handleReject(item.entry_id)}
-                    disabled={processing === item.entry_id}
-                    className={`px-4 py-2 rounded-lg text-white transition ${
-                      processing === item.entry_id
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-red-600 hover:bg-red-700"
-                    }`}
-                  >
-                    {processing === item.entry_id ? "Processing..." : "Reject"}
-                  </button>
-                </div>
+                      {imageUrl ? (
+                        <img
+                          src={imageUrl}
+                          alt="Item"
+                          className="w-full h-44 object-cover rounded-lg shadow-sm"
+                        />
+                      ) : (
+                        <div className="w-full h-44 bg-gray-700 flex items-center justify-center rounded-lg text-gray-400">
+                          No Image
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Approve + Reject */}
+                    <div className="flex justify-around bg-gray-800 py-2 px-2 mt-3">
+                      <button
+                        onClick={() => handleApprove(match.match_id)}
+                        disabled={processing === match.match_id}
+                        className={`text-xs px-3 py-1 rounded-md font-semibold transition ${
+                          processing === match.match_id
+                            ? "bg-gray-500 cursor-not-allowed"
+                            : "bg-green-600 hover:bg-green-700"
+                        }`}
+                      >
+                        Approve
+                      </button>
+
+                      <button
+                        onClick={() => handleReject(match.match_id)}
+                        disabled={processing === match.match_id}
+                        className={`text-xs px-3 py-1 rounded-md font-semibold transition ${
+                          processing === match.match_id
+                            ? "bg-gray-500 cursor-not-allowed"
+                            : "bg-red-600 hover:bg-red-700"
+                        }`}
+                      >
+                        Reject
+                      </button>
+                    </div>
+
+                    {/* View Details Button */}
+                    <div className="bg-gray-800 py-2 flex justify-center border-t border-gray-700">
+                      <button
+                        onClick={() => setSelectedMatch(match)}
+                        className="text-xs px-4 py-1.5 rounded-md bg-blue-600 hover:bg-blue-700 font-semibold transition"
+                      >
+                        View Details
+                      </button>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Popup Modal */}
+      {selectedMatch && (
+        <div
+          className="fixed inset-0 flex justify-center items-center z-50 bg-black/30 backdrop-blur-sm"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setSelectedMatch(null);
+          }}
+        >
+          <div className="bg-white rounded-2xl shadow-lg w-11/12 md:w-2/3 p-6 relative overflow-y-auto max-h-[90vh] text-black">
+            <button
+              onClick={() => setSelectedMatch(null)}
+              className="absolute top-3 right-3 text-gray-600 hover:text-black text-xl"
+            >
+              ✕
+            </button>
+
+            <h3 className="text-center text-xl font-semibold mb-5 text-black">
+              Match Details
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Lost Item */}
+              <div className="border rounded-xl p-4 bg-gray-50 text-black">
+                <h4 className="text-lg font-semibold mb-2 border-b pb-1">
+                  Lost Item
+                </h4>
+                {selectedMatch.lost_item?.photo_url ? (
+                  <img
+                    src={selectedMatch.lost_item.photo_url}
+                    alt="Lost item"
+                    className="w-full h-48 object-cover rounded-lg mb-3"
+                  />
+                ) : (
+                  <div className="w-full h-48 bg-gray-200 flex items-center justify-center rounded-lg mb-3">
+                    <span className="text-gray-500">No Image</span>
+                  </div>
+                )}
+                <p>
+                  <strong>Name:</strong>{" "}
+                  {selectedMatch.lost_item?.item_name || "N/A"}
+                </p>
+                <p>
+                  <strong>Description:</strong>{" "}
+                  {selectedMatch.lost_item?.description || "N/A"}
+                </p>
+                <p>
+                  <strong>Pickup Location:</strong>{" "}
+                  {selectedMatch.lost_item?.pickup_location || "N/A"}
+                </p>
               </div>
-            ))
-          )}
+
+              {/* Found Item */}
+              <div className="border rounded-xl p-4 bg-gray-50 text-black">
+                <h4 className="text-lg font-semibold mb-2 border-b pb-1">
+                  Found Item
+                </h4>
+                {selectedMatch.found_item?.photo_url ? (
+                  <img
+                    src={selectedMatch.found_item.photo_url}
+                    alt="Found item"
+                    className="w-full h-48 object-cover rounded-lg mb-3"
+                  />
+                ) : (
+                  <div className="w-full h-48 bg-gray-200 flex items-center justify-center rounded-lg mb-3">
+                    <span className="text-gray-500">No Image</span>
+                  </div>
+                )}
+                <p>
+                  <strong>Name:</strong>{" "}
+                  {selectedMatch.found_item?.item_name || "N/A"}
+                </p>
+                <p>
+                  <strong>Description:</strong>{" "}
+                  {selectedMatch.found_item?.description || "N/A"}
+                </p>
+                <p>
+                  <strong>Pickup Location:</strong>{" "}
+                  {selectedMatch.found_item?.pickup_location || "N/A"}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex justify-center mt-6 gap-4">
+              <button
+                onClick={() => handleApprove(selectedMatch.match_id)}
+                disabled={processing === selectedMatch.match_id}
+                className="px-5 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
+              >
+                Approve
+              </button>
+
+              <button
+                onClick={() => handleReject(selectedMatch.match_id)}
+                disabled={processing === selectedMatch.match_id}
+                className="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+              >
+                Reject
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

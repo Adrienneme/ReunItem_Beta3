@@ -1,20 +1,17 @@
-
-//Testing purpose: View all records except Rejected and Pending Approval
+// View all records except Rejected and Pending Approval
 import React, { useState, useEffect } from 'react';
 import AdminNavBar from '../../../components/layout/AdminNavBar';
 import Card from '../../../components/ui/Cards';
-import FilterDropdown from '../../../components/ui/Filters';
-import { admin_items } from '../../../api/admin'; 
+import { admin_items } from '../../../api/admin';
 
 function LostFoundRep() {
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("All");
 
   useEffect(() => {
     const fetchEntries = async () => {
       try {
-        const data = await admin_items(); 
+        const data = await admin_items();
         console.log("Fetched Lost/Found Items:", data);
 
         // Combine both lost and found items into one array
@@ -38,34 +35,18 @@ function LostFoundRep() {
     fetchEntries();
   }, []);
 
-  //filtering by status
-  const filteredEntries =
-    filter === "All"
-      ? entries
-      : entries.filter((item) => item.status === filter);
-
   return (
     <div>
       <AdminNavBar />
 
-      {/* Filter Dropdown */}
-      <div className="flex flex-wrap justify-center mt-10">
-        <FilterDropdown
-          label="Filter"
-          options={["All", "Approved", "Matched"]}
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-        />
-      </div>
-
-      {/* Loading Indicator */}
+      {/* Loading / Empty / Cards Display */}
       {loading ? (
         <p className="text-center mt-10 text-gray-500">Loading items...</p>
-      ) : filteredEntries.length === 0 ? (
+      ) : entries.length === 0 ? (
         <p className="text-center mt-10 text-gray-500">No items found.</p>
       ) : (
         <div className="flex flex-wrap justify-center gap-10 mt-10">
-          {filteredEntries.map((item) => (
+          {entries.map((item) => (
             <Card
               key={item.entry_id}
               name={item.item_name}
