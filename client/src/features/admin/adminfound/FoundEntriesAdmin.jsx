@@ -1,31 +1,44 @@
 import React, { useState, useEffect } from "react";
 import AdminNavBar from "../../../components/layout/AdminNavBar";
 import FoundBaseForm from "../../../components/forms/FoundBaseForm";
-import { deleteSubmission } from "../../../api/admin";
-import { getItem } from "../../../api/items";
-import { useLocation } from "react-router-dom";
-import { approveClaimRequest } from '../../../api/admin';
+
+import { deleteSubmission } from "../../api/admin";
+import { getItem } from "../../api/items";
+import { useApproveClaim } from '../../hooks/useApproveClaim';
+
 
 export default function FoundEntriesView() {
-  const [entry, setEntry] = useState({});
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
-  const location = useLocation();
-  const { entry_id } = location.state;
+  const { entry_id: paramEntryId } = useParams(); // URL param
+  const navigate = useNavigate();
+  const savedEntryId = localStorage.getItem("entry_id"); // fallback
+  const entry_id = paramEntryId || savedEntryId;
 
+  const [entry, setEntry] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const approveClaim = useApproveClaim();
+
+  // Fetch entry details
   useEffect(() => {
     let isMounted = true;
+
+    if (!entry_id) {
+      setError("No entry ID provided.");
+      setLoading(false);
+      return;
+    }
 
     const fetchEntry = async () => {
       try {
         const response = await getItem(entry_id);
         if (isMounted) setEntry(response);
-      } catch (error) {
-        if (isMounted) setError("No Entry Found.");
+      } catch (err) {
+        if (isMounted) setError("No entry found.");
+        console.error(err);
       } finally {
         if (isMounted) setLoading(false);
       }
-      console.log("ITEM DATA:", entry);
     };
 
     fetchEntry();
@@ -34,38 +47,20 @@ export default function FoundEntriesView() {
     };
   }, [entry_id]);
 
-  const handleDelete = async (entryId) => {
+  // Delete entry
+  const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this submission?")) return;
+
     try {
-      const response = await deleteSubmission(entryId);
+      const response = await deleteSubmission(id);
       alert(response.message);
-    } catch (error) {
-      const errMsg = error.response?.data?.detail || "Failed to delete submission.";
-      alert(errMsg);
+      navigate("/admin/home"); // redirect after deletion
+    } catch (err) {
+      alert(err.response?.data?.detail || "Failed to delete submission.");
     }
   };
 
-  // ❗ REMOVED the invalid console.log here
-
-  const handleClaim = async (match_id) => {
-    if (!window.confirm("Are you sure you want to approve this match and finalize the claim? This action cannot be undone.")) {
-      return;
-    }
-
-    try {
-      const response = await approveClaimRequest(match_id);
-      alert(response.message || `Match ${match_id} approved and items claimed successfully.`);
-    } catch (error) {
-      const errMsg =
-        error.response?.data?.detail ||
-        error.response?.data?.message ||
-        "Failed to process the claim. Please check network and permissions.";
-
-      alert(`Claim Failed: ${errMsg}`);
-      console.error("Claim approval failed:", error);
-    }
-  };
-
+  // Image upload
   const handleImageSelect = (file) => {
     if (entry.photo_url) {
       alert("You cannot change the existing photo.");
@@ -74,10 +69,12 @@ export default function FoundEntriesView() {
     setEntry((prev) => ({ ...prev, photo: file }));
   };
 
+  // Pickup location
   const handlePickupChange = (val) => {
     setEntry((prev) => ({ ...prev, pickup_location: val }));
   };
 
+  // Generic field update
   const handleChange = (field, value) => {
     setEntry((prev) => ({ ...prev, [field]: value }));
   };
@@ -89,41 +86,37 @@ export default function FoundEntriesView() {
     <div className="mb-6">
       <AdminNavBar />
       <div className="flex flex-col items-center justify-center mx-5">
-        <div>
-          <FoundBaseForm
-            label={entry.type}
-            formData={entry}
-            existingPhoto={entry.photo_url}
-            onChange={handleChange}
-            onImageSelect={handleImageSelect}
-            onPickupChange={handlePickupChange}
-            disableImageUpload={!!entry.photo_url}
-          />
-        </div>
+        <FoundBaseForm
+          label={entry.type || "Item"}  // Restore proper label
+          formData={entry}
+          existingPhoto={entry.photo_url}
+          onChange={handleChange}
+          onImageSelect={handleImageSelect}
+          onPickupChange={handlePickupChange}
+          disableImageUpload={!!entry.photo_url}
+        />
 
         <div className="flex flex-row gap-10 mt-3">
-
-        <button
-          onClick={() => {
-            // Try both possible fields
-            const matchId = entry.matchId || entry.match_id;
-
-            if (!matchId) {
-              alert("Cannot approve claim: match ID is missing.");
-              console.error("Missing match ID in entry:", entry);
-              return;
-            }
-
-            console.log("match_id sent to handleClaim:", matchId);
-            handleClaim(matchId);
-          }}
-          className="mt-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition h-10">
+          <button
+            onClick={() => {
+              if (!window.confirm("Mark this item as Claimed?")) return;
+              const matchId = entry.matchId || entry.match_id;
+              if (!matchId) {
+                alert("Match ID missing!");
+                return;
+              }
+              approveClaim.mutate(matchId);
+            }}
+            className="mt-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition h-10"
+          >
             Item Claimed
-          </button> 
+          </button>
+
           <button
             onClick={() => handleDelete(entry.entryId)}
-            className="mt-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition h-10">
-            Delete Entry
+            className="mt-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition h-10"
+          >
+            Delete Submission
           </button>
         </div>
       </div>
