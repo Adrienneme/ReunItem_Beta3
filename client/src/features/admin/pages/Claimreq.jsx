@@ -65,7 +65,7 @@ const ClaimRequest = () => {
   };
 
   return (
-    <div>
+    <div className="mb-6">
       <div className={selectedMatch ? "blur-sm pointer-events-none" : ""}>
        <AdminNavBar />
         <h2 className="flex justify-center text-lg font-semibold mt-10 text-white">

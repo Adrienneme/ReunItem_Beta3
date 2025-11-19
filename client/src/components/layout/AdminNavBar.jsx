@@ -6,7 +6,7 @@ import logo from "../../assets/icons/logo.png";
 import usericon from "../../assets/icons/usericon.png"
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-
+import search from "../../assets/icons/search.png";
 
 const AdminNavBar = ({ name = "Username", profile = usericon }) => {
   const user = JSON.parse(localStorage.getItem("user" || {}))
@@ -53,19 +53,30 @@ const AdminNavBar = ({ name = "Username", profile = usericon }) => {
       <div className="flex justify-around sm:justify-end items-center space-x-4 sm:space-x-10 mt-3 sm:mt-0 w-full sm:w-auto">
         <Link
           to="/admin/home"
-          className="flex flex-col items-center hover:text-yellow-300 transition-colors duration-200"
-        >
+          className="flex flex-col items-center hover:text-yellow-300 transition-colors duration-200">
           <img src={home} alt="Home" className="w-6 h-6 sm:w-8 sm:h-8" />
           <span className="text-sm sm:text-base mt-0">Home</span>
         </Link>
 
         <Link
           to="/admin/adminsettings"
-          className="flex flex-col items-center hover:text-yellow-300 transition-colors duration-200"
-        >
+          className="flex flex-col items-center hover:text-yellow-300 transition-colors duration-200">
           <img src={settings} alt="Settings" className="w-6 h-6 sm:w-8 sm:h-8" />
           <span className="text-sm sm:text-base mt-0">Settings</span>
         </Link>
+        <Link
+          to="/admin/usermanagement"
+          className="flex flex-col items-center hover:text-yellow-300 transition-colors duration-200">
+          <img src={usericon} alt="User Management" className="w-6 h-6 sm:w-8 sm:h-8 black-100" />
+          <span className="text-sm sm:text-base mt-0"> User Manage </span>
+        </Link>
+        <Link
+          to="/admin/auditlog"
+          className="flex flex-col items-center hover:text-yellow-300 transition-colors duration-200">
+          <img src={search} alt="Audit Logs" className="w-6 h-6 sm:w-8 sm:h-8" />
+          <span className="text-sm sm:text-base mt-0"> Audit Logs </span>
+        </Link>
+
       </div>
     </nav>
   );

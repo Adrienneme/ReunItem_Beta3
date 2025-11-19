@@ -1,7 +1,7 @@
 // View all records except Rejected and Pending Approval
 import React, { useState, useEffect } from 'react';
 import AdminNavBar from '../../../components/layout/AdminNavBar';
-import Card2 from '../../../components/ui/Card2';
+import Cards2 from '../../../components/ui/Card2';
 import { admin_items } from '../../../api/admin';
 
 function LostFoundRep() {
@@ -36,7 +36,7 @@ function LostFoundRep() {
   }, []);
 
   return (
-    <div>
+    <div className="mb-6">
       <AdminNavBar />
 
       {/* Loading / Empty / Cards Display */}
@@ -47,11 +47,11 @@ function LostFoundRep() {
       ) : (
         <div className="flex flex-wrap justify-center gap-10 mt-10">
           {entries.map((item) => (
-            <Card2
+            <Cards2
               key={item.entry_id}
               name={item.item_name}
               imageUrl={item.photo_url}
-              status={item.status}
+              label={item.type}
               linkTo="/admin/foundentryadmin"
               stateData={item}
             />

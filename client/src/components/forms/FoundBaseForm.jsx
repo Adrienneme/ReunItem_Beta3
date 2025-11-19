@@ -10,6 +10,7 @@ import PercentageBadge from '../ui/PercentageBadge';
 const FoundBaseForm = ({
   title, //title of page if meron
   status = null, //Current status of the item (e.g., "Pending Admin Approval")
+  label = null, //Item type label (e.g., "Found" or "Lost")
   formData, //Object containing all form field values: { item_name, description, photo, pickup_location... }
   onChange, /// Function called when text inputs change; receives event
   existingPhoto, //for display of already uploaded or submitted photo

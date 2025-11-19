@@ -43,7 +43,7 @@ function LostFoundRep() {
       : entries.filter((item) => item.status === filter);
 
   return (
-    <div>
+    <div className="mb-6">
       <AdminNavBar />
 
       {/* Filter Dropdown */}

@@ -30,7 +30,7 @@ function Pendingsub() {
   }, [filter]);
 
   return (
-    <div>
+    <div className="mb-6">
       <AdminNavBar />
       {/* Filter Dropdown */}
       <div className="flex flex-wrap justify-center mt-10">
