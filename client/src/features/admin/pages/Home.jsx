@@ -6,11 +6,11 @@ const AdminHome = ({
    name = "Admin"
   }) => {
   return (
-    <div>
+    <div className="mb-6">
 
       <AdminNavBar name = {name} />
       
-      <div className='flex flex-row items-center justify-center mt-60 gap-20'>
+      <div className='flex flex-row items-center justify-center mt-45 gap-20'>
         <HomeButton  to="/admin/pendingsubmissions" color='red'>
           Pending Submissions
         </HomeButton>

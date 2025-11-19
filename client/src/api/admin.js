@@ -63,6 +63,8 @@ export const admin_claims_pending = async () => {
     }
 
 
+
+
 //============Pending CLAIM request===================
 //  Fetch all pending matches
 export const getAllMatches = async () => {
@@ -123,5 +125,23 @@ export const archived_items = async () => {
   } catch (error) {
     console.error("Failed to fetch admin items:", error);
     throw error;
+  }
+};
+
+
+
+//Claim status update (lost and found)
+// Example API call function using jsonClient (like Axios)
+export const approveClaimRequest = async (match_id) => {
+  try {
+    // This maps directly to your @admin_claims_router.post("/approve_claim/{match_id}") endpoint
+    const response = await jsonClient.post(`/admin/approve_claim/${match_id}`, null, {
+      headers: { role: 'admin' },
+    });
+    return response.data;
+  } catch (error) {
+    // This throws the error object that is caught by the handleClaim function
+    console.error(" Failed to approve claim request:", error);
+    throw error; 
   }
 };
