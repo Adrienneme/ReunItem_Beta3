@@ -12,7 +12,7 @@ router = APIRouter(
     tags=["Admin Backup Restore"]
 )
 
-# Reuse admin authentication
+# ------------------- ADMIN CHECK -------------------
 def get_current_admin(current_user=Depends(UserModels.get_current_active_user)):
     if current_user.role.lower() != "admin":
         raise HTTPException(
@@ -22,7 +22,7 @@ def get_current_admin(current_user=Depends(UserModels.get_current_active_user)):
     return current_user
 
 
-# =================== BACKUP ALL TABLES ========
+# =================== BACKUP ALL TABLES =====================
 @router.get("/backup_all")
 async def backup_all_tables(admin=Depends(get_current_admin)):
     try:
@@ -34,10 +34,9 @@ async def backup_all_tables(admin=Depends(get_current_admin)):
             res = supabase.table(table).select("*").execute()
             backup_data[table] = res.data or []
 
-        # dict assignment syntax
         backup_data["backup_generated_at"] = datetime.now(pytz.UTC).isoformat()
 
-        # Convert to JSON
+        # Convert to JSON file in memory
         buffer = BytesIO()
         buffer.write(json.dumps(backup_data, indent=4).encode("utf-8"))
         buffer.seek(0)
@@ -56,14 +55,14 @@ async def backup_all_tables(admin=Depends(get_current_admin)):
         raise HTTPException(status_code=500, detail="Backup failed.")
 
 
-# =================== RESTORE ALL TABLES ===============
+# =================== RESTORE ALL TABLES =====================
 @router.post("/restore_all")
 async def restore_all_tables(
     admin=Depends(get_current_admin),
     backup_file: UploadFile = File(...)
 ):
     try:
-        # json.loads (you typed json.leadfs)
+        # Load backup JSON
         data = json.loads((await backup_file.read()).decode("utf-8"))
 
         tables = ["items", "matches_table"]
@@ -71,10 +70,9 @@ async def restore_all_tables(
         for table in tables:
             if table in data:
 
-                #  rows list
                 rows = []
 
-                # Clean IDs before insertion
+                # Clean IDs before re-inserting
                 for row in data[table]:
                     row.pop("id", None)
                     rows.append(row)
@@ -82,7 +80,7 @@ async def restore_all_tables(
                 # Delete old data
                 supabase.table(table).delete().neq("id", 0).execute()
 
-                # Insert new rows
+                # Insert rows
                 for row in rows:
                     supabase.table(table).insert(row).execute()
 
@@ -90,4 +88,4 @@ async def restore_all_tables(
 
     except Exception as e:
         print("Restore error:", e)
-        raise HTTPException(status_code=500, detail="Restore failed.")}
+        raise HTTPException(status_code=500, detail="Restore failed.")  
