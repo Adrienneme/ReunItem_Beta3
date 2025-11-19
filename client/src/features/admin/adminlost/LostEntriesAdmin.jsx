@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import AdminNavBar from "../../../components/layout/AdminNavBar";
-import LostBaseForm from "../../../components/forms/FoundBaseForm";
+import LostBaseForm from "../../../components/forms/LostBaseForm";
 import { deleteSubmission } from "../../../api/admin";
 import { getItem } from "../../../api/items";
 import { useLocation } from "react-router-dom";

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import AdminNavBar from "../../components/layout/AdminNavBar";
-import FoundBaseForm from "../../components/forms/FoundBaseForm";
-import { approveEntry, rejectEntry } from "../../api/admin";
-import { getItem } from "../../api/items";
+import AdminNavBar from "../../../components/layout/AdminNavBar";
+import FoundBaseForm from "../../../components/forms/FoundBaseForm";
+import { approveEntry, rejectEntry } from "../../../api/admin";
+import { getItem } from "../../../api/items";
 import { useLocation } from "react-router-dom";
 
 export default function FoundViewPage() {
