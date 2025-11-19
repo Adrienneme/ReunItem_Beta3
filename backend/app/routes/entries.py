@@ -6,22 +6,18 @@ from typing import List
 
 router = APIRouter(prefix="/items")
 
-@router.post("/report", response_model=ItemSchemas.ItemResponse)
+@router.post("/create", response_model=ItemSchemas.ItemResponse)
 async def create_item_route(
     item_name: str = Form(...),
     description: str = Form(...),
     pickup_location: Optional[str] = Form(None),
-    type: str = Form(...),  # matches the frontend key exactly
+    type: str = Form(...), 
     status: str = Form("Pending Approval"),
     photo: Optional[UploadFile] = File(None),
     current_user=Depends(UserModels.get_current_active_user)
 ):
-
-    # Ensure pickup_location is not None
     if not pickup_location:
         pickup_location = "Not Specified"
-
-    # Validate type against Enum
     try:
         item_type = EntryType(type)
     except ValueError:
@@ -34,8 +30,8 @@ async def create_item_route(
         type=item_type,
         status=status
     )
-
     return ItemModels.create_item(item_data, str(current_user.user_id), photo)
+
 
 @router.post('/generate')
 async def generate_desc_router(
@@ -56,7 +52,7 @@ async def get_items_route(current_user = Depends(UserModels.get_current_active_u
   
 
 @router.get("/detail/{entry_id}", response_model=ItemSchemas.ItemResponse)
-async def get_Specific_item_route(entry_id: str, current_user = Depends(UserModels.get_current_active_user)):
+async def get_Specific_item_route(entry_id: str, _= Depends(UserModels.get_current_active_user)):
   item = ItemModels.get_specific_item(entry_id)
   return item
   
@@ -88,8 +84,9 @@ def delete_item_route(entry_id: str, current_user = Depends(UserModels.get_curre
 
 
 @router.post("/matches/{entry_id}", response_model = List[MatchSchemas.FoundMatchResponse])
-def generate_desc_route(entry_id: str, _=Depends(UserModels.get_current_active_user)):
-  return ItemModels.find_match(entry_id)
+def generate_desc_route(entry_id: str, current_user=Depends(UserModels.get_current_active_user)):
+  return ItemModels.find_match(entry_id, str(current_user.user_id))
+
 
 @router.post("/set_match", response_model = MatchSchemas.MatchResponse)
 def set_match_route(match_data: MatchSchemas.MatchedItems, _=Depends(UserModels.get_current_active_user)):
@@ -99,9 +96,11 @@ def set_match_route(match_data: MatchSchemas.MatchedItems, _=Depends(UserModels.
     similarity=match_data.similarity
   )
   
+  
 @router.get("/get_match/{entry_id}")
 def get_match_route(entry_id: str, _=Depends(UserModels.get_current_active_user)):
   return ItemModels.get_match(entry_id)
+
 
 @router.delete("/cancel_claim/{entry_id}")
 def delete_match(entry_id: str, _=Depends(UserModels.get_current_active_user)):

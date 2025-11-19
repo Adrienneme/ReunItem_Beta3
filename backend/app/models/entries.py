@@ -134,7 +134,7 @@ class ItemModels:
         return {"message": "Item deleted successfully"}
 
     @staticmethod
-    def find_match(entry_id: str):
+    def find_match(entry_id: str, user_id: str):
         lost = supabase.table("items").select("*").eq("entry_id", entry_id).execute()
         if not lost.data:
             raise HTTPException(status_code=404, detail="Item not found")
@@ -142,7 +142,7 @@ class ItemModels:
         lostItemInfo = lost.data[0]
         lost_description = lostItemInfo.get("description", "")
 
-        found = supabase.table("items").select("*").eq("type", "found").execute() #add eq for status with approved 
+        found = supabase.table("items").select("*").eq("type", "found").eq("status", "Approved").neq("user_id", user_id).execute()
         foundItems = found.data
         potential_matches = []
         for i in foundItems:
@@ -151,7 +151,7 @@ class ItemModels:
             if similarity:
                 matched_item = MatchSchemas.FoundMatchResponse(**i, similarity=similarity)
                 potential_matches.append(matched_item)
-
+        print(f"Potential Matches: {potential_matches}")
         return potential_matches
 
     @staticmethod

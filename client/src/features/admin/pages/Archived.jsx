@@ -2,7 +2,7 @@ import React , { useState, useEffect } from 'react'
 import AdminNavBar from '../../../components/layout/AdminNavBar'
 import Card from '../../../components/ui/Cards'
 import FilterDropdown from '../../../components/ui/Filters'
-import { getPendingItems, archived_items } from '../../../api/admin'
+import { archived_items } from '../../../api/admin'
 
 function LostFoundRep() {
   const [entries, setEntries] = useState([]);

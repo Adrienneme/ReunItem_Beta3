@@ -1,44 +1,31 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import UserNavBar from '../../../../components/layout/UserNavBar'
 import FilterDropdown from '../../../../components/ui/Filters'
 import Card from '../../../../components/ui/Cards'
-import { getItems } from '../../../../api/items'
+import { useFetchItems } from '../../../../hooks/useFetch'
+import CircularLoad from '../../../../components/ui/CircularLoad'
 
 export default function LostEntriesPage() {
-  const [entries, setEntries] = useState([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchEntries = async () => {
-      try {
-        const response = await getItems();
-        setEntries(response);
-        console.log(response);
-      } catch (error) {
-        const errMsg = error.response?.data?.detail || "No entries yet.";
-        console.error(error);
-        alert(errMsg);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const { entries, isPending, error } = useFetchItems("lost", "lost_items");
 
-    fetchEntries();
-  }, []);
-
-  if (loading) {
+  if (isPending || error) {
     return (
       <div>
         <UserNavBar />
         <div className="min-h-screen flex justify-center mt-50 text-gray-600 text-lg">
-          Loading entries...
+          {isPending ?
+            <div className='flex flex-col items-center gap-5'>
+              <span>Loading Lost Entries...</span>
+              <CircularLoad />
+            </div> : error.message}
         </div>
       </div>
-    );
+    )
   }
 
   return (
-    <div>
+    <div className='mb-10'>
       <UserNavBar />
       <div className="flex flex-col items-center">
         <div className="mt-5 mb-5">
@@ -49,9 +36,10 @@ export default function LostEntriesPage() {
           options={[
             "All",
             "Pending Approval",
+            "Pending Claim",
             "Approved",
             "Rejected",
-            "Found",
+            "Claimed",
             "Archived"
           ]}
         />
@@ -65,7 +53,7 @@ export default function LostEntriesPage() {
                 name={item.item_name}
                 imageUrl={item.photo_url}
                 status={item.status}
-                linkTo="/user/lost-entries-detail"
+                linkTo="/user/lost-details"
                 stateData={item}
               />
             ))}

@@ -1,67 +1,31 @@
 import React from 'react'
-import { useState, useEffect } from 'react'
 import UserNavBar from '../../../../components/layout/UserNavBar'
 import FilterDropdown from '../../../../components/ui/Filters'
 import Card from '../../../../components/ui/Cards'
-import { getItems } from '../../../../api/items'
+import { useFetchItems } from '../../../../hooks/useFetch'
+import CircularLoad from '../../../../components/ui/CircularLoad'
 
-/**
- * FoundEntriesPage
- *
- * This component displays a list of "found" item entries retrieved from the backend API.
- * It includes a navigation bar, a filter dropdown, and cards for each found entry.
- *
- * Features:
- * - Fetches entries from the backend on mount
- * - Displays loading state while fetching
- * - Filters entries to show only "found" items
- * - Provides a dropdown to potentially filter by status (UI only)
- *
- * @component
- * @returns {JSX.Element} Rendered FoundEntriesPage component
- */
 export default function FoundEntriesPage() {
-  // State to store the fetched entries
-  const [entries, setEntries] = useState([]);
-  // State to track loading status
-  const [loading, setLoading] = useState(true);
 
-  /**
-   * Fetches entries from the backend API
-   * Only runs once when the component mounts
-   */
-  useEffect(() => {
-    const fetchEntries = async () => {
-      try {
-        const response = await getItems(); // API call to fetch entries
-        setEntries(response); // Store response in state
-        console.log(response);
-      } catch (error) {
-        const errMsg = error.response?.data?.detail || "No entries yet.";
-        console.error(error);
-        alert(errMsg); // Show user-friendly error
-      } finally {
-        setLoading(false); // Stop loading indicator
-      }
-    };
+  const { entries, isPending, error } = useFetchItems("found", "found_items");
 
-    fetchEntries();
-  }, []);
-
-  // Display loading screen while fetching data
-  if (loading) {
+  if (isPending || error) {
     return (
       <div>
         <UserNavBar />
         <div className="min-h-screen flex justify-center mt-50 text-gray-600 text-lg">
-          Loading entries...
+          {isPending ? 
+          <div className='flex flex-col items-center gap-5'>
+             <span>Loading Found Entries...</span>
+             <CircularLoad/>
+          </div> : error.message}
         </div>
       </div>
-    );
+    )
   }
 
   return (
-    <div>
+    <div className='mb-10'>
       {/* Navigation Bar */}
       <UserNavBar />
 
@@ -93,7 +57,7 @@ export default function FoundEntriesPage() {
                 name={item.item_name}         // Item name displayed on the card
                 imageUrl={item.photo_url}     // Item image
                 status={item.status}          // Current status of the item
-                linkTo="/user/found-entries-detail" // Navigation link to detail page
+                linkTo="/user/found-details" // Navigation link to detail page
                 stateData={item}              // Pass full item data for detail page
               />
             ))}

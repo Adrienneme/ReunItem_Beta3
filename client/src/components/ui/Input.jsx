@@ -38,10 +38,10 @@ export default function Input({
           '& .MuiInput-underline:before': { borderBottomColor: underlineColor },
           '& .MuiInput-underline:hover:before': { borderBottomColor: underlineColor },
           '& .MuiInput-underline:after': { borderBottomColor: underlineColor },
-          '& .MuiInputBase-input.Mui-disabled': {
-            color: 'white',
-            WebkitTextFillColor: 'white', // For Safari to apply white color properly
-            opacity: 1,                    // To prevent default opacity dimming
+          '& .Mui-disabled': {
+            color: 'white !important',
+            opacity: 1,
+            WebkitTextFillColor: 'white !important'
           },
         }}
       />

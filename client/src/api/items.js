@@ -12,7 +12,7 @@ export const createItem = async (formData) => {
 
   if (formData.photo) allData.append("photo", formData.photo);
 
-  const response = await formClient.post("/items/report", allData, {
+  const response = await formClient.post("/items/create", allData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
 
@@ -31,7 +31,7 @@ export const generateDescription = async (photo) => {
     return response.data;
   } catch (err) {
     console.error("Error in generateDescription:", err);
-    throw err; // rethrow so handleGenerate can catch
+    throw err; 
   }
 };
 
@@ -67,6 +67,7 @@ export const deleteItem = async (entryId) => {
 
 export const getMatches = async (entryId) => {
   const response = await jsonClient.post(`/items/matches/${entryId}`);
+  console.log("Matches response data:", response.data);
   return response.data;
 }
 

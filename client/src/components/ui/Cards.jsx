@@ -41,29 +41,23 @@ const Cards = ({
     return null;
   };
 
-  const handleExpandClick = () => {
-    if (stateData?.entry_id) {
-      localStorage.setItem("entry_id", stateData.entry_id);
-    }
-    if (stateData?.similarity){
-      localStorage.setItem("similarity", stateData.similarity);
-    }
-  };
-
   return (
     <div className="flex flex-col items-center w-full sm:w-64 md:w-0.5/4">
       <div className="w-64 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 overflow-hidden border border-black bg-gray-400">
-        
+
         {/* Header: Name + Expand */}
         <div className="flex justify-between items-center px-4 py-2 border-gray-2">
           <h2 className="text-lg font-semibold text-gray-800 truncate">{name}</h2>
-             <Link to={linkTo} onClick={handleExpandClick}>
-              <img 
-                src={expand} 
-                alt="Expand" 
-                className="w-6 h-6 cursor-pointer hover:scale-110 transition-transform" 
-              />
-            </Link>    
+          <Link to={linkTo} state={percentage !== undefined
+            ? { ...stateData, similarity: percentage, lostentry_id: stateData.lostentry_id }
+            : { ...stateData }
+          }>
+            <img
+              src={expand}
+              alt="Expand"
+              className="w-6 h-6 cursor-pointer hover:scale-110 transition-transform"
+            />
+          </Link>
         </div>
 
         {/* Image */}

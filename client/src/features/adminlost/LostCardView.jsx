@@ -3,12 +3,14 @@ import AdminNavBar from "../../components/layout/AdminNavBar";
 import LostBaseForm from "../../components/forms/LostBaseForm";
 import { approveEntry } from "../../api/admin";
 import { getItem } from "../../api/items";
+import { useLocation } from "react-router-dom";
 
 export default function LostCardView() {
   const [entry, setEntry] = useState({});
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
-  const entry_id = localStorage.getItem("entry_id");
+  const location = useLocation();
+  const { entry_id } = location.state;
 
   useEffect(() => {
     let isMounted = true;
