@@ -22,3 +22,8 @@ export const get_current_user = async () => {
 
   return response.data
 }
+
+export const getUser = async (user_id) => {
+  const response = await jsonClient.get(`users/get-user/${user_id}`)
+  return response.data
+}

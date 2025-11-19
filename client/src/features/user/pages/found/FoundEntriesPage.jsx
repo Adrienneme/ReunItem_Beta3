@@ -1,13 +1,15 @@
 import React from 'react'
 import UserNavBar from '../../../../components/layout/UserNavBar'
 import FilterDropdown from '../../../../components/ui/Filters'
-import Card from '../../../../components/ui/Cards'
+import Card2 from '../../../../components/ui/Card2'
 import { useFetchItems } from '../../../../hooks/useFetch'
 import CircularLoad from '../../../../components/ui/CircularLoad'
 
 export default function FoundEntriesPage() {
 
   const { entries, isPending, error } = useFetchItems("found", "found_items");
+
+  const [selectedStatus, setSelectedStatus] = React.useState("All");
 
   if (isPending || error) {
     return (
@@ -24,43 +26,44 @@ export default function FoundEntriesPage() {
     )
   }
 
+  const filteredEntries = entries
+    .filter((item) => item.type === "found")
+    .filter((item) =>
+      selectedStatus === "All" ? true : item.status === selectedStatus
+    );
+
   return (
     <div className='mb-10'>
-      {/* Navigation Bar */}
       <UserNavBar />
 
       <div className='flex flex-col items-center'>
-        {/* Page Title */}
         <div className='mt-5 mb-5'>
           <h1 className='text-xl font-bold'>Found Entries:</h1>
         </div>
 
-        {/* Filter Dropdown */}
         <FilterDropdown
+          label="Status"
           options={[
             "All",
             "Pending Approval",
             "Approved",
             "Rejected",
-            "Claimed",
-            "Archived"
+            "Claimed"
           ]}
+          onChange={(value) => setSelectedStatus(value)}
         />
 
-        {/* Display Found Item Cards */}
         <div className="flex flex-wrap justify-center gap-10 mt-10">
-          {entries
-            .filter((item) => item.type === "found") // Only show found items
-            .map((item) => (
-              <Card
-                key={item.entry_id}           // Unique key for list rendering
-                name={item.item_name}         // Item name displayed on the card
-                imageUrl={item.photo_url}     // Item image
-                status={item.status}          // Current status of the item
-                linkTo="/user/found-details" // Navigation link to detail page
-                stateData={item}              // Pass full item data for detail page
-              />
-            ))}
+          {filteredEntries.map((item) => (
+            <Card2
+              key={item.entry_id}
+              name={item.item_name}
+              imageUrl={item.photo_url}
+              status={item.status}
+              linkTo="/user/found-details"
+              stateData={item}
+            />
+          ))}
         </div>
       </div>
     </div>

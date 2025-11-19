@@ -81,7 +81,7 @@ export default function LostDetails() {
             <ButtonUI
               color="primary"
               onClick={() => {
-                navigate("/user/matched-entries", { state: { entry_id: formData.entry_id } })
+                navigate("/user/matched-entries", { state: { entry_id: formData.entry_id} })
               }}
             >
               View Potential Matches

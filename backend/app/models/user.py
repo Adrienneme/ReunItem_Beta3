@@ -75,4 +75,11 @@ class UserModels:
         user_data.pop("password_hash", None)
 
         return UserSchemas.User(**user_data)
+    
+    @staticmethod
+    def get_user(user_id: str):
+        response = supabase.table("user").select("*").eq("user_id", user_id).execute()
+        if not response.data: 
+            raise HTTPException(status_code=401, details="User not Found")
+        return response
 

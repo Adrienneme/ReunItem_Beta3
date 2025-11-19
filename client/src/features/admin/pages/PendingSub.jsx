@@ -1,7 +1,7 @@
 //Test function backend, update backend Pending status and approve entry working
 import React, { useState, useEffect } from 'react'
 import AdminNavBar from '../../../components/layout/AdminNavBar'
-import Card from '../../../components/ui/Cards'
+import Card2 from '../../../components/ui/Card2'
 import FilterDropdown from '../../../components/ui/Filters'
 import { getPendingItems } from '../../../api/admin'
 
@@ -50,7 +50,7 @@ function Pendingsub() {
       ) : (
         <div className="flex flex-wrap justify-center gap-10 mt-10">
           {entries.map((item) => (
-            <Card
+            <Card2
               key={item.entry_id}
               name={item.item_name}
               imageUrl={item.photo_url}

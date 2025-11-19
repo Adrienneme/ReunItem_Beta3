@@ -1,20 +1,34 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import UserNavBar from '../../../../components/layout/UserNavBar'
 import LostBaseForm from '../../../../components/forms/LostBaseForm'
 import ButtonUI from '../../../../components/ui/ButtonUI';
 import { useFetchItem, useFetchMatched } from '../../../../hooks/useFetch';
 import { useLocation, useNavigate } from 'react-router-dom';
 import CircularLoad from '../../../../components/ui/CircularLoad';
+import { getUser } from '../../../../api/users';
 
 export default function MatchedLost() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [user, setUser] = useState("");
   const { entry_id } = location.state;
   const { data } = useFetchMatched(entry_id);
   const lostentryId = data?.lost_entry_id;
   const { formData, isPending, error } = useFetchItem("lost", lostentryId, {
     enabled: !!lostentryId
   });
+
+  const userID = formData?.user_id;
+
+  useEffect(() => {
+    if (!userID) return;
+    const fetchUser = async () => {
+      const result = await getUser(userID);
+      setUser(result.data[0]);
+    };
+
+    fetchUser();
+  }, [userID]);
 
   if (isPending || error) {
     return (
@@ -40,6 +54,7 @@ export default function MatchedLost() {
         formData={formData}
         disabled={true}
         existingPhoto={formData.photo_url}
+        user={user}
       />
       <div className='flex flex-row justify-center mt-5 gap-10'>
         <ButtonUI variant="solid" color="neutral"

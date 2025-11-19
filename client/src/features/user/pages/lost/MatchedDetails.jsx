@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 import UserNavBar from '../../../../components/layout/UserNavBar';
 import FoundBaseForm from '../../../../components/forms/FoundBaseForm';
@@ -7,6 +7,7 @@ import MessageBox from '../../../../components/ui/MessageBox';
 import { useFetchItem } from '../../../../hooks/useFetch';
 import { usematchItems } from '../../../../hooks/useMatch';
 import CircularLoad from '../../../../components/ui/CircularLoad';
+import { getUser } from '../../../../api/users';
 
 export default function MatchedDetails() {
   const location = useLocation();
@@ -14,8 +15,18 @@ export default function MatchedDetails() {
   const navigate = useNavigate();
 
   const [showClaimConfirm, setShowClaimConfirm] = useState(false);
-  const { entry_id: foundentry_id, lostentry_id, similarity } = location.state
+  const { user_id, entry_id: foundentry_id, lostentry_id, similarity } = location.state
   const { formData, isPending, error } = useFetchItem("found", foundentry_id);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const result = await getUser(user_id); 
+      setUser(result.data[0]); 
+    };
+
+    fetchUser();
+  }, [user_id]);
 
   if (isPending || error) {
     return (
@@ -57,6 +68,7 @@ export default function MatchedDetails() {
         percentage={similarity}
         existingPhoto={formData.photo_url}
         disabled={true}
+        user={user}
       />
       <div className='flex flex-row justify-center mt-5 gap-10'>
         <ButtonUI variant="solid" color="neutral"

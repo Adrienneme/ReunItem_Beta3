@@ -1,6 +1,6 @@
 import React , { useState, useEffect } from 'react'
 import AdminNavBar from '../../../components/layout/AdminNavBar'
-import Card from '../../../components/ui/Cards'
+import Card2 from '../../../components/ui/Card2'
 import FilterDropdown from '../../../components/ui/Filters'
 import { archived_items } from '../../../api/admin'
 
@@ -64,7 +64,7 @@ function LostFoundRep() {
       ) : (
         <div className="flex flex-wrap justify-center gap-10 mt-10">
           {filteredEntries.map((item, index) => (
-            <Card
+            <Card2
               key={item.entry_id || item.id || index} // fallback to index if missing
               name={item.item_name || "Unnamed Item"}
               imageUrl={item.photo_url || "/placeholder.png"} // fallback image
