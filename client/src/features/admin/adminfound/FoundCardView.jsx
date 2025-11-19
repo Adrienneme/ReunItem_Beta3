@@ -82,7 +82,7 @@ export default function FoundViewPage() {
   if (error) return <div>{error}</div>;
 
   return (
-    <div>
+    <div className="mb-6">
       <AdminNavBar />
       <div className="flex flex-col items-center justify-center mx-5">
         <div>
