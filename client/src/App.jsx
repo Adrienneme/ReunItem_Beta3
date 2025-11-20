@@ -30,10 +30,10 @@ import Archived from './features/admin/pages/Archived';
 import ClaimRequest from './features/admin/pages/Claimreq';
 import Pendingsub from './features/admin/pages/PendingSub';
 import LostFoundRep from './features/admin/pages/Lost&FoundRep';
-import FoundCardView from './features/adminfound/FoundCardView';
-import FoundEntriesView from './features/adminfound/FoundEntriesAdmin';
-import LostCardView from './features/adminlost/LostCardView';
-import LostEntriesView from './features/adminlost/LostEntriesAdmin';
+import FoundCardView from './features/admin/adminfound/FoundCardView';
+import FoundEntriesView from './features/admin/adminfound/FoundEntriesAdmin';
+import LostCardView from './features/admin/adminlost/LostCardView';
+import LostEntriesView from './features/admin/adminlost/LostEntriesAdmin';
 import AdminSettings from './features/admin/pages/AdminSettings';
 
 

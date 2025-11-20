@@ -11,7 +11,7 @@ const AdminHome = ({
       <AdminNavBar name = {name} />
       
       <div className='flex flex-row items-center justify-center mt-45 gap-20'>
-        <HomeButton  to="/admin/pendingsubmissions" color='red'>
+        <HomeButton  to="/admin/pendingsubmissions" color='green'>
           Pending Submissions
         </HomeButton>
 
@@ -21,7 +21,7 @@ const AdminHome = ({
       </div>
 
       <div className='flex flex-row items-center justify-center mt-10 gap-20'>
-        <HomeButton to="/admin/claimrequest" color='red'>
+        <HomeButton to="/admin/claimrequest" color='green'>
           Claim Requests
         </HomeButton>
 

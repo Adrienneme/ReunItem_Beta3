@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import AdminNavBar from "../../components/layout/AdminNavBar";
-import FoundBaseForm from "../../components/forms/FoundBaseForm";
-import { approveEntry, rejectEntry } from "../../api/admin";
-import { getItem } from "../../api/items";
+import AdminNavBar from "../../../components/layout/AdminNavBar";
+import FoundBaseForm from "../../../components/forms/FoundBaseForm";
+import { approveEntry, rejectEntry } from "../../../api/admin";
+import { getItem } from "../../../api/items";
 import { useLocation } from "react-router-dom";
 
 export default function FoundViewPage() {
@@ -103,7 +103,7 @@ export default function FoundViewPage() {
 
           <button
             onClick={() => handleReject(entry.entry_id)}
-            className="mt-3 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+            className="mt-3 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
 
           >
             Reject
