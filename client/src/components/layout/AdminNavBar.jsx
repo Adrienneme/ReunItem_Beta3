@@ -64,18 +64,6 @@ const AdminNavBar = ({ name = "Username", profile = usericon }) => {
           <img src={settings} alt="Settings" className="w-6 h-6 sm:w-8 sm:h-8" />
           <span className="text-sm sm:text-base mt-0">Settings</span>
         </Link>
-        <Link
-          to="/admin/usermanagement"
-          className="flex flex-col items-center hover:text-yellow-300 transition-colors duration-200">
-          <img src={usericon} alt="User Management" className="w-6 h-6 sm:w-8 sm:h-8 black-100" />
-          <span className="text-sm sm:text-base mt-0"> User Manage </span>
-        </Link>
-        <Link
-          to="/admin/auditlog"
-          className="flex flex-col items-center hover:text-yellow-300 transition-colors duration-200">
-          <img src={search} alt="Audit Logs" className="w-6 h-6 sm:w-8 sm:h-8" />
-          <span className="text-sm sm:text-base mt-0"> Audit Logs </span>
-        </Link>
 
       </div>
     </nav>
