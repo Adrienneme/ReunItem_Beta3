@@ -1,6 +1,6 @@
 // useApproveClaim.js
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { approveClaimRequest } from "../api/admin"; // your existing function
+import { approveClaimRequest } from "../api/admin";
 
 export function useApproveClaim() {
   const queryClient = useQueryClient();
