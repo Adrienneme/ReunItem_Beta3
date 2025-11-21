@@ -18,7 +18,9 @@ const Button = ({ to, children, color = "green", size = "lg" }) => {
       : color === "gray"
       ? "bg-gradient-to-t from-[#605C3C] to-[#3C3B3F]"
       : color === "black"
-      ? "bg-gradient-to-t from-[#2C5364] via-[#203A43] to-[#0F2027]"
+      ? "bg-gradient-to-t from-[#008080] to-[#3C3B3F]"
+      : color === "lime"
+      ? "bg-gradient-to-t from-[#2C5364] via-[#203A43] to-[#32CD32]"
       : "bg-gray-200 text-black hover:bg-gray-300";
 
   const sizeStyle =

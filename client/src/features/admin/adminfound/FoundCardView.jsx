@@ -103,7 +103,7 @@ export default function FoundViewPage() {
 
           <button
             onClick={() => handleReject(entry.entry_id)}
-            className="mt-3 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+            className="mt-3 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
 
           >
             Reject
