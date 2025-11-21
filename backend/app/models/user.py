@@ -82,4 +82,11 @@ class UserModels:
         if not response.data: 
             raise HTTPException(status_code=401, details="User not Found")
         return response
+    
+    @staticmethod
+    def get_all_users():
+        response = supabase.table("user").select("*").execute()
+        if not response.data: 
+            raise HTTPException(status_code=401, details="User not Found")
+        return response
 

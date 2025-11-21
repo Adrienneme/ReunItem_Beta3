@@ -1,4 +1,5 @@
 import jsonClient from "./jsonClient";
+import userClient from "./userClient";
 
 export const registerUser = async (data) => {
   const response = await jsonClient.post("/users/register", data);
@@ -6,7 +7,7 @@ export const registerUser = async (data) => {
 }
 
 export const loginUser = async (data) => {
-  const response = await jsonClient.post("/users/login", data);
+  const response = await userClient.post("/users/login", data);
   return response.data
 }
 

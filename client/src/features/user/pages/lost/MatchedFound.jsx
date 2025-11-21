@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useFetchItem, useFetchMatched } from '../../../../hooks/useFetch';
 import UserNavBar from '../../../../components/layout/UserNavBar';
@@ -7,32 +7,18 @@ import ButtonUI from '../../../../components/ui/ButtonUI';
 import MessageBox from '../../../../components/ui/MessageBox';
 import { useCancelClaim } from '../../../../hooks/useEdit';
 import CircularLoad from '../../../../components/ui/CircularLoad';
-import { getUser } from '../../../../api/users';
 
 export default function MatchedFound() {
   const navigate = useNavigate();
   const location = useLocation();
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
-  const [user, setUser] = useState("");
   const cancelMutation = useCancelClaim("lost")
   const { entry_id } = location.state;
   const { data } = useFetchMatched(entry_id);
   const foundEntryId = data?.found_entry_id;
-  const { formData, isPending, error } = useFetchItem("found", foundEntryId, {
+  const { formData, user, isPending, error } = useFetchItem("found", foundEntryId, {
     enabled: !!foundEntryId
   });
-
-  const userID = formData?.user_id;
-  
-    useEffect(() => {
-      if (!userID) return;
-      const fetchUser = async () => {
-        const result = await getUser(userID); 
-        setUser(result.data[0]); 
-      };
-  
-      fetchUser();
-    }, [userID]);
   
 
   if (isPending || error) {

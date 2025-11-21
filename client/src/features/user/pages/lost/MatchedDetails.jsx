@@ -15,18 +15,8 @@ export default function MatchedDetails() {
   const navigate = useNavigate();
 
   const [showClaimConfirm, setShowClaimConfirm] = useState(false);
-  const { user_id, entry_id: foundentry_id, lostentry_id, similarity } = location.state
-  const { formData, isPending, error } = useFetchItem("found", foundentry_id);
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const result = await getUser(user_id); 
-      setUser(result.data[0]); 
-    };
-
-    fetchUser();
-  }, [user_id]);
+  const { entry_id: foundentry_id, lostentry_id, similarity } = location.state
+  const { formData, user, isPending, error } = useFetchItem("found", foundentry_id);
 
   if (isPending || error) {
     return (

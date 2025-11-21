@@ -1,20 +1,38 @@
 import { getItem, getItems, getMatch, getMatches } from '../api/items'
+import { getUser } from '../api/users';
 import { useQuery } from '@tanstack/react-query'
 
 export function useFetchItem(type, entry_id) {
-  const { data: formData, isPending, error } = useQuery({ 
+  const {
+    data: formData,
+    isPending: itemPending,
+    error: itemError
+  } = useQuery({
     queryKey: [`${type}_item`, entry_id],
     queryFn: () => getItem(entry_id),
     staleTime: 10 * 60 * 100,
     enabled: !!entry_id,
     refetchOnWindowFocus: true,
-  })
+  });
+
+  const userID = formData?.user_id;
+
+  const {
+    data: userData,
+    isPending: userPending,
+    error: userError
+  } = useQuery({
+    queryKey: ["user", userID],
+    queryFn: () => getUser(userID),
+    enabled: !!userID,
+  });
 
   return {
     formData,
-    isPending,
-    error
-  }
+    user: userData?.data?.[0] || null,
+    isPending: itemPending || userPending,
+    error: itemError || userError,
+  };
 }
 
 
@@ -64,4 +82,7 @@ export function useFetchMatched(entry_id){
     error
   }
 }
+
+
+
 
