@@ -1,5 +1,5 @@
-import jsonClient from "./jsonClient";
-import userClient from "./userClient";
+import jsonClient from "../api/axios/jsonClient";
+import userClient from "../api/axios/userClient";
 
 export const registerUser = async (data) => {
   const response = await jsonClient.post("/users/register", data);
