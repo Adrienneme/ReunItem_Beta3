@@ -145,3 +145,19 @@ export const approveClaimRequest = async (match_id) => {
     throw error; 
   }
 };
+
+//
+//New Api for Admin Mark lost to claimed
+export const markItemFound = async (entryId) => {
+  try {
+    const response = await jsonClient.post(
+      `/admin/mark_item_found/${entryId}`,
+      null,
+      { headers: { role: "admin" } }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Failed to mark item as found:", error);
+    throw error;
+  }
+};

@@ -210,3 +210,32 @@ async def admin_items(admin=Depends(get_current_admin)):
     }
 
 # =====Handle Claim in Lost and FOund
+#NEW ROUTE
+@admin_claims_router.post("/mark_item_found/{entry_id}")
+async def mark_item_found(entry_id: str, admin=Depends(get_current_admin)):
+  
+    # Check if item exists
+    item = (
+        supabase.table("items")
+        .select("*")
+        .eq("entry_id", entry_id)
+        .single()
+        .execute()
+        .data
+    )
+
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found.")
+
+    # Update status
+    result = (
+        supabase.table("items")
+        .update({"status": "Claimed"})
+        .eq("entry_id", entry_id)
+        .execute()
+    )
+
+    return {
+        "message": f"Item {entry_id} marked as FOUND → Claimed.",
+        "updated": result.data,
+    }
