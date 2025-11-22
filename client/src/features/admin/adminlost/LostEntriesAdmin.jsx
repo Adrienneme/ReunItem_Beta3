@@ -6,7 +6,7 @@ import { getItem } from "../../../api/items";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 //
-import { markItemFound } from "../../../api/admin";
+import { approveItem } from "../../../api/admin";
 
 
 export default function LostEntriesView() {
@@ -64,7 +64,7 @@ export default function LostEntriesView() {
             Go Back
           </button>
 
-          <button
+         <button
   className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded"
   onClick={async () => {
     const id = entry.entryId || entry.entry_id || entry.entry_Id;
@@ -75,16 +75,14 @@ export default function LostEntriesView() {
     }
 
     try {
-  await markItemFound(id);
-  alert("Item marked as FOUND (Claimed).");
-
-  // Trigger Go Back
-  navigate("/admin/lostandfoundrep");
-} catch (error) {
-  alert("Failed to update item.");
-  console.error(error);
-}
-
+      await approveItem(id);
+      alert(`Item marked as FOUND/LOST (Claimed).`);
+      //Auto trigger go back
+      navigate("/admin/lostandfoundrep");
+    } catch (error) {
+      alert("Failed to update item.");
+      console.error(error);
+    }
   }}
 >
   Item Found

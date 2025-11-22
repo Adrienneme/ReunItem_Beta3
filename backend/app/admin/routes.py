@@ -211,10 +211,10 @@ async def admin_items(admin=Depends(get_current_admin)):
 
 # =====Handle Claim in Lost and FOund
 #NEW ROUTE
-@admin_claims_router.post("/mark_item_found/{entry_id}")
-async def mark_item_found(entry_id: str, admin=Depends(get_current_admin)):
-  
-    # Check if item exists
+@admin_claims_router.post("/approve_item/{entry_id}")
+async def approve_item(entry_id: str, admin=Depends(get_current_admin)):
+
+    # Fetch the item and include type for reference
     item = (
         supabase.table("items")
         .select("*")
@@ -227,15 +227,16 @@ async def mark_item_found(entry_id: str, admin=Depends(get_current_admin)):
     if not item:
         raise HTTPException(status_code=404, detail="Item not found.")
 
-    # Update status
-    result = (
-        supabase.table("items")
-        .update({"status": "Claimed"})
-        .eq("entry_id", entry_id)
-        .execute()
-    )
+    # Check item type
+    if item["type"] not in ["lost", "found"]:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Cannot approve item with type '{item['type']}'"
+        )
+
+    # Update status to 'Claimed'
+    supabase.table("items").update({"status": "Claimed"}).eq("entry_id", entry_id).execute()
 
     return {
-        "message": f"Item {entry_id} marked as FOUND → Claimed.",
-        "updated": result.data,
+        "message": f"{item['type'].capitalize()} item {entry_id} status updated to 'Claimed'."
     }

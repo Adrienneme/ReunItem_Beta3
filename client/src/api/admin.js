@@ -147,17 +147,18 @@ export const approveClaimRequest = async (match_id) => {
 };
 
 //
-//New Api for Admin Mark lost to claimed
-export const markItemFound = async (entryId) => {
+
+// New API for approving any lost/found item
+export const approveItem = async (entryId) => {
   try {
     const response = await jsonClient.post(
-      `/admin/mark_item_found/${entryId}`,
+      `/admin/approve_item/${entryId}`,
       null,
       { headers: { role: "admin" } }
     );
     return response.data;
   } catch (error) {
-    console.error("Failed to mark item as found:", error);
+    console.error("Failed to approve item:", error);
     throw error;
   }
 };
