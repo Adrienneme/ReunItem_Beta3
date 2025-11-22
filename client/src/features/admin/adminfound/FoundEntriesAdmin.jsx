@@ -101,31 +101,65 @@ export default function FoundEntriesView() {
           />
         </div>
 
-        <div className="flex flex-row gap-10 mt-3">
+     <div className="flex flex-row gap-10 mt-3">
 
-        <button
-          onClick={() => {
-            // Try both possible fields
-            const matchId = entry.matchId || entry.match_id;
+ <button
+  //debugg
+   onClick={async () => {
+    if (!window.confirm("Are you sure you want to approve this match and finalize the claim? This action cannot be undone.")) {
+      return;
+    }
 
-            if (!matchId) {
-              alert("Cannot approve claim: match ID is missing.");
-              console.error("Missing match ID in entry:", entry);
-              return;
-            }
+    try {
+      // Log the entryId and status before updating
+      console.log("Updating status for entry:", entry.entryId, { status: "Claimed" });
 
-            console.log("match_id sent to handleClaim:", matchId);
-            handleClaim(matchId);
-          }}
-          className="mt-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition h-10">
-            Item Claimed
-          </button> 
-          <button
-            onClick={() => handleDelete(entry.entryId)}
-            className="mt-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition h-10">
-            Delete Entry
-          </button>
-        </div>
+      // Update status to "Claimed"
+      await updateMutation.mutateAsync({
+        entry_id: entry.entryId,
+        formData: { status: "Claimed" },
+      });
+
+      // Approve the match if matchId exists
+      const matchId = entry.matchId || entry.match_id;
+      if (matchId) {
+        const response = await approveClaimRequest(matchId);
+        alert(response.message || `Match ${matchId} approved and items claimed successfully.`);
+      } else {
+        alert("Item status updated to 'Claimed', but no match ID was found to approve.");
+      }
+
+    } catch (error) {
+      const errMsg =
+        error.response?.data?.detail ||
+        error.response?.data?.message ||
+        "Failed to claim item. Please check network and permissions.";
+      alert(`Claim Failed: ${errMsg}`);
+      console.error("Claim/Update failed:", error);
+    }
+  }}
+  className="mt-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition h-10"
+>
+  Item Claimed
+</button>
+
+  <button
+    onClick={async () => {
+      if (!window.confirm("Are you sure you want to delete this submission?")) return;
+      try {
+        const response = await deleteSubmission(entry.entryId);
+        alert(response.message);
+      } catch (error) {
+        const errMsg = error.response?.data?.detail || "Failed to delete submission.";
+        alert(errMsg);
+      }
+    }}
+    className="mt-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition h-10"
+  >
+    Delete Entry
+  </button>
+</div>
+
       </div>
     </div>
   );
