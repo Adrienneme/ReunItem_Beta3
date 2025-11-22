@@ -1,107 +1,74 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import AdminNavBar from "../../../components/layout/AdminNavBar";
 import LostBaseForm from "../../../components/forms/LostBaseForm";
-import { deleteSubmission } from "../../../api/admin";
+import CircularLoad from "../../../components/ui/CircularLoad";
 import { getItem } from "../../../api/items";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 
 export default function LostEntriesView() {
-  const [entry, setEntry] = useState({});
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
   const location = useLocation();
+  const navigate = useNavigate();
   const { entry_id } = location.state;
 
-  useEffect(() => {
-    let isMounted = true;
+  const {
+    data: entry,
+    isPending,
+    error,
+  } = useQuery({
+    queryKey: ["lost-entry", entry_id],
+    queryFn: () => getItem(entry_id),
+  });
 
-    const fetchEntry = async () => {
-      try {
-        const response = await getItem(entry_id);
-        if (isMounted) setEntry(response);
-      } catch (error) {
-        if (isMounted) setError("No Entry Found.");
-      } finally {
-        if (isMounted) setLoading(false);
-      }
-    };
+  const handleItemFound = () => {
+    navigate("/admin/home");
+  };
 
-    fetchEntry();
-    return () => {
-      isMounted = false;
-    };
-  }, [entry_id]);
-
- const handleDelete = async (entryId) => {
-  if (!window.confirm("Are you sure you want to delete this submission?")) return;
-  try {
-    const response = await deleteSubmission(entryId);
-    alert(response.message);
-  } catch (error) {
-    const errMsg = error.response?.data?.detail || "Failed to delete submission.";
-    alert(errMsg);
+  if (isPending || error) {
+    return (
+      <div>
+        <AdminNavBar />
+        <div className="min-h-screen flex justify-center mt-35 text-gray-600 text-lg">
+          {isPending ? (
+            <div className="flex flex-col items-center gap-5">
+              <span>Loading Entry Details...</span>
+              <CircularLoad />
+            </div>
+          ) : (
+            error.message
+          )}
+        </div>
+      </div>
+    );
   }
-};
-
-  const handleImageSelect = (file) => {
-    // Disable changing photo if one already exists
-    if (entry.photo_url) {
-      alert("You cannot change the existing photo.");
-      return;
-    }
-    setEntry((prev) => ({ ...prev, photo: file }));
-  };
-
-  const handlePickupChange = (val) => {
-    setEntry((prev) => ({ ...prev, pickup_location: val }));
-  };
-
-  const handleChange = (field, value) => {
-    setEntry((prev) => ({ ...prev, [field]: value }));
-  };
-
-  if (loading) return <div>Loading entry...</div>;
-  if (error) return <div>{error}</div>;
 
   return (
     <div>
       <AdminNavBar />
-      <div className="flex flex-col items-center justify-center mx-5">
-        <div>
-          <LostBaseForm
-            title="Item Status:"
-            status={entry.status}
-            formData={entry}
-            existingPhoto={entry.photo_url}
-            onChange={handleChange}
-            onImageSelect={handleImageSelect}
-            onPickupChange={handlePickupChange}
-            disableImageUpload={!!entry.photo_url} // 👈 Added flag
-          />
-        </div>
+      <div className="flex flex-col items-center justify-center mx-5 mb-10">
+        <LostBaseForm
+          title="Lost Item Details:"
+          formData={entry}
+          existingPhoto={entry.photo_url}
+          disabled={true}
+        />
 
-         <button
-          onClick="/admin/home"
-          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition mt-3"
-        >
-          Item Found
-        </button>
-        <button
-          onClick={() => handleDelete(entry.entryId)}
-          className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition mt-3"
-        >
-          Delete Submission
-        </button>
-        <button
-          onClick="/admin/home"
-          className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition mt-3"
-        >
-          Discard/Donate
-            Submission
-        </button>
-        
+        <div className="flex flex-row gap-10 mt-3">
+          <button
+            onClick={() => { navigate("/admin/lostandfoundrep"); }}
+            className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition"
+          >
+            Go Back
+          </button>
+
+          <button
+            onClick={handleItemFound}
+            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+          >
+            Item Found
+          </button>
+        </div>
       </div>
     </div>
   );
 }
-

@@ -1,52 +1,64 @@
-import React , { useState, useEffect } from 'react'
-import AdminNavBar from '../../../components/layout/AdminNavBar'
-import Card2 from '../../../components/ui/Card2'
-import FilterDropdown from '../../../components/ui/Filters'
-import { archived_items } from '../../../api/admin'
+import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+
+import AdminNavBar from "../../../components/layout/AdminNavBar";
+import Card2 from "../../../components/ui/Card2";
+import FilterDropdown from "../../../components/ui/Filters";
+import CircularLoad from "../../../components/ui/CircularLoad";
+
+import { archived_items } from "../../../api/admin";
 
 function LostFoundRep() {
-  const [entries, setEntries] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("All");
 
-  useEffect(() => {
-    const fetchEntries = async () => {
-      try {
-        const data = await archived_items(); 
-        console.log("Archived Items Data:", data);
+  const { data, isPending, error } = useQuery({
+    queryKey: ["archivedItems"],
+    queryFn: archived_items,
+    staleTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: true,
+  });
 
-        // Safely combine items from lost and found groups
-        const lostClaimed = data.lost_grouped?.Claimed || [];
-        const lostRejected = data.lost_grouped?.Rejected || [];
-        const foundClaimed = data.found_grouped?.Claimed || [];
-        const foundRejected = data.found_grouped?.Rejected || [];
+  const combined = data
+    ? [
+      ...(data.lost_grouped?.Claimed || []),
+      ...(data.lost_grouped?.Rejected || []),
+      ...(data.found_grouped?.Claimed || []),
+      ...(data.found_grouped?.Rejected || []),
+    ]
+    : [];
 
-        const combined = [...lostClaimed, ...lostRejected, ...foundClaimed, ...foundRejected];
-
-        console.log("Combined Entries:", combined);
-        setEntries(combined);
-      } catch (error) {
-        console.error("Error fetching archived items:", error);
-        alert("Failed to load items.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchEntries();
-  }, []);
-
-  // Filter entries by status
   const filteredEntries =
     filter === "All"
-      ? entries
-      : entries.filter((item) => item.status === filter);
+      ? combined
+      : combined.filter((item) => item.status === filter);
+
+  if (isPending) {
+    return (
+      <div className="mb-6">
+        <AdminNavBar />
+        <div className="flex flex-col items-center gap-5 mt-20">
+          <span>Loading Entries...</span>
+          <CircularLoad />
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="mb-6">
+        <AdminNavBar />
+        <p className="text-center mt-30 text-red-500">
+          Failed to load items.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="mb-6">
       <AdminNavBar />
 
-      {/* Filter Dropdown */}
       <div className="flex flex-wrap justify-center mt-10">
         <FilterDropdown
           label="Filter"
@@ -56,23 +68,28 @@ function LostFoundRep() {
         />
       </div>
 
-      {/* Loading or Empty States */}
-      {loading ? (
-        <p className="text-center mt-10 text-gray-500">Loading items...</p>
-      ) : filteredEntries.length === 0 ? (
-        <p className="text-center mt-10 text-gray-500">No items found.</p>
+      {filteredEntries.length === 0 ? (
+        <p className="text-center mt-30 text-gray-500">No items found.</p>
       ) : (
         <div className="flex flex-wrap justify-center gap-10 mt-10">
-          {filteredEntries.map((item, index) => (
-            <Card2
-              key={item.entry_id || item.id || index} // fallback to index if missing
-              name={item.item_name || "Unnamed Item"}
-              imageUrl={item.photo_url || "/placeholder.png"} // fallback image
-              status={item.status || "Unknown"}
-              linkTo="/admin/foundcardview"
-              stateData={item}
-            />
-          ))}
+          {filteredEntries.map((item) => {
+            const type = item.type?.toLowerCase();
+            const linkTo =
+              type === "lost"
+                ? "/admin/lostcardview"
+                : "/admin/foundcardview";
+
+            return (
+              <Card2
+                key={item.entry_id}
+                name={item.item_name}
+                imageUrl={item.photo_url}
+                label={item.type}
+                linkTo={linkTo}
+                stateData={item}
+              />
+            );
+          })}
         </div>
       )}
     </div>

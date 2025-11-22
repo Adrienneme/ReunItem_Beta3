@@ -1,125 +1,138 @@
 import React, { useState, useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { useNavigate, useLocation } from "react-router-dom";
+
 import AdminNavBar from "../../../components/layout/AdminNavBar";
 import FoundBaseForm from "../../../components/forms/FoundBaseForm";
+import CircularLoad from "../../../components/ui/CircularLoad";
+
 import { approveEntry, rejectEntry } from "../../../api/admin";
-import { getItem } from "../../../api/items";
-import { useLocation } from "react-router-dom";
+import { useFetchItem } from "../../../hooks/useFetch";
+import { useDeleteItem } from "../../../hooks/useEdit";
 
 export default function FoundViewPage() {
-  const [entry, setEntry] = useState({});
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
   const location = useLocation();
   const { entry_id } = location.state;
 
+  const [status, setStatus] = useState("");
+
+  const { formData: entry, isPending, error } = useFetchItem("found", entry_id);
+
+  const deleteMutation = useDeleteItem("found", "/admin/archived");
+
   useEffect(() => {
-    let isMounted = true;
+    if (!entry) return;
 
-    const fetchEntry = async () => {
-      try {
-        const response = await getItem(entry_id);
-        if (isMounted) setEntry(response);
-      } catch (error) {
-        if (isMounted) setError("No Entry Found.");
-      } finally {
-        if (isMounted) setLoading(false);
-      }
-    };
-
-    fetchEntry();
-    return () => {
-      isMounted = false;
-    };
-  }, [entry_id]);
-
-
-  const handleApprove = async (entryId) => {
-    if (!window.confirm("Are you sure you want to approve this item?")) return;
-    try {
-      const response = await approveEntry(entryId);
-      alert(response.message);
-    } catch (error) {
-      const errMsg = error.response?.data?.detail || "Failed to approve item.";
-      alert(errMsg);
+    if (entry.status === "Claimed" || entry.status === "Rejected") {
+      setStatus(entry.status);
+    } else {
+      setStatus("");
     }
+  }, [entry]);
+
+  const approveMutation = useMutation({
+    mutationFn: approveEntry,
+    onSuccess: (res) => {
+      alert(res.message);
+      navigate("/admin/pendingsubmissions");
+    },
+    onError: (error) => {
+      alert(error.response?.data?.detail || "Failed to approve item.");
+    },
+  });
+
+  const rejectMutation = useMutation({
+    mutationFn: rejectEntry,
+    onSuccess: (res) => {
+      alert(res.message);
+      navigate("/admin/pendingsubmissions");
+    },
+    onError: (error) => {
+      alert(error.response?.data?.detail || "Failed to reject item.");
+    },
+  });
+
+  const handleApprove = () => {
+    if (!window.confirm("Approve this item?")) return;
+    approveMutation.mutate(entry.entry_id);
   };
 
-  const handleReject = async (entryId) => {
-  if (!window.confirm("Are you sure you want to reject this item?")) return;
-  try {
-    const response = await rejectEntry(entryId);
-    alert(response.message);
+  const handleReject = () => {
+    if (!window.confirm("Reject this item?")) return;
+    rejectMutation.mutate(entry.entry_id);
+  };
 
-    // optional redirect after reject
-    setTimeout(() => {
-      window.location.href = "/admin/pendingsub";
-    }, 800);
+  const handleDelete = () => {
+    if (!window.confirm("Are you sure you want to delete this entry?")) return;
+    deleteMutation.mutate(entry.entry_id);
+  };
 
-  } catch (error) {
-    const errMsg = error.response?.data?.detail || "Failed to reject item.";
-    alert(errMsg);
+  if (isPending || error) {
+    return (
+      <div>
+        <AdminNavBar />
+        <div className="min-h-screen flex justify-center mt-50 text-gray-600 text-lg">
+          {isPending ?
+            <div className='flex flex-col items-center gap-5'>
+              <span>Loading Entry Details...</span>
+              <CircularLoad />
+            </div> : error.message}
+        </div>
+      </div>
+    );
   }
-};
 
-  const handleImageSelect = (file) => {
-    // Disable changing photo if one already exists
-    if (entry.photo_url) {
-      alert("You cannot change the existing photo.");
-      return;
-    }
-    setEntry((prev) => ({ ...prev, photo: file }));
-  };
-
-  const handlePickupChange = (val) => {
-    setEntry((prev) => ({ ...prev, pickup_location: val }));
-  };
-
-  const handleChange = (field, value) => {
-    setEntry((prev) => ({ ...prev, [field]: value }));
-  };
-
-  if (loading) return <div>Loading entry...</div>;
-  if (error) return <div>{error}</div>;
+  const showActionButtons = entry.status === "Pending Approval";
 
   return (
     <div className="mb-6">
       <AdminNavBar />
       <div className="flex flex-col items-center justify-center mx-5">
-        <div>
-          <FoundBaseForm
-            title="Item Status:"
-            status={entry.status}
-            formData={entry}
-            existingPhoto={entry.photo_url}
-            onChange={handleChange}
-            onImageSelect={handleImageSelect}
-            onPickupChange={handlePickupChange}
-            disabled={true}
-            disableImageUpload={!!entry.photo_url} // 👈 Added flag
-          />
-        </div>
+        <FoundBaseForm
+          title="Found Item Details:"
+          status={status}
+          formData={entry}
+          existingPhoto={entry.photo_url}
+          disabled
+        />
 
         <div className="flex flex-row gap-10 mt-5">
+          {showActionButtons ? (
+            <>
+              <button
+                onClick={handleApprove}
+                className="mt-3 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+              >
+                Approve
+              </button>
 
-          <button
-            onClick={() => handleReject(entry.entry_id)}
-            className="mt-3 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
+              <button
+                onClick={handleReject}
+                className="mt-3 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
+              >
+                Reject
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => navigate(-1)}
+                className="mt-3 bg-gray-600 text-white px-5 py-2 rounded-lg hover:bg-gray-700 transition"
+              >
+                Go Back
+              </button>
 
-          >
-            Reject
-          </button>
-
-          <button
-            onClick={() => handleApprove(entry.entry_id)}
-            className="mt-3 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
-
-          >
-            Approve
-          </button>
+              <button
+                onClick={handleDelete}
+                className="mt-3 bg-red-600 text-white px-5 py-2 rounded-lg hover:bg-red-700 transition"
+              >
+                Delete Entry
+              </button>
+            </>
+          )}
         </div>
-
       </div>
     </div>
   );
 }
-

@@ -90,7 +90,7 @@ const Card2 = ({
       </div>
 
       {/* Status / Percentage / Label */}
-      <div className="flex justify-center items-center py-3 bg-gray-800 border-t border-gray-700">
+      <div className="flex justify-center items-center py-1 bg-gray-800 border-t border-gray-700">
         {renderBottomLabel()}
       </div>
 

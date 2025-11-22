@@ -29,7 +29,7 @@ const FoundBaseForm = ({
       {/* Title and Status Badge */}
       <div className="mb-5 text-center">
         <h1 className="mt-5 mb-2 text-xl font-bold">{title}</h1>
-        {user && <h1 className='text-yellow-500 mb-3'>{`From User: ${user.first_name} ${user.last_name}`}</h1>}
+        {user && <h1 className='text-yellow-500 mb-3'>{`Entry From: ${user.first_name} ${user.last_name}`}</h1>}
         {status && <StatusBadge status={status} />}
         {percentage && <PercentageBadge percentage={percentage} />}
               

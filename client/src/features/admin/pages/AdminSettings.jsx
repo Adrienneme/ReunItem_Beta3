@@ -6,12 +6,6 @@ import profile from '../../../assets/icons/usericon.png'
 const AdminSettings = () => {
   const navigate = useNavigate();
 
-  const user = JSON.parse(localStorage.getItem("user")) || {
-    first_name: "",
-    last_name: "",
-    email: ""
-  };
-
   const handleLogout = () => {
     localStorage.removeItem("user");
     alert("Logged out!");
