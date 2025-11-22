@@ -1,4 +1,4 @@
-import jsonClient from "./jsonClient";
+import jsonClient from "../api/axios/jsonClient";
 
 //========= Pending Submissions =======
 export const getPendingItems = async (filter = "All") => {

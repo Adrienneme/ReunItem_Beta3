@@ -1,51 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import AdminNavBar from "../../../components/layout/AdminNavBar";
 import FoundBaseForm from "../../../components/forms/FoundBaseForm";
-import { deleteSubmission } from "../../../api/admin";
+import CircularLoad from "../../../components/ui/CircularLoad";
+import { useLocation, useNavigate } from "react-router-dom";
+import { approveClaimRequest } from "../../../api/admin";
 import { getItem } from "../../../api/items";
-import { useLocation } from "react-router-dom";
-import { approveClaimRequest } from '../../../api/admin';
+import { useQuery } from "@tanstack/react-query";
 
 export default function FoundEntriesView() {
-  const [entry, setEntry] = useState({});
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
   const location = useLocation();
+  const navigate = useNavigate();
   const { entry_id } = location.state;
 
-  useEffect(() => {
-    let isMounted = true;
-
-    const fetchEntry = async () => {
-      try {
-        const response = await getItem(entry_id);
-        if (isMounted) setEntry(response);
-      } catch (error) {
-        if (isMounted) setError("No Entry Found.");
-      } finally {
-        if (isMounted) setLoading(false);
-      }
-      console.log("ITEM DATA:", entry);
-    };
-
-    fetchEntry();
-    return () => {
-      isMounted = false;
-    };
-  }, [entry_id]);
-
-  const handleDelete = async (entryId) => {
-    if (!window.confirm("Are you sure you want to delete this submission?")) return;
-    try {
-      const response = await deleteSubmission(entryId);
-      alert(response.message);
-    } catch (error) {
-      const errMsg = error.response?.data?.detail || "Failed to delete submission.";
-      alert(errMsg);
-    }
-  };
-
-  // ❗ REMOVED the invalid console.log here
+  const {
+    data: entry,
+    isPending,
+    error,
+  } = useQuery({
+    queryKey: ["found-entry", entry_id],
+    queryFn: () => getItem(entry_id),
+  });
 
   const handleClaim = async (match_id) => {
     if (!window.confirm("Are you sure you want to approve this match and finalize the claim? This action cannot be undone.")) {
@@ -62,28 +36,23 @@ export default function FoundEntriesView() {
         "Failed to process the claim. Please check network and permissions.";
 
       alert(`Claim Failed: ${errMsg}`);
-      console.error("Claim approval failed:", error);
     }
   };
 
-  const handleImageSelect = (file) => {
-    if (entry.photo_url) {
-      alert("You cannot change the existing photo.");
-      return;
-    }
-    setEntry((prev) => ({ ...prev, photo: file }));
-  };
-
-  const handlePickupChange = (val) => {
-    setEntry((prev) => ({ ...prev, pickup_location: val }));
-  };
-
-  const handleChange = (field, value) => {
-    setEntry((prev) => ({ ...prev, [field]: value }));
-  };
-
-  if (loading) return <div>Loading entry...</div>;
-  if (error) return <div>{error}</div>;
+  if (isPending || error) {
+    return (
+      <div>
+        <AdminNavBar />
+        <div className="min-h-screen flex justify-center mt-35 text-gray-600 text-lg">
+          {isPending ?
+            <div className='flex flex-col items-center gap-5'>
+              <span>Loading Entry Details...</span>
+              <CircularLoad />
+            </div> : error.message}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="mb-6">
@@ -91,39 +60,34 @@ export default function FoundEntriesView() {
       <div className="flex flex-col items-center justify-center mx-5">
         <div>
           <FoundBaseForm
+            title="Found Item Details:"
             label={entry.type}
             formData={entry}
             existingPhoto={entry.photo_url}
-            onChange={handleChange}
-            onImageSelect={handleImageSelect}
-            onPickupChange={handlePickupChange}
-            disableImageUpload={!!entry.photo_url}
+            disabled={true}
           />
         </div>
 
-        <div className="flex flex-row gap-10 mt-3">
-
-        <button
-          onClick={() => {
-            // Try both possible fields
-            const matchId = entry.matchId || entry.match_id;
-
-            if (!matchId) {
-              alert("Cannot approve claim: match ID is missing.");
-              console.error("Missing match ID in entry:", entry);
-              return;
-            }
-
-            console.log("match_id sent to handleClaim:", matchId);
-            handleClaim(matchId);
-          }}
-          className="mt-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition h-10">
-            Item Claimed
-          </button> 
+        <div className="flex flex-row gap-10 mt-5">
           <button
-            onClick={() => handleDelete(entry.entryId)}
-            className="mt-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition h-10">
-            Delete Entry
+            onClick={() => { navigate("/admin/lostandfoundrep"); }}
+            className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition"
+          >
+            Go Back
+          </button>
+
+          <button
+            onClick={() => {
+              const matchId = entry.matchId || entry.match_id;
+              if (!matchId) {
+                alert("Cannot approve claim: match ID is missing.");
+                return;
+              }
+              handleClaim(matchId);
+            }}
+            className="mt-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition h-10"
+          >
+            Item Claimed
           </button>
         </div>
       </div>

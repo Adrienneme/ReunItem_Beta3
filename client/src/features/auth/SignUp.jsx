@@ -14,13 +14,13 @@ const checkPasswordStrength = (password) => {
     if (password.length === 0) {
         return { status: 'none', color: 'text-gray-400', text: 'Enter a password' };
     } else if (password.length < minLength) {
-        return { status: 'weak', color: 'text-red-500', text: `Weak: Must be at least ${minLength} characters.` };
+        return { status: 'weak', color: 'text-red-900', text: `Weak: Must be at least ${minLength} characters.` };
     } else if (password.length >= minLength && hasAlphaNumeric && hasSpecialChar) {
         return { status: 'strong', color: 'text-green-500', text: 'Strong: Excellent password.' };
     } else if (password.length >= minLength && hasAlphaNumeric) {
         return { status: 'good', color: 'text-yellow-500', text: 'Good: Add a special character for max strength.' };
     } else {
-        return { status: 'weak', color: 'text-red-500', text: 'Weak: Requires letters, numbers, and at least 8 characters.' };
+        return { status: 'weak', color: 'text-red-900', text: 'Weak: Requires letters, numbers, and at least 8 characters.' };
     }
 };
 
@@ -144,7 +144,7 @@ const Signup = () => {
                 {/* --- End Display Password Strength Status --- */}
 
                 {/* Display general errors or success messages */}
-                {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
+                {error && <p className="text-red-900 text-sm mt-2">{error}</p>}
                 {message && <p className="text-green-600 text-sm mt-2">{message}</p>}
                 
                 <button
@@ -157,7 +157,7 @@ const Signup = () => {
 
             <p className="mt-4 text-sm text-white">
                 Already have an account?{" "}
-                <a href="/login" className="text-blue-600 hover:underline">
+                <a href="/login" className="text-blue-500 hover:underline">
                     Login here
                 </a>
             </p>

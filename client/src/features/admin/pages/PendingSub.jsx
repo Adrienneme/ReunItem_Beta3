@@ -1,38 +1,50 @@
-//Test function backend, update backend Pending status and approve entry working
-import React, { useState, useEffect } from 'react'
-import AdminNavBar from '../../../components/layout/AdminNavBar'
-import Card from '../../../components/ui/Cards'
-import FilterDropdown from '../../../components/ui/Filters'
-import { getPendingItems } from '../../../api/admin'
+import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+
+import AdminNavBar from "../../../components/layout/AdminNavBar";
+import Card2 from "../../../components/ui/Card2";
+import FilterDropdown from "../../../components/ui/Filters";
+import CircularLoad from "../../../components/ui/CircularLoad";
+
+import { getPendingItems } from "../../../api/admin";
 
 function Pendingsub() {
-  const [entries, setEntries] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("All");
 
-  const fetchEntries = async () => {
-    try {
-      setLoading(true);
-      const data = await getPendingItems(filter);
-      setEntries(data);
-      console.log("Pending Items:", data);
-    } catch (error) {
-      const errMsg = error.response?.data?.detail || "No Pending Entries.";
-      console.error(error);
-      alert(errMsg);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data: entries, isPending, error } = useQuery({
+    queryKey: ["pendingItems", filter],
+    queryFn: () => getPendingItems(filter),
+    staleTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: true,
+  });
 
-  useEffect(() => {
-    fetchEntries();
-  }, [filter]);
+  if (isPending) {
+    return (
+      <div className="mb-6">
+        <AdminNavBar />
+        <div className="flex flex-col items-center gap-5 mt-20">
+          <span>Loading Entries...</span>
+          <CircularLoad />
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="mb-6">
+        <AdminNavBar />
+        <p className="text-center mt-30 text-red-500">
+          {error.response?.data?.detail || "Failed to load entries."}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="mb-6">
       <AdminNavBar />
-      {/* Filter Dropdown */}
+
       <div className="flex flex-wrap justify-center mt-10">
         <FilterDropdown
           label="Filter"
@@ -42,23 +54,28 @@ function Pendingsub() {
         />
       </div>
 
-      {/* Cards Section */}
-      {loading ? (
-        <p className="text-center mt-10">Loading...</p>
-      ) : entries.length === 0 ? (
-        <p className="text-center mt-10 text-gray-500">No pending items found.</p>
+      {entries?.length === 0 ? (
+        <p className="text-center mt-30 text-gray-500">No pending items found.</p>
       ) : (
         <div className="flex flex-wrap justify-center gap-10 mt-10">
-          {entries.map((item) => (
-            <Card
-              key={item.entry_id}
-              name={item.item_name}
-              imageUrl={item.photo_url}
-              label={item.type}
-              linkTo="/admin/foundcardview"
-              stateData={item}
-            />
-          ))}
+          {entries?.map((item) => {
+            const type = item.type?.toLowerCase();
+            const linkTo =
+              type === "lost"
+                ? "/admin/lostcardview"
+                : "/admin/foundcardview";
+
+            return (
+              <Card2
+                key={item.entry_id}
+                name={item.item_name}
+                imageUrl={item.photo_url}
+                label={item.type}
+                linkTo={linkTo}
+                stateData={item}
+              />
+            );
+          })}
         </div>
       )}
     </div>

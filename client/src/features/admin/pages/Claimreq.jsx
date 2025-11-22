@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import AdminNavBar from '../../../components/layout/AdminNavBar';
+import CircularLoad from "../../../components/ui/CircularLoad";
 import {
   getAllMatches,
   approveClaim,
@@ -73,9 +74,10 @@ const ClaimRequest = () => {
         </h2>
 
         {loading ? (
-          <p className="text-center mt-10 text-gray-400">
-            Loading pending claims...
-          </p>
+          <div className='flex flex-col items-center gap-5 mt-20'>
+                    <span>Loading Entries...</span>
+                    <CircularLoad />
+                  </div>
         ) : (
           <div className="flex flex-wrap justify-center gap-10 mt-10">
             {pendingClaims.length === 0 ? (

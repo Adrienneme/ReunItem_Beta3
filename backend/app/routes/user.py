@@ -18,3 +18,8 @@ async def read_users_me(
     current_user: Annotated[UserSchemas.User, Depends(UserModels.get_current_active_user)],
     ) -> Union[UserSchemas.User, None]: 
     return current_user
+  
+@router.get("/get-user/{user_id}")
+def get_user_route(user_id: str, _= Depends(UserModels.get_current_active_user)):
+  user = UserModels.get_user(user_id)
+  return user

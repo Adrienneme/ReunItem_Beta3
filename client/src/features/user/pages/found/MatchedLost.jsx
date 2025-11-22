@@ -12,7 +12,7 @@ export default function MatchedLost() {
   const { entry_id } = location.state;
   const { data } = useFetchMatched(entry_id);
   const lostentryId = data?.lost_entry_id;
-  const { formData, isPending, error } = useFetchItem("lost", lostentryId, {
+  const { formData, user, isPending, error } = useFetchItem("lost", lostentryId, {
     enabled: !!lostentryId
   });
 
@@ -40,6 +40,7 @@ export default function MatchedLost() {
         formData={formData}
         disabled={true}
         existingPhoto={formData.photo_url}
+        user={user}
       />
       <div className='flex flex-row justify-center mt-5 gap-10'>
         <ButtonUI variant="solid" color="neutral"

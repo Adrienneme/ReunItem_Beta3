@@ -16,10 +16,10 @@ export default function MatchedFound() {
   const { entry_id } = location.state;
   const { data } = useFetchMatched(entry_id);
   const foundEntryId = data?.found_entry_id;
-  const { formData, isPending, error } = useFetchItem("found", foundEntryId, {
+  const { formData, user, isPending, error } = useFetchItem("found", foundEntryId, {
     enabled: !!foundEntryId
   });
-
+  
 
   if (isPending || error) {
     return (
@@ -53,6 +53,7 @@ export default function MatchedFound() {
         formData={formData}
         disabled={true}
         existingPhoto={formData.photo_url}
+        user={user}
       />
       <div className='flex flex-row justify-center mt-5 gap-10'>
         <ButtonUI variant="solid" color="neutral"

@@ -106,9 +106,9 @@ class ItemModels:
         return ItemSchemas.ItemResponse(**response.data[0])
 
     @staticmethod
-    def delete_item(entry_id: str, user_id: str):
+    def delete_item(entry_id: str):
         # Fetch existing item
-        existing = supabase.table("items").select("*").eq("entry_id", entry_id).eq("user_id", user_id).execute()
+        existing = supabase.table("items").select("*").eq("entry_id", entry_id).execute()
         if not existing.data:
             raise HTTPException(status_code=403, detail="You cannot delete this item")
 
@@ -127,7 +127,7 @@ class ItemModels:
                 raise HTTPException(status_code=500, detail=f"Photo deletion failed: {str(e)}")
 
         # Delete database entry
-        response = supabase.table("items").delete().eq("entry_id", entry_id).eq("user_id", user_id).execute()
+        response = supabase.table("items").delete().eq("entry_id", entry_id).execute()
         if not response.data:
             raise HTTPException(status_code=500, detail="Failed to delete item.")
 

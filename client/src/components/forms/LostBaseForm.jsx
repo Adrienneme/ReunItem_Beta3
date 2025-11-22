@@ -16,7 +16,8 @@ const LostBaseForm = ({
   disabled = false, //true if for display only
   onGenerate, //logic for generating item description
   loading = false, //indication for generating description
-  percentage = null
+  percentage = null,
+  user
 }) => {
 
   return (
@@ -24,9 +25,8 @@ const LostBaseForm = ({
       {/*Title Page w/ badge?*/}
       <div className='mb-5 flex flex-col items-center'>
         <h1 className='mt-5 mb-3 text-xl font-bold'><b>{title}</b></h1>
-        {status && (
-          <StatusBadge status={status} />
-        )}
+        {user && <h1 className='text-yellow-500 mb-3'>{`From User: ${user.first_name} ${user.last_name}`}</h1>}
+        {status && (<StatusBadge status={status} />)}
         {percentage && <PercentageBadge percentage={percentage} />}
       </div>
 

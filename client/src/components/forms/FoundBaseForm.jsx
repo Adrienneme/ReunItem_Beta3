@@ -20,16 +20,19 @@ const FoundBaseForm = ({
   onPickupChange, //calls function for users to specify pickup location
   disabled = false, //disables all inputs (for display only)
   disablePickupSelect = false, //admins discretion for changing the pickup location 
-  percentage = null
+  percentage = null,
+  user
 }) => {
   return (
     <div className="flex flex-col items-center justify-center">
 
       {/* Title and Status Badge */}
       <div className="mb-5 text-center">
-        <h1 className="mt-5 mb-3 text-xl font-bold">{title}</h1>
+        <h1 className="mt-5 mb-2 text-xl font-bold">{title}</h1>
+        {user && <h1 className='text-yellow-500 mb-3'>{`Entry From: ${user.first_name} ${user.last_name}`}</h1>}
         {status && <StatusBadge status={status} />}
         {percentage && <PercentageBadge percentage={percentage} />}
+              
       </div>
 
       {/* Item Name */}

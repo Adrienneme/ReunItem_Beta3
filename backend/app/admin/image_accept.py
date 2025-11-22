@@ -48,7 +48,7 @@ async def approve_entry(entry_id: str, admin=Depends(get_current_admin)):
     if not entry:
         raise HTTPException(status_code=404, detail="Entry not found.")
 
-    supabase.table("items").update({"status": "Claimed"}).eq("entry_id", entry_id).execute()
+    supabase.table("items").update({"status": "Approved"}).eq("entry_id", entry_id).execute()
 
     return {"message": f"Entry {entry_id} approved successfully!", "entry_id": entry_id}
 

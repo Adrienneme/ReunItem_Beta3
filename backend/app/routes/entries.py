@@ -79,8 +79,8 @@ async def update_item_route(
 
 
 @router.delete("/delete/{entry_id}")
-def delete_item_route(entry_id: str, current_user = Depends(UserModels.get_current_active_user)):
-  return ItemModels.delete_item(entry_id, str(current_user.user_id))
+def delete_item_route(entry_id: str, _= Depends(UserModels.get_current_active_user)):
+  return ItemModels.delete_item(entry_id)
 
 
 @router.post("/matches/{entry_id}", response_model = List[MatchSchemas.FoundMatchResponse])

@@ -70,7 +70,7 @@ const Login = () => {
           className="w-full p-2 mt-1 border border-black rounded text-gray-900 placeholder-gray-300"
         />
 
-        {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
+        {error && <p className="text-red-800 text-sm mt-2">{error}</p>}
 
         <button
           type="submit"
@@ -82,7 +82,7 @@ const Login = () => {
 
       <p className="mt-4 text-sm text-white">
         Don’t have an account?{" "}
-        <a href="/signup" className="text-blue-600 hover:underline">
+        <a href="/signup" className="text-blue-500 hover:underline">
           Signup here
         </a>
       </p>

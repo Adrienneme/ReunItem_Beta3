@@ -1,5 +1,5 @@
-import formClient from "./formClient";
-import jsonClient from "./jsonClient"
+import formClient from "../api/axios/formClient";
+import jsonClient from "../api/axios/jsonClient"
 
 export const createItem = async (formData) => {
   const allData = new FormData();

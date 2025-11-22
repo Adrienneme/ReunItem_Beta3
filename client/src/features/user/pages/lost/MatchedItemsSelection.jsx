@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import UserNavBar from '../../../../components/layout/UserNavBar'
-import Card from '../../../../components/ui/Cards'
+import Card2 from '../../../../components/ui/Card2'
 import { useFetchMatches } from '../../../../hooks/useFetch'
 import { useLocation } from 'react-router-dom'
 import LinearLoad from '../../../../components/ui/LinearLoad'
@@ -43,7 +43,7 @@ export default function MatchedItemsSelection() {
 
         {entries
           .map((item) => (
-            <Card
+            <Card2
               key={item.entry_id}
               name={item.item_name}
               imageUrl={item.photo_url}
