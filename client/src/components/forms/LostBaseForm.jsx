@@ -1,10 +1,11 @@
-import React from 'react'
+import React, {useState} from 'react'
 import Input from '../ui/Input'
 import StatusBadge from '../ui/StatusBadge'
 import ImageUpload from '../ui/ImageUpload'
 import GenerateButton from '../ui/GenerateButton'
 import MultilineInput from '../ui/MultilineInput'
 import PercentageBadge from '../ui/PercentageBadge'
+import { ChevronDown, ChevronUp, User } from 'lucide-react';
 
 const LostBaseForm = ({
   title, //different titles for each page (submission(post), display(get), editing(put))
@@ -20,15 +21,41 @@ const LostBaseForm = ({
   user
 }) => {
 
+  const [infoOpen, setInfoOpen] = useState(false);
+
   return (
     <div className='flex flex-col items-center '>
       {/*Title Page w/ badge?*/}
       <div className='mb-5 flex flex-col items-center'>
         <h1 className='mt-5 mb-3 text-xl font-bold'><b>{title}</b></h1>
-        {user && <h1 className='text-yellow-500 mb-3'>{`From User: ${user.first_name} ${user.last_name}`}</h1>}
         {status && (<StatusBadge status={status} />)}
         {percentage && <PercentageBadge percentage={percentage} />}
       </div>
+
+      {/* User Info Dropdown */}
+      {user && (
+        <div className="w-full max-w-md mb-4">
+          <button
+            className="w-full flex items-center justify-between bg-#242424 px-7 py-2 rounded-xl shadow hover:bg-#242424 transition"
+            onClick={() => setInfoOpen(!infoOpen)}
+          >
+            <span className="flex items-center gap-2 font-semibold">
+              <User size={18} /> Entry By:
+
+            </span>
+            <span className="ml-auto text-gray-500 font-light mr-2">View User Information</span>
+            {infoOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+          </button>
+
+          {infoOpen && (
+            <div className="mt-2 bg-#242424 shadow-md rounded-xl p-4 border animate-fadeIn">
+              <p className="text-gray-300"><strong>Name:</strong> {user.first_name} {user.last_name}</p>
+              <p className="text-gray-300 mt-1"><strong>Email:</strong> {user.contact || user.email}</p>
+              <p className="text-gray-300 mt-1"><strong>Contact Number:</strong> {user.contact}</p>
+            </div>
+          )}
+        </div>
+      )}
 
       {/*Item name*/}
       <div>

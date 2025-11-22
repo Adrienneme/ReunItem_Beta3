@@ -52,7 +52,7 @@ export default function FoundDetails() {
         existingPhoto={formData.photo_url}
       />
       <div className='flex flex-row items-center justify-center mt-5'>
-        {["Claimed", "Rejected", "Archived"].includes(formData.status) && (
+        {["Rejected", "Archived"].includes(formData.status) && (
           <div className='flex flex-row items-center justify-center mt-5 gap-5'>
             <ButtonUI variant="solid" color="neutral" onClick={() => navigate("/user/found-entries")}>
               Go Back
@@ -78,7 +78,7 @@ export default function FoundDetails() {
           </div>
         )}
 
-        {formData.status == "Pending Claim" && (
+        {["Pending Claim", "Claimed"].includes(formData.status) && (
           <div className='flex flex-row gap-10'>
             <ButtonUI variant="solid" color="neutral"
               onClick={() => navigate("/user/found-entries")}>
