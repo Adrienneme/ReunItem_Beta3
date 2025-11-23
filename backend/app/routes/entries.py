@@ -65,7 +65,7 @@ async def update_item_route(
   pickup_location: str = Form(None),
   type: str = Form(None),
   photo: UploadFile = None,
-  current_user = Depends(UserModels.get_current_active_user)
+  _= Depends(UserModels.get_current_active_user)
 ):
   updates = {}
   if item_name: updates["item_name"] = item_name
@@ -75,7 +75,7 @@ async def update_item_route(
   
   updates["status"] = EntryStatus.Pending_Approval
 
-  return ItemModels.update_item(entry_id, str(current_user.user_id), updates, photo)
+  return ItemModels.update_item(entry_id, updates, photo)
 
 
 @router.delete("/delete/{entry_id}")
