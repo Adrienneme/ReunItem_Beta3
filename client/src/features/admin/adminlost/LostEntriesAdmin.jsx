@@ -11,7 +11,11 @@ export default function LostEntriesView() {
   const navigate = useNavigate();
   const { entry_id } = location.state;
 
+<<<<<<< HEAD
   const { user, formData: entry, isPending, error } = useFetchItem("found", entry_id);
+=======
+  const { user, formData: entry, isPending, error } = useFetchItem("lost", entry_id);
+>>>>>>> d33a39a (LostEntrisAdmin update)
 
   if (isPending || error) {
     return (
@@ -40,11 +44,15 @@ export default function LostEntriesView() {
 
     try {
       await approveItem(id);
+<<<<<<< HEAD
       alert(`Item marked as FOUND/LOST (Claimed).`);
+=======
+      alert("Item marked as FOUND/LOST (Claimed).");
+>>>>>>> d33a39a (LostEntrisAdmin update)
       navigate("/admin/lostandfoundrep");
-    } catch (error) {
+    } catch (err) {
       alert("Failed to update item.");
-      console.error(error);
+      console.error(err);
     }
   };
 
