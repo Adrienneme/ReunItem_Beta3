@@ -14,10 +14,10 @@ export default function MatchedItemsSelection() {
     return (
       <div>
         <UserNavBar />
-        <div className="min-h-screen flex justify-center mt-50 text-gray-600 text-lg">
+        <div className="min-h-screen flex justify-center mt-35 text-gray-600 text-lg">
           {isPending ?
             <div className='flex flex-col items-center gap-5'>
-              <span>Loading Potential Matches...</span>
+              <span>Searching for Potential Found Item Matches...</span>
               <LinearLoad />
             </div> : error.message}
         </div>
@@ -34,7 +34,7 @@ export default function MatchedItemsSelection() {
         </div>
       </div>
 
-      <div className="flex flex-wrap justify-center gap-10 mt-10">
+      <div className="flex flex-wrap justify-center gap-10 mt-5">
         <div>
           {!entries || entries.length === 0 && (
             <p className="text-gray-500 text-lg mt-20">No matched items found, Check again later...</p>

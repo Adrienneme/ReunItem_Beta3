@@ -22,10 +22,10 @@ export default function MatchedDetails() {
     return (
       <div>
         <UserNavBar />
-        <div className="min-h-screen flex justify-center mt-50 text-gray-600 text-lg">
+        <div className="min-h-screen flex justify-center mt-35 text-gray-600 text-lg">
           {isPending ?
             <div className='flex flex-col items-center gap-5'>
-              <span>Loading Entry Details...</span>
+              <span>Loading Matched Found Item</span>
               <CircularLoad />
             </div> : error.message}
         </div>

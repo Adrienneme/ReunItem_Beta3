@@ -15,10 +15,10 @@ export default function FoundEntriesPage() {
     return (
       <div>
         <UserNavBar />
-        <div className="min-h-screen flex justify-center mt-50 text-gray-600 text-lg">
+        <div className="min-h-screen flex justify-center mt-35 text-gray-600 text-lg">
           {isPending ? 
           <div className='flex flex-col items-center gap-5'>
-             <span>Loading Found Entries...</span>
+             <span>Loading Found Items</span>
              <CircularLoad/>
           </div> : error.message}
         </div>
@@ -38,7 +38,7 @@ export default function FoundEntriesPage() {
 
       <div className='flex flex-col items-center'>
         <div className='mt-5 mb-5'>
-          <h1 className='text-xl font-bold'>Found Entries:</h1>
+          <h1 className='text-xl font-bold'>Found Items:</h1>
         </div>
 
         <FilterDropdown

@@ -9,10 +9,10 @@ import CircularLoad from '../../../../components/ui/CircularLoad';
 export default function MatchedLost() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { entry_id } = location.state;
-  const { data } = useFetchMatched(entry_id);
+  const entry_id = location.state?.entry_id;
+  const { data, isPending } = useFetchMatched(entry_id);
   const lostentryId = data?.lost_entry_id;
-  const { formData, user, isPending, error } = useFetchItem("lost", lostentryId, {
+  const { formData, user, error } = useFetchItem("lost", lostentryId, {
     enabled: !!lostentryId
   });
 
@@ -20,16 +20,28 @@ export default function MatchedLost() {
     return (
       <div>
         <UserNavBar />
-        <div className="min-h-screen flex justify-center mt-50 text-gray-600 text-lg">
+        <div className="min-h-screen flex justify-center mt-35 text-gray-600 text-lg">
           {isPending ?
             <div className='flex flex-col items-center gap-5'>
-              <span>Loading Entry Details...</span>
+              <span>Retrieving Matched Lost Item</span>
               <CircularLoad />
             </div> : error.message}
         </div>
       </div>
     )
   }
+
+  if (!lostentryId) {
+    return (
+      <div>
+        <UserNavBar />
+        <div className='flex flex-col items-center gap-5 mt-35'>
+          <span className='text-red-600'>No Matched Item</span>
+        </div>
+      </div>
+    )
+  }
+
 
   return (
     <div className='mb-10'>

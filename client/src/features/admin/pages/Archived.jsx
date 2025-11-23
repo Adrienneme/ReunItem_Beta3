@@ -32,27 +32,19 @@ function LostFoundRep() {
       ? combined
       : combined.filter((item) => item.status === filter);
 
-  if (isPending) {
+  if (isPending || error) {
     return (
-      <div className="mb-6">
+      <div>
         <AdminNavBar />
-        <div className="flex flex-col items-center gap-5 mt-20">
-          <span>Loading Entries...</span>
-          <CircularLoad />
+        <div className="min-h-screen flex justify-center mt-35 text-gray-600 text-lg">
+          {isPending ?
+            <div className='flex flex-col items-center gap-5'>
+              <span>Loading Item Entries</span>
+              <CircularLoad />
+            </div> : error.response?.data?.detail || "No Item Entries Yet"}
         </div>
       </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="mb-6">
-        <AdminNavBar />
-        <p className="text-center mt-30 text-red-500">
-          Failed to load items.
-        </p>
-      </div>
-    );
+    )
   }
 
   return (

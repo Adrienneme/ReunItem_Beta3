@@ -12,60 +12,81 @@ export default function MatchedFound() {
   const navigate = useNavigate();
   const location = useLocation();
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
-  const cancelMutation = useCancelClaim("lost")
-  const { entry_id } = location.state;
-  const { data } = useFetchMatched(entry_id);
-  const foundEntryId = data?.found_entry_id;
-  const { formData, user, isPending, error } = useFetchItem("found", foundEntryId, {
-    enabled: !!foundEntryId
-  });
-  
 
-  if (isPending || error) {
+  const cancelMutation = useCancelClaim("lost");
+
+  const entry_id = location.state?.entry_id;
+
+  const { data, isPending: matchedPending } = useFetchMatched(entry_id);
+  const foundEntryId = data?.found_entry_id;
+
+  const { formData, user, isPending: itemPending } = useFetchItem(
+    "found",
+    foundEntryId,
+    { enabled: !!foundEntryId }
+  );
+
+  if (matchedPending || (foundEntryId && itemPending)) {
     return (
       <div>
         <UserNavBar />
-        <div className="min-h-screen flex justify-center mt-50 text-gray-600 text-lg">
-          {isPending ?
-            <div className='flex flex-col items-center gap-5'>
-              <span>Loading Entry Details...</span>
-              <CircularLoad />
-            </div> : error.message}
+        <div className="mt-35 flex justify-center items-center text-gray-600 text-lg">
+          <div className='flex flex-col items-center gap-5'>
+            <span>Retrieving Matched Found Item</span>
+            <CircularLoad />
+          </div>
         </div>
       </div>
-    )
+    );
   }
 
-  const cancelCancel = () => {
-    setShowCancelConfirm(false);
-  };
-
-  const confirmCancel = () => {
-    cancelMutation.mutate(entry_id)
+  if (!foundEntryId && !matchedPending) {
+    return (
+      <div>
+        <UserNavBar />
+        <div className='flex flex-col items-center gap-5 mt-35'>
+          <span className='text-red-600'>No Matched Item</span>
+        </div>
+      </div>
+    );
   }
+
+  const cancelCancel = () => setShowCancelConfirm(false);
+  const confirmCancel = () => cancelMutation.mutate(entry_id);
 
   return (
     <div className='mb-10'>
       <UserNavBar />
+
       <FoundBaseForm
         title="Matched Found Item Details:"
         percentage={data.similarity}
         formData={formData}
         disabled={true}
-        existingPhoto={formData.photo_url}
+        existingPhoto={formData?.photo_url}
         user={user}
       />
+
       <div className='flex flex-row justify-center mt-5 gap-10'>
-        <ButtonUI variant="solid" color="neutral"
-          onClick={() => navigate("/user/lost-details", { state: { entry_id: entry_id } })}>
+        <ButtonUI
+          variant="solid"
+          color="neutral"
+          onClick={() => navigate("/user/lost-details", { state: { entry_id } })}
+        >
           Go Back
         </ButtonUI>
-        <ButtonUI variant="solid" color="danger"
-          onClick={() => { setShowCancelConfirm(true) }}
-        >
-          Cancel Claim Request
-        </ButtonUI>
+
+        {formData?.status === "Pending Claim" && (
+          <ButtonUI
+            variant="solid"
+            color="danger"
+            onClick={() => setShowCancelConfirm(true)}
+          >
+            Cancel Claim Request
+          </ButtonUI>
+        )}
       </div>
+
       <MessageBox
         show={showCancelConfirm}
         message="Are you sure you want to Cancel claimed Item?"
@@ -73,5 +94,5 @@ export default function MatchedFound() {
         onCancel={cancelCancel}
       />
     </div>
-  )
+  );
 }

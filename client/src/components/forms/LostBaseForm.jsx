@@ -40,7 +40,7 @@ const LostBaseForm = ({
       {user && (
         <div className="w-full mb-4">
           <button
-            className="w-full flex items-center justify-between bg-#242424 px-7 py-2 rounded-xl shadow hover:bg-#242424 transition"
+            className="w-full flex items-center justify-between bg-#2A3326 px-7 py-2 rounded-xl shadow hover:bg-#242424 transition"
             onClick={() => setInfoOpen(!infoOpen)}
           >
             <span className="flex items-center gap-2 font-semibold">
