@@ -68,16 +68,16 @@ const ClaimRequest = () => {
   return (
     <div className="mb-6">
       <div className={selectedMatch ? "blur-sm pointer-events-none" : ""}>
-       <AdminNavBar />
+        <AdminNavBar />
         <h2 className="flex justify-center text-lg font-semibold mt-10 text-white">
           Pending Claim Requests
         </h2>
 
         {loading ? (
           <div className='flex flex-col items-center gap-5 mt-20'>
-                    <span>Loading Entries...</span>
-                    <CircularLoad />
-                  </div>
+            <span>Loading Entries...</span>
+            <CircularLoad />
+          </div>
         ) : (
           <div className="flex flex-wrap justify-center gap-10 mt-10">
             {pendingClaims.length === 0 ? (
@@ -88,23 +88,37 @@ const ClaimRequest = () => {
               pendingClaims.map((match) => {
                 const imageUrl =
                   match.lost_item?.photo_url || match.found_item?.photo_url;
+
                 const itemName =
                   match.lost_item?.item_name ||
                   match.found_item?.item_name ||
                   "Unnamed Item";
+
+                const lostUser = `${match.lost_user?.first_name || ""} ${match.lost_user?.last_name || ""}`.trim();
+                const foundUser = `${match.found_user?.first_name || ""} ${match.found_user?.last_name || ""}`.trim();
 
                 return (
                   <div
                     key={match.match_id}
                     className="w-64 bg-gray-900 text-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-transform hover:scale-105 flex flex-col justify-between"
                   >
-                    {/* Item Info (Top) */}
                     <div className="flex flex-col items-center px-3 pt-4 text-center">
                       <h3 className="font-semibold text-sm mb-1 line-clamp-2 text-white">
                         {itemName}
                       </h3>
-                      <p className="text-xs text-gray-400 mb-3 break-words">
-                        ID: {match.match_id}
+
+                      <p className="text-xs text-gray-400 mb-1 break-words">
+                        Match ID: {match.match_id}
+                      </p>
+
+                      {/* Lost & Found Users */}
+                      <p className="text-xs text-gray-300">
+                        <strong>Lost Owner:</strong>{" "}
+                        {lostUser || "Unknown"}
+                      </p>
+                      <p className="text-xs text-gray-300 mb-3">
+                        <strong>Found Owner:</strong>{" "}
+                        {foundUser || "Unknown"}
                       </p>
 
                       {imageUrl ? (
@@ -120,7 +134,6 @@ const ClaimRequest = () => {
                       )}
                     </div>
 
-                    {/* Approve + Reject */}
                     <div className="flex justify-around bg-gray-800 py-2 px-2 mt-3">
                       <button
                         onClick={() => handleApprove(match.match_id)}
@@ -147,7 +160,6 @@ const ClaimRequest = () => {
                       </button>
                     </div>
 
-                    {/* View Details Button */}
                     <div className="bg-gray-800 py-2 flex justify-center border-t border-gray-700">
                       <button
                         onClick={() => setSelectedMatch(match)}
@@ -164,7 +176,6 @@ const ClaimRequest = () => {
         )}
       </div>
 
-      {/* Popup Modal */}
       {selectedMatch && (
         <div
           className="fixed inset-0 flex justify-center items-center z-50 bg-black/30 backdrop-blur-sm"
@@ -180,16 +191,29 @@ const ClaimRequest = () => {
               ✕
             </button>
 
-            <h3 className="text-center text-xl font-semibold mb-5 text-black">
+            <h3 className="text-center text-xl font-semibold mb-4 text-black">
               Match Details
             </h3>
 
+            <div className="mb-4 text-center">
+              <p className="text-sm text-gray-700">
+                <strong>Lost Item Owner:</strong>{" "}
+                {selectedMatch.lost_user?.first_name}{" "}
+                {selectedMatch.lost_user?.last_name}
+              </p>
+              <p className="text-sm text-gray-700">
+                <strong>Found Item Owner:</strong>{" "}
+                {selectedMatch.found_user?.first_name}{" "}
+                {selectedMatch.found_user?.last_name}
+              </p>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Lost Item */}
               <div className="border rounded-xl p-4 bg-gray-50 text-black">
                 <h4 className="text-lg font-semibold mb-2 border-b pb-1">
                   Lost Item
                 </h4>
+
                 {selectedMatch.lost_item?.photo_url ? (
                   <img
                     src={selectedMatch.lost_item.photo_url}
@@ -201,6 +225,7 @@ const ClaimRequest = () => {
                     <span className="text-gray-500">No Image</span>
                   </div>
                 )}
+
                 <p>
                   <strong>Name:</strong>{" "}
                   {selectedMatch.lost_item?.item_name || "N/A"}
@@ -215,11 +240,11 @@ const ClaimRequest = () => {
                 </p>
               </div>
 
-              {/* Found Item */}
               <div className="border rounded-xl p-4 bg-gray-50 text-black">
                 <h4 className="text-lg font-semibold mb-2 border-b pb-1">
                   Found Item
                 </h4>
+
                 {selectedMatch.found_item?.photo_url ? (
                   <img
                     src={selectedMatch.found_item.photo_url}
@@ -231,6 +256,7 @@ const ClaimRequest = () => {
                     <span className="text-gray-500">No Image</span>
                   </div>
                 )}
+
                 <p>
                   <strong>Name:</strong>{" "}
                   {selectedMatch.found_item?.item_name || "N/A"}
