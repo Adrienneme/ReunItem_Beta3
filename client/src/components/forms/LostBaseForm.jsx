@@ -5,18 +5,21 @@ import ImageUpload from '../ui/ImageUpload'
 import GenerateButton from '../ui/GenerateButton'
 import MultilineInput from '../ui/MultilineInput'
 import PercentageBadge from '../ui/PercentageBadge'
-import { ChevronDown, ChevronUp, User } from 'lucide-react';
+import { 
+  ChevronDown, ChevronUp, User, Tag, 
+  FileText, Phone, Camera 
+} from 'lucide-react';
 
 const LostBaseForm = ({
-  title, //different titles for each page (submission(post), display(get), editing(put))
-  formData, //pass or update existing data
-  status = null, //for display only, update to pending when submitted
-  onChange, // for updates and submission for inputs
-  existingPhoto, //url for when image already uploaded in database
-  onImageSelect, //for updates and submission of photo
-  disabled = false, //true if for display only
-  onGenerate, //logic for generating item description
-  loading = false, //indication for generating description
+  title,
+  formData,
+  status = null,
+  onChange,
+  existingPhoto,
+  onImageSelect,
+  disabled = false,
+  onGenerate,
+  loading = false,
   percentage = null,
   user
 }) => {
@@ -24,26 +27,28 @@ const LostBaseForm = ({
   const [infoOpen, setInfoOpen] = useState(false);
 
   return (
-    <div className='flex flex-col items-center'>
-      {/*Title Page w/ badge?*/}
-      <div className='mb-5 flex flex-col items-center'>
-        <h1 className='mt-5 mb-3 text-xl font-bold'><b>{title}</b></h1>
-        {status && (<StatusBadge status={status} />)}
+    <div className="flex flex-col justify-center mx-auto w-full max-w-md">
+
+      {/* Title + Status */}
+      <div className="mb-5 text-center">
+        <h1 className="mt-5 mb-3 text-xl font-bold">{title}</h1>
+        {status && <StatusBadge status={status} />}
         {percentage && <PercentageBadge percentage={percentage} />}
       </div>
 
       {/* User Info Dropdown */}
       {user && (
-        <div className="w-full max-w-md mb-4">
+        <div className="w-full mb-4">
           <button
             className="w-full flex items-center justify-between bg-#242424 px-7 py-2 rounded-xl shadow hover:bg-#242424 transition"
             onClick={() => setInfoOpen(!infoOpen)}
           >
             <span className="flex items-center gap-2 font-semibold">
               <User size={18} /> Entry From:
-
             </span>
+
             <span className="ml-auto text-gray-500 font-light mr-2">View User Information</span>
+
             {infoOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
           </button>
 
@@ -57,74 +62,79 @@ const LostBaseForm = ({
         </div>
       )}
 
-      {/*Item name*/}
-      <div className='mt-3 w-full max-w-md'>
-        <Input
-          name='item_name'
-          label='Item Name'
-          type='text'
-          value={formData.item_name}
-          onChange={onChange}
-          placeholder="e.g. Phone / Wallet / Bag..."
-          disabled={disabled}
-          required={true}
-        />
+      {/* Item Name */}
+      <div className="mt-3 w-full">
+        <div className="flex items-center gap-2">
+          <Tag size={18} className="text-gray-400" />
+          <Input
+            name="item_name"
+            label="Item Name"
+            type="text"
+            value={formData.item_name}
+            onChange={onChange}
+            placeholder="e.g. Phone / Wallet / Bag..."
+            disabled={disabled}
+            required
+          />
+        </div>
       </div>
 
-      {/*Image upload*/}
-      <div className='flex flex-row items-center'>
-        <div>
+      {/* Image Upload + Generate */}
+      <div className="flex flex-row items-center gap-5 mt-3">
+        <div className="flex items-center gap-2">
+          <Camera size={18} className="text-gray-400" />
           <ImageUpload
             photo_url={existingPhoto}
             onImageSelect={onImageSelect}
-            message='Upload Clear Photo of Lost Item here (Optional)'
+            message="Upload clear photo (Optional)"
             disabled={disabled}
-            required={false}
           />
         </div>
-        <div className='ml-5'>
-          <GenerateButton
-            loading={loading}
-            onClick={onGenerate}
-            disabled={!formData.photo}
-          />
-        </div>
-      </div>
 
-      {/*description*/}
-      <div>
-        <MultilineInput
-          name='description'
-          label='Short Item Description'
-          type='text'
-          placeholder='e.g. iPhone 12 with a black case and small crack on the upper-right corner of the screen. It was found near the cafeteria table around 2:30 PM.'
-          value={formData.description}
-          onChange={onChange}
-          required={true}
+        <GenerateButton
+          loading={loading}
+          onClick={onGenerate}
           disabled={disabled}
         />
       </div>
 
-      {/* Contact Number - visible only when NOT disabled */}
-      {!disabled && (
-        <div className='mt-1 w-full'>
-          <Input
-            name='contact_number'
-            label='Contact Information'
-            type='tel'
-            pattern='[0-9]*'
-            inputMode='numeric'
-            value={formData.contact_number || ""}
+      {/* Description */}
+      <div className="mt-3 w-full">
+        <div className="flex items-center gap-2">
+          <FileText size={18} className="text-gray-400" />
+          <MultilineInput
+            name="description"
+            label="Short Item Description"
+            placeholder="e.g. Black iPhone with cracked corner, last seen near cafeteria..."
+            value={formData.description}
             onChange={onChange}
-            placeholder='Enter your contact number'
-            required={false}
-            disabled={false}
+            required
+            disabled={disabled}
           />
         </div>
+      </div>
+
+      {/* Contact Number */}
+      {!disabled && (
+        <div className="mt-4 w-full">
+          <div className="flex items-center gap-2">
+            <Phone size={18} className="text-gray-400" />
+            <Input
+              name="contact_number"
+              label="Contact Information"
+              type="tel"
+              pattern="[0-9]*"
+              inputMode="numeric"
+              value={formData.contact_number || ""}
+              onChange={onChange}
+              placeholder="Enter your contact number"
+              required={false}
+            />
+          </div>
+        </div>
       )}
-
     </div>
-  )
-}
+  );
+};
 
-export default LostBaseForm
+export default LostBaseForm;
