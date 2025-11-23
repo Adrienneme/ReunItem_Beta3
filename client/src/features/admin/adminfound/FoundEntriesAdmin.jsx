@@ -6,6 +6,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { approveClaimRequest } from "../../../api/admin";
 import { getItem } from "../../../api/items";
 import { useQuery } from "@tanstack/react-query";
+//
+import { approveItem } from "../../../api/admin";
 
 export default function FoundEntriesView() {
   const location = useLocation();
@@ -77,18 +79,30 @@ export default function FoundEntriesView() {
           </button>
 
           <button
-            onClick={() => {
-              const matchId = entry.matchId || entry.match_id;
-              if (!matchId) {
-                alert("Cannot approve claim: match ID is missing.");
-                return;
-              }
-              handleClaim(matchId);
-            }}
-            className="mt-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition h-10"
-          >
-            Item Claimed
-          </button>
+  className="mt-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition h-10"
+  onClick={async () => {
+    const id = entry.entryId || entry.entry_id || entry.entry_Id;
+
+    if (!id) {
+      alert("Entry ID is missing.");
+      return;
+    }
+
+    try {
+      await approveItem(id);  
+      alert(`Item marked as FOUND (Claimed).`);
+
+      // Go back after success(Auto trigger go back)
+      navigate("/admin/lostandfoundrep");
+    } catch (error) {
+      alert("Failed to update item.");
+      console.error(error);
+    }
+  }}
+>
+  Item Claimed
+</button>
+
         </div>
       </div>
     </div>

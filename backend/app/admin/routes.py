@@ -210,3 +210,33 @@ async def admin_items(admin=Depends(get_current_admin)):
     }
 
 # =====Handle Claim in Lost and FOund
+#NEW ROUTE
+@admin_claims_router.post("/approve_item/{entry_id}")
+async def approve_item(entry_id: str, admin=Depends(get_current_admin)):
+
+    # Fetch the item and include type for reference
+    item = (
+        supabase.table("items")
+        .select("*")
+        .eq("entry_id", entry_id)
+        .single()
+        .execute()
+        .data
+    )
+
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found.")
+
+    # Check item type
+    if item["type"] not in ["lost", "found"]:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Cannot approve item with type '{item['type']}'"
+        )
+
+    # Update status to 'Claimed'
+    supabase.table("items").update({"status": "Claimed"}).eq("entry_id", entry_id).execute()
+
+    return {
+        "message": f"{item['type'].capitalize()} item {entry_id} status updated to 'Claimed'."
+    }
