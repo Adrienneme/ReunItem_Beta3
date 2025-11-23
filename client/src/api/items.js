@@ -6,6 +6,7 @@ export const createItem = async (formData) => {
   allData.append("item_name", formData.item_name);
   allData.append("description", formData.description);
   allData.append("pickup_location", formData.pickup_location);
+  allData.append("contact_number", formData.contact_number);
   const typeValue = formData.item_type === "lost" ? "lost" : "found";
   allData.append("type", typeValue);
   allData.append("status", formData.status || "Pending Approval");
@@ -18,6 +19,7 @@ export const createItem = async (formData) => {
 
   return response.data;
 };
+
 
 export const generateDescription = async (photo) => {
   if (!photo) throw new Error("No photo provided to generateDescription");
@@ -35,11 +37,13 @@ export const generateDescription = async (photo) => {
   }
 };
 
+
 export const updateItem = async (entry_id, data) => {
   const formData = new FormData();
   if (data.item_name) formData.append("item_name", data.item_name);
   if (data.description) formData.append("description", data.description);
   if (data.pickup_location) formData.append("pickup_location", data.pickup_location);
+  if (data.contact_number) formData.append("pickup_location", data.contact_number);
   if (data.type) formData.append("type", data.type);
   if (data.photo) formData.append("photo", data.photo);
 

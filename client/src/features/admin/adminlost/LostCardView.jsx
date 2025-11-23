@@ -17,7 +17,7 @@ export default function LostCardView() {
 
   const [status, setStatus] = useState("");
 
-  const { formData: entry, isPending, error } = useFetchItem("lost", entry_id);
+  const { user, formData: entry, isPending, error } = useFetchItem("lost", entry_id);
 
   const deleteMutation = useDeleteItem("lost", "/admin/archived");
 
@@ -91,6 +91,7 @@ export default function LostCardView() {
         <LostBaseForm
           title="Lost Item Details:"
           formData={entry}
+          user={user}
           status={status}
           existingPhoto={entry.photo_url}
           disabled

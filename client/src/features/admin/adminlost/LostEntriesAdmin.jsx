@@ -2,8 +2,8 @@ import React from "react";
 import AdminNavBar from "../../../components/layout/AdminNavBar";
 import LostBaseForm from "../../../components/forms/LostBaseForm";
 import CircularLoad from "../../../components/ui/CircularLoad";
-import { getItem } from "../../../api/items";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useFetchItem } from "../../../hooks/useFetch";
 import { useQuery } from "@tanstack/react-query";
 //
 import { approveItem } from "../../../api/admin";
@@ -14,14 +14,7 @@ export default function LostEntriesView() {
   const navigate = useNavigate();
   const { entry_id } = location.state;
 
-  const {
-    data: entry,
-    isPending,
-    error,
-  } = useQuery({
-    queryKey: ["lost-entry", entry_id],
-    queryFn: () => getItem(entry_id),
-  });
+  const { user, formData: entry, isPending, error } = useFetchItem("found", entry_id);
 
   const handleItemFound = () => {
     navigate("/admin/home");
@@ -52,6 +45,7 @@ export default function LostEntriesView() {
         <LostBaseForm
           title="Lost Item Details:"
           formData={entry}
+          user={user}
           existingPhoto={entry.photo_url}
           disabled={true}
         />

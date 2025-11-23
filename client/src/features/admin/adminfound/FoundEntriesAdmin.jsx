@@ -4,6 +4,7 @@ import FoundBaseForm from "../../../components/forms/FoundBaseForm";
 import CircularLoad from "../../../components/ui/CircularLoad";
 import { useLocation, useNavigate } from "react-router-dom";
 import { approveClaimRequest } from "../../../api/admin";
+import { useFetchItem } from "../../../hooks/useFetch";
 import { getItem } from "../../../api/items";
 import { useQuery } from "@tanstack/react-query";
 //
@@ -14,14 +15,7 @@ export default function FoundEntriesView() {
   const navigate = useNavigate();
   const { entry_id } = location.state;
 
-  const {
-    data: entry,
-    isPending,
-    error,
-  } = useQuery({
-    queryKey: ["found-entry", entry_id],
-    queryFn: () => getItem(entry_id),
-  });
+  const { user, formData: entry, isPending, error } = useFetchItem("found", entry_id);
 
   const handleClaim = async (match_id) => {
     if (!window.confirm("Are you sure you want to approve this match and finalize the claim? This action cannot be undone.")) {
@@ -65,6 +59,7 @@ export default function FoundEntriesView() {
             title="Found Item Details:"
             label={entry.type}
             formData={entry}
+            user={user}
             existingPhoto={entry.photo_url}
             disabled={true}
           />

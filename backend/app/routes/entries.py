@@ -11,13 +11,15 @@ async def create_item_route(
     item_name: str = Form(...),
     description: str = Form(...),
     pickup_location: Optional[str] = Form(None),
+    contact_number: Optional[str] = Form(None),
     type: str = Form(...), 
     status: str = Form("Pending Approval"),
     photo: Optional[UploadFile] = File(None),
     current_user=Depends(UserModels.get_current_active_user)
 ):
-    if not pickup_location:
+    if not pickup_location and not contact_number:
         pickup_location = "Not Specified"
+        contact_number = "N/A"
     try:
         item_type = EntryType(type)
     except ValueError:
@@ -27,6 +29,7 @@ async def create_item_route(
         item_name=item_name,
         description=description,
         pickup_location=pickup_location,
+        contact_number=contact_number,
         type=item_type,
         status=status
     )
@@ -63,6 +66,7 @@ async def update_item_route(
   item_name: str = Form(None),
   description: str = Form(None),
   pickup_location: str = Form(None),
+  contact_number: str = Form(None),
   type: str = Form(None),
   photo: UploadFile = None,
   _= Depends(UserModels.get_current_active_user)
@@ -71,6 +75,7 @@ async def update_item_route(
   if item_name: updates["item_name"] = item_name
   if description: updates["description"] = description
   if pickup_location: updates["pickup_location"] = pickup_location
+  if contact_number: updates["pickup_location"] = contact_number
   if type: updates["type"] = type
   
   updates["status"] = EntryStatus.Pending_Approval

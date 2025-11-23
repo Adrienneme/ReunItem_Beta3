@@ -17,7 +17,7 @@ export default function FoundViewPage() {
 
   const [status, setStatus] = useState("");
 
-  const { formData: entry, isPending, error } = useFetchItem("found", entry_id);
+  const { user, formData: entry, isPending, error } = useFetchItem("found", entry_id);
 
   const deleteMutation = useDeleteItem("found", "/admin/archived");
 
@@ -93,6 +93,7 @@ export default function FoundViewPage() {
           title="Found Item Details:"
           status={status}
           formData={entry}
+          user={user}
           existingPhoto={entry.photo_url}
           disabled
         />

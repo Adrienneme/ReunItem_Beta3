@@ -51,7 +51,7 @@ export default function LostDetails() {
         existingPhoto={formData.photo_url}
       />
       <div className='flex flex-col justify-center items-center'>
-        {["Claimed", "Rejected", "Archived"].includes(formData.status) && (
+        {["Rejected", "Archived"].includes(formData.status) && (
           <div className='flex flex-row items-center justify-center mt-5 gap-5'>
             <ButtonUI variant="solid" color="neutral" onClick={() => navigate("/user/lost-entries")}>
               Go Back
@@ -81,7 +81,7 @@ export default function LostDetails() {
             <ButtonUI
               color="primary"
               onClick={() => {
-                navigate("/user/matched-entries", { state: { entry_id: formData.entry_id} })
+                navigate("/user/matched-entries", { state: { entry_id: formData.entry_id } })
               }}
             >
               View Potential Matches
@@ -89,13 +89,20 @@ export default function LostDetails() {
           )}
         </div>
 
-        {formData.status == "Pending Claim" && (
+        {["Pending Claim", "Claimed"].includes(formData.status) && (
           <div className='flex flex-row gap-10'>
             <ButtonUI variant="solid" color="neutral"
               onClick={() => navigate("/user/lost-entries")}>
               Go Back
             </ButtonUI>
-            <ButtonUI onClick={() => navigate("/user/matched-found", { state: { entry_id: formData.entry_id } })}>
+
+            <ButtonUI
+              onClick={() =>
+                navigate("/user/matched-found", {
+                  state: { entry_id: formData.entry_id }
+                })
+              }
+            >
               View Claimed Match
             </ButtonUI>
           </div>
