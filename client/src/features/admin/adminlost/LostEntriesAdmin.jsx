@@ -4,6 +4,9 @@ import LostBaseForm from "../../../components/forms/LostBaseForm";
 import CircularLoad from "../../../components/ui/CircularLoad";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useFetchItem } from "../../../hooks/useFetch";
+import { useQuery } from "@tanstack/react-query";
+//
+import { approveItem } from "../../../api/admin";
 
 
 export default function LostEntriesView() {
@@ -55,12 +58,33 @@ export default function LostEntriesView() {
             Go Back
           </button>
 
-          <button
-            onClick={handleItemFound}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
-          >
-            Item Found
-          </button>
+         <button
+  className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded"
+  onClick={async () => {
+    const id = entry.entryId || entry.entry_id || entry.entry_Id;
+
+    if (!id) {
+      alert("Entry ID is missing.");
+      return;
+    }
+
+    try {
+      await approveItem(id);
+      alert(`Item marked as FOUND/LOST (Claimed).`);
+      //Auto trigger go back
+      navigate("/admin/lostandfoundrep");
+    } catch (error) {
+      alert("Failed to update item.");
+      console.error(error);
+    }
+  }}
+>
+  Item Found
+</button>
+
+
+
+
         </div>
       </div>
     </div>

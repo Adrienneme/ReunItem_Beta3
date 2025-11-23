@@ -145,3 +145,20 @@ export const approveClaimRequest = async (match_id) => {
     throw error; 
   }
 };
+
+//
+
+// New API for approving any lost/found item
+export const approveItem = async (entryId) => {
+  try {
+    const response = await jsonClient.post(
+      `/admin/approve_item/${entryId}`,
+      null,
+      { headers: { role: "admin" } }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Failed to approve item:", error);
+    throw error;
+  }
+};
