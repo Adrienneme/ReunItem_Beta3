@@ -4,9 +4,7 @@ import LostBaseForm from "../../../components/forms/LostBaseForm";
 import CircularLoad from "../../../components/ui/CircularLoad";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useFetchItem } from "../../../hooks/useFetch";
-//
 import { approveItem } from "../../../api/admin";
-
 
 export default function LostEntriesView() {
   const location = useLocation();
@@ -33,6 +31,23 @@ export default function LostEntriesView() {
     );
   }
 
+  const handleApprove = async () => {
+    const id = entry.entryId || entry.entry_id || entry.entry_Id;
+    if (!id) {
+      alert("Entry ID is missing.");
+      return;
+    }
+
+    try {
+      await approveItem(id);
+      alert("Item marked as FOUND/LOST (Claimed).");
+      navigate("/admin/lostandfoundrep");
+    } catch (error) {
+      alert("Failed to update item.");
+      console.error(error);
+    }
+  };
+
   return (
     <div>
       <AdminNavBar />
@@ -47,7 +62,7 @@ export default function LostEntriesView() {
 
         <div className="flex flex-row gap-10 mt-3">
           <button
-            onClick={() => { navigate("/admin/lostandfoundrep"); }}
+            onClick={() => navigate("/admin/lostandfoundrep")}
             className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition"
           >
             Go Back
@@ -55,28 +70,10 @@ export default function LostEntriesView() {
 
           <button
             className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded"
-            onClick={async () => {
-              const id = entry.entryId || entry.entry_id || entry.entry_Id;
-
-              if (!id) {
-                alert("Entry ID is missing.");
-                return;
-              }
-
-              try {
-                await approveItem(id);
-                alert(`Item marked as FOUND/LOST (Claimed).`);
-                //Auto trigger go back
-                navigate("/admin/lostandfoundrep");
-              } catch (error) {
-                alert("Failed to update item.");
-                console.error(error);
-              }
-            }}
+            onClick={handleApprove}
           >
             Item Found
           </button>
-
         </div>
       </div>
     </div>
