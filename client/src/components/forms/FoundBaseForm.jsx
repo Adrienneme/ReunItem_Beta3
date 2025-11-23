@@ -44,7 +44,7 @@ const FoundBaseForm = ({
             onClick={() => setInfoOpen(!infoOpen)}
           >
             <span className="flex items-center gap-2 font-semibold">
-              <User size={18} /> Entry By:
+              <User size={18} /> Entry From:
 
             </span>
             <span className="ml-auto text-gray-500 font-light mr-2">View User Information</span>
@@ -55,14 +55,14 @@ const FoundBaseForm = ({
             <div className="mt-2 bg-#242424 shadow-md rounded-xl p-4 border animate-fadeIn">
               <p className="text-gray-300"><strong>Name:</strong> {user.first_name} {user.last_name}</p>
               <p className="text-gray-300 mt-1"><strong>Email:</strong> {user.contact || user.email}</p>
-              <p className="text-gray-300 mt-1"><strong>Contact Number:</strong> {user.contact}</p>
+              <p className="text-gray-300 mt-1"><strong>Contact Number:</strong> {formData.contact_number}</p>
             </div>
           )}
         </div>
       )}
 
       {/* Item Name */}
-      <div className="mt-3 w-full ">
+      <div className="mt-3 w-full max-w-md">
         <Input
           name="item_name"
           label="Item Name"
@@ -102,7 +102,7 @@ const FoundBaseForm = ({
       />
 
       {/* Pickup Location */}
-      <div className="mt-3 w-full ">
+      <div className="mt-3 w-full max-w-md">
         <DropDownSelect
           name="pickup_location"
           options={["Gate1", "Gate2", "Gate3", "ADSAS Office", "Tonus Gym"]}
@@ -124,7 +124,7 @@ const FoundBaseForm = ({
             value={formData.contact_number || ""}
             onChange={onChange}
             placeholder='Enter your contact number'
-            required={true}
+            required={false}
             disabled={false}
           />
         </div>

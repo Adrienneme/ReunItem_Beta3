@@ -13,6 +13,7 @@ export default function useCreate(defaultType = "found") {
     description: "",
     photo: null,
     pickup_location: "",
+    contact_number: "",
     item_type: defaultType,
     status: "Pending Approval",
   });

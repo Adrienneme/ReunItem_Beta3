@@ -28,6 +28,7 @@ class ItemSchemas:
         description: str
         photo_url: Optional[str] = None
         pickup_location: Optional[str] = None
+        contact_number: Optional[str] = None
         type: EntryType
         status: EntryStatus = EntryStatus.Pending_Approval
 

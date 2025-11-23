@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import Input from '../ui/Input'
 import StatusBadge from '../ui/StatusBadge'
 import ImageUpload from '../ui/ImageUpload'
@@ -24,7 +24,7 @@ const LostBaseForm = ({
   const [infoOpen, setInfoOpen] = useState(false);
 
   return (
-    <div className='flex flex-col items-center '>
+    <div className='flex flex-col items-center'>
       {/*Title Page w/ badge?*/}
       <div className='mb-5 flex flex-col items-center'>
         <h1 className='mt-5 mb-3 text-xl font-bold'><b>{title}</b></h1>
@@ -40,7 +40,7 @@ const LostBaseForm = ({
             onClick={() => setInfoOpen(!infoOpen)}
           >
             <span className="flex items-center gap-2 font-semibold">
-              <User size={18} /> Entry By:
+              <User size={18} /> Entry From:
 
             </span>
             <span className="ml-auto text-gray-500 font-light mr-2">View User Information</span>
@@ -51,14 +51,14 @@ const LostBaseForm = ({
             <div className="mt-2 bg-#242424 shadow-md rounded-xl p-4 border animate-fadeIn">
               <p className="text-gray-300"><strong>Name:</strong> {user.first_name} {user.last_name}</p>
               <p className="text-gray-300 mt-1"><strong>Email:</strong> {user.contact || user.email}</p>
-              <p className="text-gray-300 mt-1"><strong>Contact Number:</strong> {user.contact}</p>
+              <p className="text-gray-300 mt-1"><strong>Contact Number:</strong> {formData.contact_number}</p>
             </div>
           )}
         </div>
       )}
 
       {/*Item name*/}
-      <div>
+      <div className='mt-3 w-full max-w-md'>
         <Input
           name='item_name'
           label='Item Name'
@@ -104,6 +104,24 @@ const LostBaseForm = ({
           disabled={disabled}
         />
       </div>
+
+      {/* Contact Number - visible only when NOT disabled */}
+      {!disabled && (
+        <div className='mt-1 w-full'>
+          <Input
+            name='contact_number'
+            label='Contact Information'
+            type='tel'
+            pattern='[0-9]*'
+            inputMode='numeric'
+            value={formData.contact_number || ""}
+            onChange={onChange}
+            placeholder='Enter your contact number'
+            required={false}
+            disabled={false}
+          />
+        </div>
+      )}
 
     </div>
   )
