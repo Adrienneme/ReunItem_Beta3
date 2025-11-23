@@ -88,14 +88,10 @@ const ClaimRequest = () => {
               pendingClaims.map((match) => {
                 const imageUrl =
                   match.lost_item?.photo_url || match.found_item?.photo_url;
-
                 const itemName =
                   match.lost_item?.item_name ||
                   match.found_item?.item_name ||
                   "Unnamed Item";
-
-                const lostUser = `${match.lost_user?.first_name || ""} ${match.lost_user?.last_name || ""}`.trim();
-                const foundUser = `${match.found_user?.first_name || ""} ${match.found_user?.last_name || ""}`.trim();
 
                 return (
                   <div
@@ -109,6 +105,7 @@ const ClaimRequest = () => {
 <<<<<<< HEAD
 =======
 
+<<<<<<< HEAD
                       <p className="text-xs text-gray-400 mb-1 break-words">
                         Match ID: {match.match_id}
                       </p>
@@ -124,6 +121,8 @@ const ClaimRequest = () => {
                       </p>
 >>>>>>> 9da2bf3 (feat: enhance match retrieval with user details for lost and found items)
 
+=======
+>>>>>>> c152ce4 (style: update styling for claim request component and improve user visibility)
                       {imageUrl ? (
                         <img
                           src={imageUrl}
@@ -138,10 +137,14 @@ const ClaimRequest = () => {
                     </div>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
                     <div className="flex justify-around bg-gray-700 py-2 px-2 mt-3">
 =======
                     <div className="flex justify-around bg-gray-800 py-2 px-2 mt-3">
 >>>>>>> 9da2bf3 (feat: enhance match retrieval with user details for lost and found items)
+=======
+                    <div className="flex justify-around bg-gray-700 py-2 px-2 mt-3">
+>>>>>>> c152ce4 (style: update styling for claim request component and improve user visibility)
                       <button
                         onClick={() => handleApprove(match.match_id)}
                         disabled={processing === match.match_id}
@@ -168,10 +171,14 @@ const ClaimRequest = () => {
                     </div>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
                     <div className="bg-gray-700 py-2 flex justify-center border-t border-gray-600">
 =======
                     <div className="bg-gray-800 py-2 flex justify-center border-t border-gray-700">
 >>>>>>> 9da2bf3 (feat: enhance match retrieval with user details for lost and found items)
+=======
+                    <div className="bg-gray-700 py-2 flex justify-center border-t border-gray-600">
+>>>>>>> c152ce4 (style: update styling for claim request component and improve user visibility)
                       <button
                         onClick={() => setSelectedMatch(match)}
                         className="text-xs px-4 py-1.5 rounded-md bg-blue-600 hover:bg-blue-700 font-semibold transition"
@@ -202,33 +209,28 @@ const ClaimRequest = () => {
             </button>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
             <h3 className="text-center text-xl font-semibold mb-4 text-white">
 =======
             <h3 className="text-center text-xl font-semibold mb-4 text-black">
 >>>>>>> 9da2bf3 (feat: enhance match retrieval with user details for lost and found items)
+=======
+            <h3 className="text-center text-xl font-semibold mb-4 text-white">
+>>>>>>> c152ce4 (style: update styling for claim request component and improve user visibility)
               Match Details
             </h3>
 
-            <div className="mb-4 text-center">
-              <p className="text-sm text-gray-700">
-                <strong>Lost Item Owner:</strong>{" "}
-                {selectedMatch.lost_user?.first_name}{" "}
-                {selectedMatch.lost_user?.last_name}
-              </p>
-              <p className="text-sm text-gray-700">
-                <strong>Found Item Owner:</strong>{" "}
-                {selectedMatch.found_user?.first_name}{" "}
-                {selectedMatch.found_user?.last_name}
-              </p>
-            </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c152ce4 (style: update styling for claim request component and improve user visibility)
               {/* Lost Item */}
               <div className="border rounded-xl p-4 bg-gray-800 flex flex-col">
                 <p className="text-sm mb-2 font-semibold text-gray-200">
                   {selectedMatch.lost_user?.first_name} {selectedMatch.lost_user?.last_name}
                 </p>
+<<<<<<< HEAD
 =======
               <div className="border rounded-xl p-4 bg-gray-50 text-black">
                 <h4 className="text-lg font-semibold mb-2 border-b pb-1">
@@ -236,6 +238,8 @@ const ClaimRequest = () => {
                 </h4>
 
 >>>>>>> 9da2bf3 (feat: enhance match retrieval with user details for lost and found items)
+=======
+>>>>>>> c152ce4 (style: update styling for claim request component and improve user visibility)
                 {selectedMatch.lost_item?.photo_url ? (
                   <img
                     src={selectedMatch.lost_item.photo_url}
@@ -247,6 +251,7 @@ const ClaimRequest = () => {
                     No Image
                   </div>
                 )}
+<<<<<<< HEAD
 <<<<<<< HEAD
                 <p><strong>Name:</strong> {selectedMatch.lost_item?.item_name || "N/A"}</p>
                 <p><strong>Description:</strong> {selectedMatch.lost_item?.description || "N/A"}</p>
@@ -280,6 +285,18 @@ const ClaimRequest = () => {
                 </h4>
 
 >>>>>>> 9da2bf3 (feat: enhance match retrieval with user details for lost and found items)
+=======
+                <p><strong>Name:</strong> {selectedMatch.lost_item?.item_name || "N/A"}</p>
+                <p><strong>Description:</strong> {selectedMatch.lost_item?.description || "N/A"}</p>
+                <p><strong>Pickup Location:</strong> {selectedMatch.lost_item?.pickup_location || "N/A"}</p>
+              </div>
+
+              {/* Found Item */}
+              <div className="border rounded-xl p-4 bg-gray-800 flex flex-col">
+                <p className="text-sm mb-2 font-semibold text-gray-200">
+                  {selectedMatch.found_user?.first_name} {selectedMatch.found_user?.last_name}
+                </p>
+>>>>>>> c152ce4 (style: update styling for claim request component and improve user visibility)
                 {selectedMatch.found_item?.photo_url ? (
                   <img
                     src={selectedMatch.found_item.photo_url}
@@ -291,6 +308,7 @@ const ClaimRequest = () => {
                     No Image
                   </div>
                 )}
+<<<<<<< HEAD
 <<<<<<< HEAD
                 <p><strong>Name:</strong> {selectedMatch.found_item?.item_name || "N/A"}</p>
                 <p><strong>Description:</strong> {selectedMatch.found_item?.description || "N/A"}</p>
@@ -310,6 +328,11 @@ const ClaimRequest = () => {
                   {selectedMatch.found_item?.pickup_location || "N/A"}
                 </p>
 >>>>>>> 9da2bf3 (feat: enhance match retrieval with user details for lost and found items)
+=======
+                <p><strong>Name:</strong> {selectedMatch.found_item?.item_name || "N/A"}</p>
+                <p><strong>Description:</strong> {selectedMatch.found_item?.description || "N/A"}</p>
+                <p><strong>Pickup Location:</strong> {selectedMatch.found_item?.pickup_location || "N/A"}</p>
+>>>>>>> c152ce4 (style: update styling for claim request component and improve user visibility)
               </div>
             </div>
 
