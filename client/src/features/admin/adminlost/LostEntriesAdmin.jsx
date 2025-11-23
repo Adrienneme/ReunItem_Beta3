@@ -78,6 +78,7 @@ export default function LostEntriesView() {
       await approveItem(id);
       alert(`Item marked as FOUND/LOST (Claimed).`);
       //Auto trigger go back
+      
       navigate("/admin/lostandfoundrep");
     } catch (error) {
       alert("Failed to update item.");
