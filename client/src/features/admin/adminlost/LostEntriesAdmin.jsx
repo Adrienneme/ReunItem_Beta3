@@ -11,11 +11,8 @@ export default function LostEntriesView() {
   const navigate = useNavigate();
   const { entry_id } = location.state;
 
-<<<<<<< HEAD
-  const { user, formData: entry, isPending, error } = useFetchItem("found", entry_id);
-=======
+  // Choose either "lost" or "found" depending on your intended use
   const { user, formData: entry, isPending, error } = useFetchItem("lost", entry_id);
->>>>>>> d33a39a (LostEntrisAdmin update)
 
   if (isPending || error) {
     return (
@@ -44,11 +41,7 @@ export default function LostEntriesView() {
 
     try {
       await approveItem(id);
-<<<<<<< HEAD
-      alert(`Item marked as FOUND/LOST (Claimed).`);
-=======
       alert("Item marked as FOUND/LOST (Claimed).");
->>>>>>> d33a39a (LostEntrisAdmin update)
       navigate("/admin/lostandfoundrep");
     } catch (err) {
       alert("Failed to update item.");
@@ -77,8 +70,8 @@ export default function LostEntriesView() {
           </button>
 
           <button
-            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition"
             onClick={handleApprove}
+            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition"
           >
             Item Found
           </button>
