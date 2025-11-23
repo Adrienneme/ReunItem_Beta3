@@ -17,14 +17,14 @@ export default function LostEntriesView() {
     return (
       <div>
         <AdminNavBar />
-        <div className="min-h-screen flex justify-center mt-35 text-gray-600 text-lg">
+        <div className="min-h-screen flex justify-center items-center text-gray-600 text-lg mt-20">
           {isPending ? (
             <div className="flex flex-col items-center gap-5">
               <span>Loading Entry Details...</span>
               <CircularLoad />
             </div>
           ) : (
-            error.message
+            <span>{error.message}</span>
           )}
         </div>
       </div>
@@ -40,7 +40,7 @@ export default function LostEntriesView() {
 
     try {
       await approveItem(id);
-      alert("Item marked as FOUND/LOST (Claimed).");
+      alert(`Item marked as FOUND/LOST (Claimed).`);
       navigate("/admin/lostandfoundrep");
     } catch (error) {
       alert("Failed to update item.");
@@ -69,7 +69,7 @@ export default function LostEntriesView() {
           </button>
 
           <button
-            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded"
+            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition"
             onClick={handleApprove}
           >
             Item Found
