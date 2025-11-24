@@ -26,24 +26,21 @@ def get_current_admin(current_user = Depends(UserModels.get_current_active_user)
 # ================== Pending Claim Submission =========
 @admin_claims_router.get("/matches")
 async def get_all_matches():
-    
-   # Return all pending matches where is_claimed = False
-   # and include lost/found item details.
-    
+
     matches = (
         supabase.table("matches_table")
         .select("*")
-        .eq("is_claimed", False)  # boolean comparison
+        .eq("is_claimed", False)
         .execute()
         .data or []
     )
 
     if not matches:
-        # Return empty list instead of string message
         return {"matches": []}
 
-    # Attach lost & found item details
     for m in matches:
+
+        #  Fetch Lost Item 
         lost_item = (
             supabase.table("items")
             .select("*")
@@ -53,6 +50,7 @@ async def get_all_matches():
             .data
         )
 
+        # Fetch Found Item 
         found_item = (
             supabase.table("items")
             .select("*")
@@ -65,13 +63,35 @@ async def get_all_matches():
         m["lost_item"] = lost_item
         m["found_item"] = found_item
 
-    print("=== MATCHES DATA ===")
-    for m in matches:
-        print({
-            "match_id": m["match_id"],
-            "lost_item": m["lost_item"],
-            "found_item": m["found_item"]
-        })
+        #  Get User IDs
+        lost_user_id = lost_item.get("user_id") if lost_item else None
+        found_user_id = found_item.get("user_id") if found_item else None
+
+        # Fetch Lost User 
+        lost_user = (
+            supabase.table("user")
+            .select("first_name, last_name")
+            .eq("user_id", lost_user_id)
+            .single()
+            .execute()
+            .data
+            if lost_user_id else None
+        )
+
+        #  Fetch Found User
+        found_user = (
+            supabase.table("user")
+            .select("first_name, last_name")
+            .eq("user_id", found_user_id)
+            .single()
+            .execute()
+            .data
+            if found_user_id else None
+        )
+
+        #Attach 
+        m["lost_user"] = lost_user
+        m["found_user"] = found_user
 
     return {"matches": matches}
 
