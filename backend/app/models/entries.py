@@ -15,6 +15,7 @@ def clean_filename(name: str) -> str:
 
 def log_action(actor_id: str, action: str, status_code: int, details: str, entity: str):
     try:
+        actor_id = str(actor_id)
         user_res = supabase.table("user").select("first_name, last_name, role").eq("user_id", actor_id).execute()
 
         if user_res.data:

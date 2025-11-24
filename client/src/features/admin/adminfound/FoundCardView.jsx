@@ -34,6 +34,7 @@ export default function FoundViewPage() {
   const approveMutation = useMutation({
     mutationFn: approveEntry,
     onSuccess: (res) => {
+      queryClient.invalidateQueries(["pendingItems"]);
       alert(res.message);
       navigate("/admin/pendingsubmissions");
     },
@@ -45,6 +46,7 @@ export default function FoundViewPage() {
   const rejectMutation = useMutation({
     mutationFn: rejectEntry,
     onSuccess: (res) => {
+      queryClient.invalidateQueries(["pendingItems"]);
       alert(res.message);
       navigate("/admin/pendingsubmissions");
     },

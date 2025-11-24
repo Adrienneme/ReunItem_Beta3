@@ -1,9 +1,8 @@
-# dito manggaling reject status
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from app.core.db import supabase
 from app.models.user import UserModels
-from app.schemas import ItemSchemas
+from app.models.entries import log_action
 
 router = APIRouter(
     prefix="/admin",
@@ -11,57 +10,60 @@ router = APIRouter(
 )
 
 
-# Reuse existing JWT system
 def get_current_admin(current_user=Depends(UserModels.get_current_active_user)):
     if current_user.role.lower() != "admin":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Admin access required."
-        )
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin access required.")
     return current_user
 
-# View Pending Uploads/Pending Submission
+
 @router.get("/uploads/pending")
-async def admin_pending_uploads(
-    admin=Depends(get_current_admin),
-    item_type: str = "All"
-):
-    query = supabase.table("items").select("*").eq("status", "Pending Approval")
+async def admin_pending_uploads(_=Depends(get_current_admin), item_type: str = "All"):
+    try:
+        query = supabase.table("items").select("*").eq("status", "Pending Approval")
 
-    if item_type.lower() == "lost":
-        query = query.eq("type", "lost")   
-    elif item_type.lower() == "found":
-        query = query.eq("type", "found")  
+        if item_type.lower() == "lost":
+            query = query.eq("type", "lost")
+        elif item_type.lower() == "found":
+            query = query.eq("type", "found")
 
-    pending_uploads = query.execute().data or []
+        pending_uploads = query.execute().data or []
+        return pending_uploads
 
-    print(f"Filter: {item_type}, Results: {len(pending_uploads)} items")
-    return pending_uploads
-
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
-# Approve Entry
 @router.post("/approve_entry/{entry_id}")
 async def approve_entry(entry_id: str, admin=Depends(get_current_admin)):
-    entry = supabase.table("items").select("*").eq("entry_id", entry_id).execute().data
+    try:
+        entry = supabase.table("items").select("*").eq("entry_id", entry_id).execute().data
 
-    if not entry:
-        raise HTTPException(status_code=404, detail="Entry not found.")
+        if not entry:
+            raise HTTPException(status_code=404, detail="Entry not found")
 
-    supabase.table("items").update({"status": "Approved"}).eq("entry_id", entry_id).execute()
+        supabase.table("items").update({"status": "Approved"}).eq("entry_id", entry_id).execute()
 
-    return {"message": f"Entry {entry_id} approved successfully!", "entry_id": entry_id}
+        log_action(admin.user_id, "APPROVE_ENTRY", 200, f"Approved entry {entry_id}", "items")
+        return {"message": f"Entry {entry_id} approved successfully!", "entry_id": entry_id}
 
-#Reject Entry
+    except Exception as e:
+        log_action(admin.user_id, "APPROVE_ENTRY", 500, str(e), "items")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.post("/reject_entry/{entry_id}")
 async def reject_entry(entry_id: str, admin=Depends(get_current_admin)):
-    # Fetch the entry first
-    entry = supabase.table("items").select("*").eq("entry_id", entry_id).execute().data
+    try:
+        entry = supabase.table("items").select("*").eq("entry_id", entry_id).execute().data
 
-    if not entry:
-        raise HTTPException(status_code=404, detail="Entry not found.")
+        if not entry:
+            raise HTTPException(status_code=404, detail="Entry not found")
 
-    # Update its status to Rejected
-    supabase.table("items").update({"status": "Rejected"}).eq("entry_id", entry_id).execute()
+        supabase.table("items").update({"status": "Rejected"}).eq("entry_id", entry_id).execute()
 
-    return {"message": f"Entry {entry_id} rejected successfully!", "entry_id": entry_id}
+        log_action(admin.user_id, "REJECT_ENTRY", 200, f"Rejected entry {entry_id}", "items")
+        return {"message": f"Entry {entry_id} rejected successfully!", "entry_id": entry_id}
+
+    except Exception as e:
+        log_action(admin.user_id, "REJECT_ENTRY", 500, str(e), "items")
+        raise HTTPException(status_code=500, detail=str(e))
