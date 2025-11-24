@@ -4,34 +4,50 @@ import LostBaseForm from "../../../components/forms/LostBaseForm";
 import CircularLoad from "../../../components/ui/CircularLoad";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useFetchItem } from "../../../hooks/useFetch";
-//
 import { approveItem } from "../../../api/admin";
-
 
 export default function LostEntriesView() {
   const location = useLocation();
   const navigate = useNavigate();
   const { entry_id } = location.state;
 
-  const { user, formData: entry, isPending, error } = useFetchItem("found", entry_id);
+  // Choose either "lost" or "found" depending on your intended use
+  const { user, formData: entry, isPending, error } = useFetchItem("lost", entry_id);
 
   if (isPending || error) {
     return (
       <div>
         <AdminNavBar />
-        <div className="min-h-screen flex justify-center mt-35 text-gray-600 text-lg">
+        <div className="min-h-screen flex justify-center items-center text-gray-600 text-lg mt-20">
           {isPending ? (
             <div className="flex flex-col items-center gap-5">
               <span>Loading Entry Details...</span>
               <CircularLoad />
             </div>
           ) : (
-            error.message
+            <span>{error.message}</span>
           )}
         </div>
       </div>
     );
   }
+
+  const handleApprove = async () => {
+    const id = entry.entryId || entry.entry_id || entry.entry_Id;
+    if (!id) {
+      alert("Entry ID is missing.");
+      return;
+    }
+
+    try {
+      await approveItem(id);
+      alert("Item marked as FOUND/LOST (Claimed).");
+      navigate("/admin/lostandfoundrep");
+    } catch (err) {
+      alert("Failed to update item.");
+      console.error(err);
+    }
+  };
 
   return (
     <div>
@@ -47,36 +63,18 @@ export default function LostEntriesView() {
 
         <div className="flex flex-row gap-10 mt-3">
           <button
-            onClick={() => { navigate("/admin/lostandfoundrep"); }}
+            onClick={() => navigate("/admin/lostandfoundrep")}
             className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition"
           >
             Go Back
           </button>
 
           <button
-            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded"
-            onClick={async () => {
-              const id = entry.entryId || entry.entry_id || entry.entry_Id;
-
-              if (!id) {
-                alert("Entry ID is missing.");
-                return;
-              }
-
-              try {
-                await approveItem(id);
-                alert(`Item marked as FOUND/LOST (Claimed).`);
-                //Auto trigger go back
-                navigate("/admin/lostandfoundrep");
-              } catch (error) {
-                alert("Failed to update item.");
-                console.error(error);
-              }
-            }}
+            onClick={handleApprove}
+            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition"
           >
             Item Found
           </button>
-
         </div>
       </div>
     </div>
