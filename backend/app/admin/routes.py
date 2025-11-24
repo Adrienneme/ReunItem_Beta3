@@ -240,3 +240,4 @@ async def approve_item(entry_id: str, admin=Depends(get_current_admin)):
     return {
         "message": f"{item['type'].capitalize()} item {entry_id} status updated to 'Claimed'."
     }
+
