@@ -162,3 +162,41 @@ export const approveItem = async (entryId) => {
     throw error;
   }
 };
+
+
+//========Backup and restore =======
+      //Backup data (Download json file)
+     export const backupAllTables = async () => {
+  try {
+    const response = await jsonClient.get("/admin/backup_all", {
+      responseType: "blob", // handles file download
+      headers: { role: "admin" },
+    });
+
+    return response;
+  } catch (error) {
+    console.error("Failed to backup all tables:", error);
+    throw error;
+  }
+};
+
+
+      //Restore (Upload Json File)
+  export const restoreAllTables = async (file) => {
+  try {
+    const formData = new FormData();
+    formData.append("backup_file", file);
+
+    const response = await jsonClient.post("/admin/restore_all", formData, {
+      headers: {
+        role: "admin",
+      },
+      timeout: 10 * 60 * 1000, // 10 minutes for very large restores
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Failed to restore database:", error);
+    throw error;
+  }
+};
