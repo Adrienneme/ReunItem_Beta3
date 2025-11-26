@@ -40,17 +40,6 @@ export default function MatchedFound() {
     );
   }
 
-  if (error) {
-    return (
-      <div>
-        <UserNavBar />
-        <div className="mt-35 flex justify-center text-gray-600 text-lg">
-          <span className='text-red-600'>{error.message}</span>
-        </div>
-      </div>
-    );
-  }
-
   if (!foundEntryId && !matchedPending) {
     return (
       <div>

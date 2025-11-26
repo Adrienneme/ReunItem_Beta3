@@ -44,17 +44,6 @@ export default function MatchedLost() {
     );
   }
 
-  if (error) {
-    return (
-      <div>
-        <UserNavBar />
-        <div className="mt-35 flex justify-center text-gray-600 text-lg">
-          <span className='text-red-600'>{error.message}</span>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className='mb-10'>
       <UserNavBar />

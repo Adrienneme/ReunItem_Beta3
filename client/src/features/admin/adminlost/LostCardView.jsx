@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import AdminNavBar from "../../../components/layout/AdminNavBar";
@@ -13,6 +13,7 @@ import { useDeleteItem } from "../../../hooks/useEdit";
 export default function LostCardView() {
   const navigate = useNavigate();
   const location = useLocation();
+  const queryClient = useQueryClient();
   const { entry_id } = location.state;
 
   const [status, setStatus] = useState("");

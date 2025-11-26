@@ -1,18 +1,47 @@
 import React from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useLocation, useNavigate } from "react-router-dom";
+
 import AdminNavBar from "../../../components/layout/AdminNavBar";
 import LostBaseForm from "../../../components/forms/LostBaseForm";
 import CircularLoad from "../../../components/ui/CircularLoad";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useFetchItem } from "../../../hooks/useFetch";
+
 import { approveItem } from "../../../api/admin";
+import { useFetchItem } from "../../../hooks/useFetch";
 
 export default function LostEntriesView() {
   const location = useLocation();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   const { entry_id } = location.state;
 
-  // Choose either "lost" or "found" depending on your intended use
   const { user, formData: entry, isPending, error } = useFetchItem("lost", entry_id);
+
+  const approveMutation = useMutation({
+    mutationFn: approveItem,
+    onSuccess: (res) => {
+      queryClient.invalidateQueries(["adminItems"]);
+      alert(res.message || "Item marked as FOUND/LOST (Claimed).");
+      navigate("/admin/lostandfoundrep");
+    },
+    onError: (err) => {
+      alert(err.response?.data?.detail || "Failed to update item.");
+      console.error(err);
+    },
+  });
+
+  const handleApprove = () => {
+    const id = entry.entryId || entry.entry_id || entry.entry_Id;
+    if (!id) {
+      alert("Entry ID is missing.");
+      return;
+    }
+    if (!window.confirm("Mark item as FOUND/LOST?")) return;
+
+    approveMutation.mutate(id);
+  };
+
 
   if (isPending || error) {
     return (
@@ -25,29 +54,13 @@ export default function LostEntriesView() {
               <CircularLoad />
             </div>
           ) : (
-            <span>{error.message}</span>
+            <span>{error.message || "There was an error loading this entry."}</span>
           )}
         </div>
       </div>
     );
   }
 
-  const handleApprove = async () => {
-    const id = entry.entryId || entry.entry_id || entry.entry_Id;
-    if (!id) {
-      alert("Entry ID is missing.");
-      return;
-    }
-
-    try {
-      await approveItem(id);
-      alert("Item marked as FOUND/LOST (Claimed).");
-      navigate("/admin/lostandfoundrep");
-    } catch (err) {
-      alert("Failed to update item.");
-      console.error(err);
-    }
-  };
 
   return (
     <div>
@@ -58,7 +71,7 @@ export default function LostEntriesView() {
           formData={entry}
           user={user}
           existingPhoto={entry.photo_url}
-          disabled={true}
+          disabled
         />
 
         <div className="flex flex-row gap-10 mt-3">
