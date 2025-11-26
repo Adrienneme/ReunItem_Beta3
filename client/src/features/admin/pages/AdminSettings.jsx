@@ -2,14 +2,16 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import AdminNavBar from "../../../components/layout/AdminNavBar";
 import profile from '../../../assets/icons/usericon.png'
+import { logoutUser } from "../../../api/users";
 
 const AdminSettings = () => {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await logoutUser();
     localStorage.removeItem("user");
-    alert("Logged out!");
-    navigate('/login');
+    localStorage.removeItem("token");
+    navigate("/login");
   };
 
   return (
