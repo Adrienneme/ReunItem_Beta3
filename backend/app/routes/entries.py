@@ -47,7 +47,6 @@ async def generate_desc_router(
   except Exception as e:
       raise HTTPException(status_code=500, detail=f"Error generating description: {e}")
   
-  
 
 @router.get("/list", response_model=List[ItemSchemas.ItemResponse])
 async def get_items_route(current_user = Depends(UserModels.get_current_active_user)):
@@ -94,8 +93,9 @@ def generate_desc_route(entry_id: str, current_user=Depends(UserModels.get_curre
 
 
 @router.post("/set_match", response_model = MatchSchemas.MatchResponse)
-def set_match_route(match_data: MatchSchemas.MatchedItems, _=Depends(UserModels.get_current_active_user)):
+def set_match_route(match_data: MatchSchemas.MatchedItems, current_user=Depends(UserModels.get_current_active_user)):
   return ItemModels.set_match(
+    user_id=current_user,
     lostentry_id=match_data.lost_entry_id,
     foundentry_id=match_data.found_entry_id,
     similarity=match_data.similarity
@@ -108,5 +108,5 @@ def get_match_route(entry_id: str, _=Depends(UserModels.get_current_active_user)
 
 
 @router.delete("/cancel_claim/{entry_id}")
-def delete_match(entry_id: str, _=Depends(UserModels.get_current_active_user)):
-  return ItemModels.cancel_claim(entry_id)
+def delete_match(entry_id: str, current_user=Depends(UserModels.get_current_active_user)):
+  return ItemModels.cancel_claim(current_user, entry_id)

@@ -52,9 +52,14 @@ export default function LostDetails() {
       />
       <div className='flex flex-col justify-center items-center'>
         {["Rejected", "Archived"].includes(formData.status) && (
-          <div className='flex flex-row items-center justify-center mt-5 gap-5'>
+          <div className='flex flex-row items-center justify-center mt-5 gap-10'>
             <ButtonUI variant="solid" color="neutral" onClick={() => navigate("/user/lost-entries")}>
               Go Back
+            </ButtonUI>
+            <ButtonUI variant="solid" color="danger"
+              onClick={() => { setShowDeleteConfirm(true) }}
+            >
+              Delete Entry
             </ButtonUI>
           </div>
         )}

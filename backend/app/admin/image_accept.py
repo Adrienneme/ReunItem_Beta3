@@ -43,11 +43,11 @@ async def approve_entry(entry_id: str, admin=Depends(get_current_admin)):
 
         supabase.table("items").update({"status": "Approved"}).eq("entry_id", entry_id).execute()
 
-        log_action(admin.user_id, "APPROVE_ENTRY", 200, f"Approved entry {entry_id}", "items")
+        log_action(admin.user_id, "APPROVE_ENTRY", "OK", f"Approved entry {entry_id}", "items")
         return {"message": f"Entry {entry_id} approved successfully!", "entry_id": entry_id}
 
     except Exception as e:
-        log_action(admin.user_id, "APPROVE_ENTRY", 500, str(e), "items")
+        log_action(admin.user_id, "APPROVE_ENTRY", "ERR", str(e), "items")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -61,9 +61,9 @@ async def reject_entry(entry_id: str, admin=Depends(get_current_admin)):
 
         supabase.table("items").update({"status": "Rejected"}).eq("entry_id", entry_id).execute()
 
-        log_action(admin.user_id, "REJECT_ENTRY", 200, f"Rejected entry {entry_id}", "items")
+        log_action(admin.user_id, "REJECT_ENTRY", "OK", f"Rejected entry {entry_id}", "items")
         return {"message": f"Entry {entry_id} rejected successfully!", "entry_id": entry_id}
 
     except Exception as e:
-        log_action(admin.user_id, "REJECT_ENTRY", 500, str(e), "items")
+        log_action(admin.user_id, "REJECT_ENTRY", "ERR", str(e), "items")
         raise HTTPException(status_code=500, detail=str(e))

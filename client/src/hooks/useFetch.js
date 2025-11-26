@@ -29,7 +29,7 @@ export function useFetchItem(type, entry_id) {
 
   return {
     formData,
-    user: userData?.data?.[0] || null,
+    user: userData || null,
     isPending: itemPending || userPending,
     error: itemError || userError,
   };

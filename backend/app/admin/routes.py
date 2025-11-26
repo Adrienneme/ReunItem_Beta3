@@ -103,11 +103,11 @@ async def approve_claim(match_id: str, admin=Depends(get_current_admin)):
         for entry_id in [match["lost_entry_id"], match["found_entry_id"]]:
             supabase.table("items").update({"status": "Claimed"}).eq("entry_id", entry_id).execute()
 
-        log_action(admin.user_id, "APPROVE_CLAIM", 200, f"Approved match {match_id}", "matches_table")
+        log_action(admin.user_id, "APPROVE_CLAIM", "OK", f"Approved match {match_id}", "matches_table")
         return {"message": f"Match {match_id} approved successfully."}
 
     except Exception as e:
-        log_action(admin.user_id, "APPROVE_CLAIM", 500, str(e), "matches_table")
+        log_action(admin.user_id, "APPROVE_CLAIM", "ERR", str(e), "matches_table")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -131,11 +131,11 @@ async def reject_claim(match_id: str, admin=Depends(get_current_admin)):
         for entry_id in [match["lost_entry_id"], match["found_entry_id"]]:
             supabase.table("items").update({"status": "Approved"}).eq("entry_id", entry_id).execute()
 
-        log_action(admin.user_id, "REJECT_CLAIM", 200, f"Rejected match {match_id}", "matches_table")
+        log_action(admin.user_id, "REJECT_CLAIM", "OK", f"Rejected match {match_id}", "matches_table")
         return {"message": f"Match {match_id} rejected successfully."}
 
     except Exception as e:
-        log_action(admin.user_id, "REJECT_CLAIM", 500, str(e), "matches_table")
+        log_action(admin.user_id, "REJECT_CLAIM", "ERR", str(e), "matches_table")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -235,9 +235,9 @@ async def approve_item(entry_id: str, admin=Depends(get_current_admin)):
 
         supabase.table("items").update({"status": "Claimed"}).eq("entry_id", entry_id).execute()
 
-        log_action(admin.user_id, "APPROVE_ITEM", 200, f"Approved item {entry_id}", "items")
+        log_action(admin.user_id, "APPROVE_ITEM", "OK", f"Approved item {entry_id}", "items")
         return {"message": f"{item['type'].capitalize()} item {entry_id} status updated to 'Claimed'."}
 
     except Exception as e:
-        log_action(admin.user_id, "APPROVE_ITEM", 500, str(e), "items")
+        log_action(admin.user_id, "APPROVE_ITEM", "ERR", str(e), "items")
         raise HTTPException(status_code=500, detail=str(e))

@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import UserNavBar from "../../../components/layout/UserNavBar";
-
+import { logoutUser } from "../../../api/users";
 import { User2, Mail, LogOut, Palette, Globe, HelpCircle, FileText,
           Info, FileSignature, Star,
 } from "lucide-react";
@@ -15,8 +15,10 @@ const Settings = () => {
     email: "",
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await logoutUser();
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
     navigate("/login");
   };
 

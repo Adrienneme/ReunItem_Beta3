@@ -18,7 +18,7 @@ export default function LostEntriesView() {
     return (
       <div>
         <AdminNavBar />
-        <div className="min-h-screen flex justify-center items-center text-gray-600 text-lg mt-20">
+        <div className="min-h-screen flex justify-center mt-35 text-gray-600 text-lg">
           {isPending ? (
             <div className="flex flex-col items-center gap-5">
               <span>Loading Entry Details...</span>
