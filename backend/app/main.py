@@ -7,9 +7,6 @@ from app.admin.image_accept import router as admin_image_router
 from app.admin.routes import admin_claims_router
 
 
-
-
-
 app = FastAPI(title="ReunItem")
 
 
@@ -21,7 +18,7 @@ origin = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origin,
+    allow_origins=["*"], #change later for production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]

@@ -8,6 +8,7 @@ import CircularLoad from '../../../../components/ui/CircularLoad'
 export default function LostEntriesPage() {
 
   const { entries, isPending, error } = useFetchItems("lost", "lost_items");
+  console.log(entries)
 
   const [selectedStatus, setSelectedStatus] = React.useState("All");
 
@@ -24,6 +25,17 @@ export default function LostEntriesPage() {
         </div>
       </div>
     )
+  }
+
+  if (entries.length == 0) {
+    return (
+      <div>
+        <UserNavBar />
+        <div className='flex flex-col items-center gap-5 mt-35'>
+          <span className='text-gray-500'>No Lost Item Entries Yet!</span>
+        </div>
+      </div>
+    );
   }
 
   const filteredEntries = entries

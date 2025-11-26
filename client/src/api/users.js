@@ -2,6 +2,7 @@ import jsonClient from "../api/axios/jsonClient";
 import userClient from "../api/axios/userClient";
 
 export const registerUser = async (data) => {
+  console.log(data)
   const response = await jsonClient.post("/users/register", data);
   return response.data;
 };

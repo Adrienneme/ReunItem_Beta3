@@ -16,17 +16,18 @@ class UserModels:
     @staticmethod
     def create_user(user: UserSchemas.UserCreate, actor_id: str | None = None):
         is_admin = False
-
+        SYSTEM_USER_ID = "00000000-0000-0000-0000-000000000000"
         if actor_id:
             admin_check = supabase.table("user").select("role").eq("user_id", actor_id).execute()
             if admin_check.data and admin_check.data[0]["role"] == "admin":
                 is_admin = True
             else:
-                actor_id = "SYSTEM"
+                actor_id = SYSTEM_USER_ID
         else:
-            actor_id = "SYSTEM" 
+            actor_id = SYSTEM_USER_ID
 
         existing_user = supabase.table("user").select("*").eq("email", user.email).execute()
+        print("CHECKING EMAIL", user.email, existing_user.data)
         if existing_user.data:
             raise HTTPException(status_code=400, detail="Email already registered")
 

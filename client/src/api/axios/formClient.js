@@ -31,6 +31,7 @@ formClient.interceptors.response.use(
         }, 200);
       }
     }
+    return Promise.reject(error);
   }
 );
 

@@ -71,7 +71,7 @@ const Signup = () => {
         }
         
         try {
-            const response = await registerUser({ ...form, role: "user" });
+            const response = await registerUser(form);
             console.log("User created: ", response);
             navigate('/login');
             alert("Account created successfully!")

@@ -26,6 +26,17 @@ export default function FoundEntriesPage() {
     )
   }
 
+    if (entries.length == 0) {
+    return (
+      <div>
+        <UserNavBar />
+        <div className='flex flex-col items-center gap-5 mt-35'>
+          <span className='text-gray-500'>No Found Item Entries Yet!</span>
+        </div>
+      </div>
+    );
+  }
+
   const filteredEntries = entries
     .filter((item) => item.type === "found")
     .filter((item) =>
