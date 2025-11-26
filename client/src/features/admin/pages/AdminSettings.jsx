@@ -11,55 +11,66 @@ const AdminSettings = () => {
 
   const MAX_FILE_SIZE = 200 * 1024 * 1024; // 200MB
 
-  // ===================== Logout=======
+  // ---------------- Logout ----------------
   const handleLogout = () => {
     localStorage.removeItem("user");
     alert("Logged out!");
     navigate("/login");
   };
 
-  // ===================== Backup===============
+  // ---------------- Backup ----------------
   const handleBackup = async () => {
-    if (!window.confirm("Are you sure you want to download a full backup?")) return;
+  if (!window.confirm("Are you sure you want to download a full backup?")) return;
 
-    setLoading(true);
-    try {
-      const res = await backupAllTables();
+  setLoading(true);
+  try {
+    const res = await backupAllTables();
 
-      const blob = new Blob([res.data], { type: "application/json" });
-      const url = window.URL.createObjectURL(blob);
+    // If using axios with responseType 'blob'
+    const blob = new Blob([res.data], { type: "application/json" });
 
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `full_backup_${new Date().toISOString().replace(/[:.]/g, "_")}.json`;
-      a.click();
-      a.remove();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `full_backup_${new Date().toISOString().replace(/[:.]/g, "_")}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
 
-      alert("Backup downloaded successfully!");
-    } catch (error) {
-      console.error("Backup failed:", error);
-      alert("Backup failed. Check console for details.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    alert("Backup downloaded successfully!");
+  } catch (error) {
+    console.error("Backup failed:", error);
+    alert("Backup failed. Check console for details.");
+  } finally {
+    setLoading(false);
+  }
+};
 
-  // ===================== Restore =========
+  // ---------------- Restore ----------------
   const handleRestore = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    if (file.size > MAX_FILE_SIZE) {
-      alert(`File too large. Maximum allowed size is ${MAX_FILE_SIZE / (1024 * 1024)}MB`);
+    if (!file.name.endsWith(".json")) {
+      alert("Invalid file type. Must be a JSON backup file.");
+      e.target.value = null;
       return;
     }
 
-    if (!window.confirm("Are you sure you want to restore this backup? This will overwrite existing data.")) return;
+    if (file.size > MAX_FILE_SIZE) {
+      alert(`File too large. Maximum allowed size is ${MAX_FILE_SIZE / (1024 * 1024)}MB`);
+      e.target.value = null;
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("backup_file", file);
 
     setLoading(true);
     try {
-      await restoreAllTables(file);
-      alert("Database restored successfully!");
+      const res = await restoreAllTables(formData);
+      console.log("Restore response:", res);
+      alert(res.message || "Restore completed successfully!");
     } catch (error) {
       console.error("Restore failed:", error);
       alert("Restore failed. Check console for details.");
@@ -74,13 +85,16 @@ const AdminSettings = () => {
       <AdminNavBar />
       <div className="flex justify-center items-center mb-10">
         <div className="mt-7 w-full max-w-md p-6 bg-gray-900 border border-gray-300 rounded-lg shadow-md">
-          <h2 className="text-2xl font-semibold mb-6 mt-5 text-center"><b>Settings:</b></h2>
+          <h2 className="text-2xl font-semibold mb-6 mt-5 text-center">
+            <b>Settings:</b>
+          </h2>
+
           <div className="flex flex-col items-center justify-center">
             <img src={profile} alt="Profile" className="w-30" />
             <h2 className="text-2xl font-semibold mb-6 mt-5">Admin</h2>
           </div>
 
-          {/* BACKUP BUTTON */}
+          {/* Backup Button */}
           <div className="text-center mt-4">
             <button
               onClick={handleBackup}
@@ -93,7 +107,7 @@ const AdminSettings = () => {
             </button>
           </div>
 
-          {/* RESTORE (UPLOAD FILE) */}
+          {/* Restore Button */}
           <div className="text-center">
             <input
               type="file"
@@ -113,7 +127,7 @@ const AdminSettings = () => {
             </button>
           </div>
 
-          {/* LOGOUT */}
+          {/* Logout Button */}
           <div className="text-center mt-4">
             <button
               onClick={handleLogout}

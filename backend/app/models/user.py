@@ -14,7 +14,7 @@ class UserModels:
 
     @staticmethod
     def create_user(user: UserSchemas.UserCreate) -> UserSchemas.User:
-        existing_user = supabase.table("user").select("*").eq("email", user.email).execute()
+        existing_user = supabase.table("user_backup").select("*").eq("email", user.email).execute()
         if existing_user.data:
             raise HTTPException(status_code=400, detail="Email already Registered")
 
@@ -22,7 +22,7 @@ class UserModels:
         user_data["password_hash"] = Security.hash_password(user_data["password_hash"])
         user_data["role"] = user.role.value
 
-        response = supabase.table("user").insert(user_data).execute()
+        response = supabase.table("user_backup").insert(user_data).execute()
 
         if not response.data:
             raise HTTPException(status_code=500, detail="Failed to create user.")
@@ -35,7 +35,7 @@ class UserModels:
 
     @staticmethod
     def login_user(user: UserSchemas.UserLogin):
-        response = supabase.table("user").select("*").eq("email", user.email).execute()
+        response = supabase.table("user_backup").select("*").eq("email", user.email).execute()
         if not response.data:
             raise HTTPException(status_code=401, detail="User is not yet Registered")
 
@@ -48,7 +48,8 @@ class UserModels:
         
         token = Security.create_user_token(
             data={"sub": str(user_data["email"])},
-            expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+            expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        )
 
         return UserSchemas.LoginResponse(
             access_token=token,
@@ -67,7 +68,7 @@ class UserModels:
         except InvalidTokenError:
             raise HTTPException(status_code=401, detail="Could not validate credentials")
 
-        response = supabase.table("user").select("*").eq("email", email).execute()
+        response = supabase.table("user_backup").select("*").eq("email", email).execute()
         if not response.data:
             raise HTTPException(status_code=401, detail="User not found")
 
@@ -78,15 +79,14 @@ class UserModels:
     
     @staticmethod
     def get_user(user_id: str):
-        response = supabase.table("user").select("*").eq("user_id", user_id).execute()
+        response = supabase.table("user_backup").select("*").eq("user_id", user_id).execute()
         if not response.data: 
-            raise HTTPException(status_code=401, details="User not Found")
+            raise HTTPException(status_code=401, detail="User not Found")
         return response
     
     @staticmethod
     def get_all_users():
-        response = supabase.table("user").select("*").execute()
+        response = supabase.table("user_backup").select("*").execute()
         if not response.data: 
-            raise HTTPException(status_code=401, details="No Users Yet")
+            raise HTTPException(status_code=401, detail="No Users Yet")
         return response
-

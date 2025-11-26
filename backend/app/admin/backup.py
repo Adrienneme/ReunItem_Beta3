@@ -1,38 +1,47 @@
-from fastapi import APIRouter, Depends, File, UploadFile, HTTPException, status
+from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from fastapi.responses import StreamingResponse
 from app.core.db import supabase
 from app.models.user import UserModels
-import json
-from io import BytesIO
 from datetime import datetime
-import pytz
-import os
+from io import BytesIO
+import pytz, json
 
-router = APIRouter(
-    prefix="/admin",
-    tags=["Admin Backup Restore"]
-)
+router = APIRouter(prefix="/admin", tags=["Admin Backup Restore"])
 
-# -------------- ADMIN CHECK ----
+# ------------------- ADMIN CHECK -------------------
 def get_current_admin(current_user=Depends(UserModels.get_current_active_user)):
     if current_user.role.lower() != "admin":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Admin access required."
-        )
+        raise HTTPException(status_code=403, detail="Not authorized")
     return current_user
 
-# ------------- Helper for chunked inserts ------
-def chunk_list(lst, chunk_size):
-    """Yield successive chunk_size-sized chunks from lst."""
-    for i in range(0, len(lst), chunk_size):
-        yield lst[i:i + chunk_size]
 
-# ============== BackUp all tables =============
+# ------------------- AUTO-DETECT TABLES ----------------
+def get_all_backup_tables():
+    """Fetch all tables ending with '_backup' automatically"""
+    try:
+        res = supabase.table("pg_catalog.pg_tables").select("tablename").execute()
+        tables = [t["tablename"] for t in res.data if t["tablename"].endswith("_backup")]
+        return tables
+    except Exception as e:
+        print("Error fetching tables:", e)
+        # fallback to manual list
+        return ["user_backup", "items_backup", "matches_table_backup", "activity_logs_backup", "audit_logs_backup"]
+
+def get_table_columns(table_name: str):
+    """Fetch column names for a table"""
+    try:
+        res = supabase.table("information_schema.columns")\
+            .select("column_name")\
+            .eq("table_name", table_name).execute()
+        return [c["column_name"] for c in res.data] if res.data else []
+    except Exception as e:
+        print(f"Error fetching columns for {table_name}:", e)
+        return []
+# ------------------- BACKUP -------------------
 @router.get("/backup_all")
 async def backup_all_tables(admin=Depends(get_current_admin)):
     try:
-        tables = ["activity_logs", "audit_logs", "items", "matches_table", "user"]
+        tables = get_all_backup_tables()
         backup_data = {}
 
         for table in tables:
@@ -45,58 +54,78 @@ async def backup_all_tables(admin=Depends(get_current_admin)):
         buffer.write(json.dumps(backup_data, indent=4).encode("utf-8"))
         buffer.seek(0)
 
+        filename = f"full_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+
         return StreamingResponse(
             buffer,
             media_type="application/json",
-            headers={
-                "Content-Disposition":
-                f"attachment; filename=full_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-            }
+            headers={"Content-Disposition": f"attachment; filename={filename}"}
         )
+
     except Exception as e:
         print("Backup error:", e)
         raise HTTPException(status_code=500, detail="Backup failed.")
 
-# ================ RESTORE ALL TABLES (With batch insert) ===============
+# ------------------- RESTORE ----------------
 @router.post("/restore_all")
 async def restore_all_tables(
-    admin=Depends(get_current_admin),
-    backup_file: UploadFile = File(...)
+    backup_file: UploadFile = File(...),
+    admin=Depends(get_current_admin)
 ):
-    ENV = os.getenv("ENV", "production")
-    if ENV == "production":
-        raise HTTPException(403, "Restore is disabled in production environment.")
+    if not backup_file.filename.endswith(".json"):
+        raise HTTPException(status_code=400, detail="Invalid file type")
 
-    allowed_tables = ["activity_logs", "audit_logs", "items", "matches_table", "user"]
-    BATCH_SIZE = 5000  # Insert 5000 rows per batch
+    contents = await backup_file.read()
+    if not contents:
+        raise HTTPException(status_code=400, detail="Empty backup file")
 
     try:
-        data = json.loads((await backup_file.read()).decode("utf-8"))
+        data = json.loads(contents)
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=400, detail="Invalid JSON file")
 
-        for table_name, rows in data.items():
-            if table_name == "backup_generated_at":
-                continue
+    tables = get_all_backup_tables()
+    print("Received file:", backup_file.filename, "size:", len(contents))
 
-            if table_name not in allowed_tables:
-                raise HTTPException(400, f"Invalid table in backup: {table_name}")
+    for table in tables:
+        if table not in data:
+            print(f"Skipping table {table}, not in backup file")
+            continue
 
-            # Clean IDs
-            cleaned_rows = []
-            for row in rows:
-                row.pop("id", None)
-                cleaned_rows.append(row)
+        records = data[table]
+        if not records:
+            print(f"No records for table {table}, skipping")
+            continue
 
-            # Delete old data
-            supabase.table(table_name).delete().neq("id", 0).execute()
+        # Fetch actual columns from table
+        columns = get_table_columns(table)
+        if not columns:
+            print(f"No columns detected for {table}, skipping")
+            continue
 
-            # Batch insert
-            for batch in chunk_list(cleaned_rows, BATCH_SIZE):
-                if batch:
-                    supabase.table(table_name).insert(batch).execute()
+        # Clean records
+        cleaned_records = []
+        for record in records:
+            cleaned = {}
+            for k, v in record.items():
+                if k not in columns:
+                    continue  # skip unknown columns
+                if isinstance(v, str) and v.upper() in ["NONE", "NULL"]:
+                    cleaned[k] = None
+                else:
+                    cleaned[k] = v
+            if cleaned:
+                cleaned_records.append(cleaned)
 
-            print(f"[INFO] Restored {len(cleaned_rows)} rows into {table_name}")
+        # Delete existing rows if table has a primary key
+        if "id" in columns:
+            supabase.table(table).delete().neq("id", None).execute()
+        else:
+            print(f"Skipping delete for {table}, no primary key found")
 
-        return {"message": "Database restored successfully (batch insert)."}
-    except Exception as e:
-        print("Restore error:", e)
-        raise HTTPException(status_code=500, detail=f"Restore failed: {str(e)}")
+        # Insert cleaned records
+        if cleaned_records:
+            supabase.table(table).insert(cleaned_records).execute()
+            print(f"Inserted {len(cleaned_records)} rows into {table}")
+
+    return {"message": "Restore completed successfully!"}
