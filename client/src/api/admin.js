@@ -162,3 +162,8 @@ export const approveItem = async (entryId) => {
     throw error;
   }
 };
+
+export const getLogs = async () => {
+  const response = await jsonClient.get("/admin/get-logs");
+    return response.data;
+}

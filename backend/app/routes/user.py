@@ -4,7 +4,7 @@ from app.models import UserModels
 from app.schemas import UserSchemas
 from app.admin.routes import get_current_admin
 
-router = APIRouter(prefix='/users') #all routes start with /users
+router = APIRouter(prefix='/users') 
 
 @router.post('/register', response_model=UserSchemas.User)
 def create_user_route(user: UserSchemas.UserCreate):

@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from app.core.db import supabase
 from app.models.user import UserModels
+from app.models.audit_logs import get_logs
 from app.models.entries import log_action
 
 admin_claims_router = APIRouter(
@@ -241,3 +242,8 @@ async def approve_item(entry_id: str, admin=Depends(get_current_admin)):
     except Exception as e:
         log_action(admin.user_id, "APPROVE_ITEM", "ERR", str(e), "items")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@admin_claims_router.get("/get-logs")
+async def get_logs_route(admin=Depends(get_current_admin)):
+    return get_logs()
