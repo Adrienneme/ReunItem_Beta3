@@ -14,7 +14,6 @@ export default function LostEntriesPage() {
     startDate: null,
     endDate: null,
   });
-  console.log(entries)
 
   const [selectedStatus, setSelectedStatus] = React.useState("All");
 
@@ -72,8 +71,9 @@ export default function LostEntriesPage() {
           <h1 className="text-xl font-bold">Lost Items:</h1>
         </div>
 
-        <div className='flex flex-col items-center'>
-          <h1 className='mb-5'>Filter By:</h1>
+
+        <div>
+          <h1 className='mb-5'><b>Filter By</b></h1>
           <FilterDropdown
             label="Status"
             options={[
@@ -86,12 +86,14 @@ export default function LostEntriesPage() {
             ]}
             onChange={(value) => setSelectedStatus(value)}
           />
-
-          <DateRangeFilter
-            startDate={dateRange.startDate}
-            endDate={dateRange.endDate}
-            onChange={setDateRange}
-          />
+          <div className='flex flex-row gap-3 items-center mt-6'>
+            <h1>Timeline:</h1>
+            <DateRangeFilter
+              startDate={dateRange.startDate}
+              endDate={dateRange.endDate}
+              onChange={setDateRange}
+            />
+          </div>
         </div>
 
         <div className="flex flex-wrap justify-center gap-10 mt-10">

@@ -4,10 +4,16 @@ import FilterDropdown from '../../../../components/ui/Filters'
 import Card2 from '../../../../components/ui/Card2'
 import { useFetchItems } from '../../../../hooks/useFetch'
 import CircularLoad from '../../../../components/ui/CircularLoad'
+import DateRangeFilter from '../../../../components/ui/DateRangeFilter'
+import dayjs from 'dayjs'
 
 export default function FoundEntriesPage() {
 
   const { entries, isPending, error } = useFetchItems("found", "found_items");
+  const [dateRange, setDateRange] = React.useState({
+    startDate: null,
+    endDate: null,
+  });
 
   const [selectedStatus, setSelectedStatus] = React.useState("All");
 
@@ -16,17 +22,17 @@ export default function FoundEntriesPage() {
       <div>
         <UserNavBar />
         <div className="min-h-screen flex justify-center mt-35 text-gray-600 text-lg">
-          {isPending ? 
-          <div className='flex flex-col items-center gap-5'>
-             <span>Loading Found Items</span>
-             <CircularLoad/>
-          </div> : error.message}
+          {isPending ?
+            <div className='flex flex-col items-center gap-5'>
+              <span>Loading Found Items</span>
+              <CircularLoad />
+            </div> : error.message}
         </div>
       </div>
     )
   }
 
-    if (entries.length == 0) {
+  if (entries.length == 0) {
     return (
       <div>
         <UserNavBar />
@@ -41,7 +47,19 @@ export default function FoundEntriesPage() {
     .filter((item) => item.type === "found")
     .filter((item) =>
       selectedStatus === "All" ? true : item.status === selectedStatus
-    );
+    )
+    .filter((item) => {
+      const { startDate, endDate } = dateRange;
+
+      if (!startDate || !endDate) return true;
+
+      const itemDate = dayjs(item.created_at);
+
+      return (
+        itemDate.isAfter(startDate.startOf("day")) &&
+        itemDate.isBefore(endDate.endOf("day"))
+      );
+    });
 
   return (
     <div className='mb-10'>
@@ -52,17 +70,28 @@ export default function FoundEntriesPage() {
           <h1 className='text-xl font-bold'>Found Items:</h1>
         </div>
 
-        <FilterDropdown
-          label="Status"
-          options={[
-            "All",
-            "Pending Approval",
-            "Approved",
-            "Rejected",
-            "Claimed"
-          ]}
-          onChange={(value) => setSelectedStatus(value)}
-        />
+        <div>
+          <h1 className='mb-5'><b>Filter By:</b></h1>
+          <FilterDropdown
+            label="Status"
+            options={[
+              "All",
+              "Pending Approval",
+              "Approved",
+              "Rejected",
+              "Claimed"
+            ]}
+            onChange={(value) => setSelectedStatus(value)}
+          />
+          <div className='flex flex-row gap-3 items-center mt-6'>
+            <h1>Timeline:</h1>
+            <DateRangeFilter
+              startDate={dateRange.startDate}
+              endDate={dateRange.endDate}
+              onChange={setDateRange}
+            />
+          </div>
+        </div>
 
         <div className="flex flex-wrap justify-center gap-10 mt-10">
           {filteredEntries.map((item) => (

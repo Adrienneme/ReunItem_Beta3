@@ -5,11 +5,17 @@ import AdminNavBar from "../../../components/layout/AdminNavBar";
 import Card2 from "../../../components/ui/Card2";
 import FilterDropdown from "../../../components/ui/Filters";
 import CircularLoad from "../../../components/ui/CircularLoad";
+import DateRangeFilter from "../../../components/ui/DateRangeFilter";
+import dayjs from "dayjs";
 
 import { getPendingItems } from "../../../api/admin";
 
 function Pendingsub() {
   const [filter, setFilter] = useState("All");
+  const [dateRange, setDateRange] = useState({
+    startDate: null,
+    endDate: null,
+  });
 
   const { data: entries, isPending, error } = useQuery({
     queryKey: ["pendingItems", filter],
@@ -23,34 +29,65 @@ function Pendingsub() {
       <div>
         <AdminNavBar />
         <div className="min-h-screen flex justify-center mt-35 text-gray-600 text-lg">
-          {isPending ?
-            <div className='flex flex-col items-center gap-5'>
+          {isPending ? (
+            <div className="flex flex-col items-center gap-5">
               <span>Loading Item Entries</span>
               <CircularLoad />
-            </div> : error.response?.data?.detail || "No Item Entries Yet"}
+            </div>
+          ) : (
+            error.response?.data?.detail || "No Item Entries Yet"
+          )}
         </div>
       </div>
-    )
+    );
   }
+
+  const filteredEntries = entries?.filter((item) => {
+    const { startDate, endDate } = dateRange;
+
+    if (!startDate || !endDate) return true;
+
+    const itemDate = dayjs(item.created_at);
+
+    return (
+      itemDate.isAfter(startDate.startOf("day")) &&
+      itemDate.isBefore(endDate.endOf("day"))
+    );
+  });
 
   return (
     <div className="mb-6">
       <AdminNavBar />
-
-      <div className="flex flex-wrap justify-center mt-10">
-        <FilterDropdown
-          label="Filter"
-          options={["All", "Lost", "Found"]}
-          value={filter}
-          onChange={setFilter}
-        />
+      <div className="flex flex-col items-center mt-5 mb-5">
+        <h1 className="text-xl font-bold mb-5">Pending Entry Submissions:</h1>
+        <div>
+          <h1 className='mb-5'><b>Filter By</b></h1>
+          <FilterDropdown
+            label="Filter"
+            options={["All", "Lost", "Found"]}
+            value={filter}
+            onChange={setFilter}
+          />
+          <div className='flex flex-row gap-3 items-center mt-6'>
+            <h1>Timeline:</h1>
+            <DateRangeFilter
+              startDate={dateRange.startDate}
+              endDate={dateRange.endDate}
+              onChange={setDateRange}
+            />
+          </div>
+        </div>
       </div>
 
-      {entries?.length === 0 ? (
-        <p className="text-center mt-30 text-gray-500">No pending items found.</p>
+
+
+      {filteredEntries?.length === 0 ? (
+        <p className="text-center mt-30 text-gray-500">
+          No pending items found.
+        </p>
       ) : (
         <div className="flex flex-wrap justify-center gap-10 mt-10">
-          {entries?.map((item) => {
+          {filteredEntries?.map((item) => {
             const type = item.type?.toLowerCase();
             const linkTo =
               type === "lost"

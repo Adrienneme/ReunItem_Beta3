@@ -48,7 +48,7 @@ export default function DateRangeFilter({ startDate, endDate, onChange }) {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <div className="flex gap-3 mt-4">
+      <div className="flex gap-3">
         <DatePicker
           label="Start Date"
           value={startDate}

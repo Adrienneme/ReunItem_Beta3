@@ -5,11 +5,17 @@ import AdminNavBar from "../../../components/layout/AdminNavBar";
 import Card2 from "../../../components/ui/Card2";
 import FilterDropdown from "../../../components/ui/Filters";
 import CircularLoad from "../../../components/ui/CircularLoad";
+import DateRangeFilter from "../../../components/ui/DateRangeFilter";
+import dayjs from "dayjs";
 
 import { archived_items } from "../../../api/admin";
 
 function LostFoundRep() {
   const [filter, setFilter] = useState("All");
+  const [dateRange, setDateRange] = useState({
+    startDate: null,
+    endDate: null,
+  });
 
   const { data, isPending, error } = useQuery({
     queryKey: ["archivedItems"],
@@ -20,44 +26,69 @@ function LostFoundRep() {
 
   const combined = data
     ? [
-      ...(data.lost_grouped?.Claimed || []),
-      ...(data.lost_grouped?.Rejected || []),
-      ...(data.found_grouped?.Claimed || []),
-      ...(data.found_grouped?.Rejected || []),
-    ]
+        ...(data.lost_grouped?.Claimed || []),
+        ...(data.lost_grouped?.Rejected || []),
+        ...(data.found_grouped?.Claimed || []),
+        ...(data.found_grouped?.Rejected || []),
+      ]
     : [];
 
-  const filteredEntries =
-    filter === "All"
-      ? combined
-      : combined.filter((item) => item.status === filter);
+  const filteredEntries = combined
+    .filter((item) => {
+      if (filter === "All") return true;
+      return item.status === filter;
+    })
+    .filter((item) => {
+      const { startDate, endDate } = dateRange;
+
+      if (!startDate || !endDate) return true;
+
+      const itemDate = dayjs(item.created_at);
+
+      return (
+        itemDate.isAfter(startDate.startOf("day")) &&
+        itemDate.isBefore(endDate.endOf("day"))
+      );
+    });
 
   if (isPending || error) {
     return (
       <div>
         <AdminNavBar />
         <div className="min-h-screen flex justify-center mt-35 text-gray-600 text-lg">
-          {isPending ?
-            <div className='flex flex-col items-center gap-5'>
+          {isPending ? (
+            <div className="flex flex-col items-center gap-5">
               <span>Loading Item Entries</span>
               <CircularLoad />
-            </div> : error.response?.data?.detail || "No Item Entries Yet"}
+            </div>
+          ) : (
+            error.response?.data?.detail || "No Item Entries Yet"
+          )}
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <div className="mb-6">
       <AdminNavBar />
 
-      <div className="flex flex-wrap justify-center mt-10">
+      <div className="flex flex-col items-center mt-10 gap-5">
         <FilterDropdown
           label="Filter"
           options={["All", "Claimed", "Rejected"]}
           value={filter}
           onChange={setFilter}
         />
+
+        <div className="flex flex-row gap-3 items-center">
+          <h1>Timeline:</h1>
+          <DateRangeFilter
+            startDate={dateRange.startDate}
+            endDate={dateRange.endDate}
+            onChange={setDateRange}
+          />
+        </div>
       </div>
 
       {filteredEntries.length === 0 ? (
