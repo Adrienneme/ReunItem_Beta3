@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from enum import Enum
+from typing import Optional
 import uuid
 
 class UserRole(str, Enum):

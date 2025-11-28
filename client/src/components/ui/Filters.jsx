@@ -19,7 +19,7 @@ const Filter = ({ label = "Filter", options = [], onChange }) => {
         id={label}
         value={selected}
         onChange={handleChange}
-        className="border border-gray-400 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-black-500 bg-white text-black"
+        className="border border-gray-400 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-black-50  bg-gray-900 text-white"
       >
         {options.map((option, index) => (
           <option key={index} value={option}>

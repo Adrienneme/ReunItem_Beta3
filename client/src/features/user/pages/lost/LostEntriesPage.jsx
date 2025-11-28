@@ -4,10 +4,16 @@ import FilterDropdown from '../../../../components/ui/Filters'
 import Card2 from '../../../../components/ui/Card2'
 import { useFetchItems } from '../../../../hooks/useFetch'
 import CircularLoad from '../../../../components/ui/CircularLoad'
+import DateRangeFilter from '../../../../components/ui/DateRangeFilter'
+import dayjs from 'dayjs'
 
 export default function LostEntriesPage() {
 
   const { entries, isPending, error } = useFetchItems("lost", "lost_items");
+  const [dateRange, setDateRange] = React.useState({
+    startDate: null,
+    endDate: null,
+  });
   console.log(entries)
 
   const [selectedStatus, setSelectedStatus] = React.useState("All");
@@ -42,7 +48,20 @@ export default function LostEntriesPage() {
     .filter((item) => item.type === "lost")
     .filter((item) =>
       selectedStatus === "All" ? true : item.status === selectedStatus
-    );
+    )
+    .filter((item) => {
+      const { startDate, endDate } = dateRange;
+
+      if (!startDate || !endDate) return true;
+
+      const itemDate = dayjs(item.created_at);
+
+      return (
+        itemDate.isAfter(startDate.startOf("day")) &&
+        itemDate.isBefore(endDate.endOf("day"))
+      );
+    });
+
 
   return (
     <div className='mb-10'>
@@ -53,18 +72,27 @@ export default function LostEntriesPage() {
           <h1 className="text-xl font-bold">Lost Items:</h1>
         </div>
 
-        <FilterDropdown
-          label="Status"
-          options={[
-            "All",
-            "Pending Approval",
-            "Pending Claim",
-            "Approved",
-            "Rejected",
-            "Claimed"
-          ]}
-          onChange={(value) => setSelectedStatus(value)}
-        />
+        <div className='flex flex-col items-center'>
+          <h1 className='mb-5'>Filter By:</h1>
+          <FilterDropdown
+            label="Status"
+            options={[
+              "All",
+              "Pending Approval",
+              "Pending Claim",
+              "Approved",
+              "Rejected",
+              "Claimed"
+            ]}
+            onChange={(value) => setSelectedStatus(value)}
+          />
+
+          <DateRangeFilter
+            startDate={dateRange.startDate}
+            endDate={dateRange.endDate}
+            onChange={setDateRange}
+          />
+        </div>
 
         <div className="flex flex-wrap justify-center gap-10 mt-10">
           {filteredEntries.map((item) => (

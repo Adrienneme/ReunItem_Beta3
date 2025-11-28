@@ -39,6 +39,7 @@ class ItemSchemas:
     class ItemResponse(ItemBase):
         entry_id: uuid.UUID
         user_id: uuid.UUID
+        created_at: Optional[str]
 
         class Config:
             from_attributes = True
