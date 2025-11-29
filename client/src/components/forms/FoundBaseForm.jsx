@@ -56,7 +56,7 @@ const FoundBaseForm = ({
             <div className="mt-2 bg-#242424 shadow-md rounded-xl p-4 border animate-fadeIn">
               <p className="text-gray-300"><strong>Name:</strong> {user.first_name} {user.last_name}</p>
               <p className="text-gray-300 mt-1"><strong>Email:</strong> {user.contact || user.email}</p>
-              <p className="text-gray-300 mt-1"><strong>Contact Number:</strong> {formData.contact_number}</p>
+              <p className="text-gray-300 mt-1"><strong>Contact Info:</strong> {formData.contact_number}</p>
             </div>
           )}
         </div>
@@ -140,7 +140,7 @@ const FoundBaseForm = ({
               inputMode="numeric"
               value={formData.contact_number || ""}
               onChange={onChange}
-              placeholder="Enter your contact number"
+              placeholder="e.g. Fb / Messenger / phone..."
               required={false}
               disabled={false}
             />
