@@ -35,6 +35,7 @@ import FoundEntriesView from './features/admin/adminfound/FoundEntriesAdmin';
 import LostCardView from './features/admin/adminlost/LostCardView';
 import LostEntriesView from './features/admin/adminlost/LostEntriesAdmin';
 import AdminSettings from './features/admin/pages/AdminSettings';
+import AuditLogs from './features/admin/pages/AuditLogs';
 
 
 
@@ -91,6 +92,7 @@ function App() {
               <Route path="lostentryadmin" element={<LostEntriesView />} />
               <Route path="lostcardview" element={<LostCardView />} />
               <Route path="adminsettings" element={<AdminSettings/>} />
+              <Route path="auditlogs" element={<AuditLogs/>} />
             </Routes> 
           </ProtectedRoutes>
         }
