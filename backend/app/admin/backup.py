@@ -12,15 +12,15 @@ router = APIRouter(prefix="/admin", tags=["Admin Backup Restore"])
 
 # ============================================================
 # ADMIN CHECK
-# ============================================================
+
 def get_current_admin(current_user=Depends(UserModels.get_current_active_user)):
     if current_user.role.lower() != "admin":
         raise HTTPException(status_code=403, detail="Not authorized")
     return current_user
 
 # ============================================================
-# TABLE LIST
-# ============================================================
+# TABLE LIST(to be called/used)
+
 def get_all_backup_tables():
     """Auto-detect tables ending with _backup"""
     try:
@@ -37,8 +37,8 @@ def get_all_backup_tables():
         ]
 
 # ============================================================
-# GET TABLE COLUMNS
-# ============================================================
+# GET TABLE COLUMNS, using Remote Procedure Call to fetch all column name of a table
+
 def get_table_columns(table):
     """Return list of column names"""
     try:
@@ -56,8 +56,8 @@ def get_table_columns(table):
         return []
 
 # ============================================================
-# BACKUP (CHUNKED)
-# ============================================================
+# BACKUP (CHUNKED) , fetch all rows from all _backup tables and return as JSON file
+#using streaming response, converts to table  and return ad downloadable file
 # ------------------- BACKUP -------------------
 @router.get("/backup_all")
 async def backup_all_tables(admin=Depends(get_current_admin)):
@@ -94,12 +94,13 @@ async def backup_all_tables(admin=Depends(get_current_admin)):
 
 # ============================================================
 # RESTORE (CHUNKED + SAFE UPSERT)
-# ============================================================
+
 @router.post("/restore_all")
 async def restore_all_tables(
     backup_file: UploadFile = File(...),
     admin=Depends(get_current_admin)
 ):
+    #Ensures file is json, then converts to python dict
     if not backup_file.filename.endswith(".json"):
         raise HTTPException(status_code=400, detail="Invalid file type")
 
@@ -111,6 +112,9 @@ async def restore_all_tables(
         data = json.loads(contents)
     except json.JSONDecodeError:
         raise HTTPException(status_code=400, detail="Invalid JSON file")
+    
+#Primary Keys dictionary ensures upserts uses the correct promary key
+#upserts insert new rows/update existing rows base on primary key
 
     tables = get_all_backup_tables()
     print(f"[RESTORE] Tables to restore: {tables}")
@@ -124,21 +128,22 @@ async def restore_all_tables(
         "matches_table_backup": "match_id",
         "user_backup": "user_id",
     }
-
+#loops throgh table and skip empty tables
     for table in tables:
         records = data.get(table, [])
         print(f"\n[RESTORE] Table {table}: {len(records)} records")
 
         if not records:
-            print("  ↳ No records, skipping")
+            print("   No records, skipping")
             continue
 
         columns = get_table_columns(table)
         if not columns:
-            print("  ↳ No columns detected, skipping")
+            print("   No columns detected, skipping")
             continue
 
         # ---------------- CLEAN DATA ----------------
+        #Valid Columns will be converted to Null to none so Python sees Null
         cleaned_records = []
         for record in records:
             cleaned = {
@@ -149,13 +154,13 @@ async def restore_all_tables(
             if cleaned:
                 cleaned_records.append(cleaned)
 
-        print(f"  ↳ Cleaned: {len(cleaned_records)}")
+        print(f"   Cleaned: {len(cleaned_records)}")
         if not cleaned_records:
             continue
 
         # ---------------- USE CORRECT PRIMARY KEY ----------------
         pk = PRIMARY_KEYS.get(table)
-        print(f"  ↳ PK used for upsert: {pk}")
+        print(f"   PK used for upsert: {pk}")
 
         # ---------------- PROCESS IN CHUNKS ----------------
         total = len(cleaned_records)
@@ -163,9 +168,10 @@ async def restore_all_tables(
 
         for i in range(chunks):
             batch = cleaned_records[i * CHUNK_SIZE:(i + 1) * CHUNK_SIZE]
-            print(f"  ↳ Restoring chunk {i+1}/{chunks} ({len(batch)} rows)")
+            print(f"   Restoring chunk {i+1}/{chunks} ({len(batch)} rows)")
 
             # ---------------- SAFE UPSERT → INSERT FALLBACK ----------------
+            #Upser fallback if fails
             try:
                 if pk:
                     supabase.table(table).upsert(batch, on_conflict=pk).execute()
@@ -174,9 +180,22 @@ async def restore_all_tables(
                     supabase.table(table).insert(batch).execute()
                     print("    ✓ Insert success (no PK)")
             except Exception as e:
-                print(f"    ⚠ Failed to restore chunk for {table}: {e}")
+                print(f"     Failed to restore chunk for {table}: {e}")
                 supabase.table(table).insert(batch).execute()
-                print("    ✓ Insert fallback success")
+                print("     Insert fallback success")
 
     print("\n[RESTORE] Restore completed.")
     return {"message": "Restore completed successfully!"}
+
+
+"""
+Summury of the process
+Backup will fetch all rows from all _backup tables and return as JSON file
+Restore willl read the JSON file, then basically just change/update teh data(No delete happening)
+=====Restore logic=====
+If row with this primary key exist, update that row
+  if not, then insert a new row 
+     this will ensure no data will be duplicated or lost
+     duplicates may happen if tablle does not have primary key defined, 
+     which is why primary key mappi was used
+     Primarry key mappinf is at line 124"""
