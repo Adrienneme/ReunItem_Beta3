@@ -175,10 +175,10 @@ async def restore_all_tables(
             try:
                 if pk:
                     supabase.table(table).upsert(batch, on_conflict=pk).execute()
-                    print("    ✓ Upsert success")
+                    print("     Upsert success")
                 else:
                     supabase.table(table).insert(batch).execute()
-                    print("    ✓ Insert success (no PK)")
+                    print("     Insert success (no PK)")
             except Exception as e:
                 print(f"     Failed to restore chunk for {table}: {e}")
                 supabase.table(table).insert(batch).execute()
