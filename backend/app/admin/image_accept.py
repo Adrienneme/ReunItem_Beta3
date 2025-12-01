@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from app.core.db import supabase
 from app.models.user import UserModels
-from app.models.entries import log_action
+from app.models.audit_logs import log_action
 
 router = APIRouter(
     prefix="/admin",

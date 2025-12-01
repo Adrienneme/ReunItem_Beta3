@@ -5,7 +5,7 @@ from fastapi import HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
 from datetime import timedelta
 from jwt.exceptions import InvalidTokenError
-from app.models.entries import log_action
+from app.models.audit_logs import log_action
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -136,7 +136,7 @@ class UserModels:
     def logout_user(current_user: UserSchemas.User):
         supabase.table("user").update({"active_status": False}).eq("user_id", current_user.user_id).execute()
 
-        log_action(current_user.user_id, "LOGOUT_USER", "OK", "User logged out", "user")
+        log_action(str(current_user.user_id), "LOGOUT_USER", "OK", "User logged out Successfully", "user")
 
         return {"message": "Logged out successfully"}
 
