@@ -35,7 +35,7 @@ const UserNavBar = ({ name = "Username", profile = usericon }) => {
       {/* Center Logo */}
       <div className="flex items-center space-x-2 flex-shrink-0 mt-2 sm:mt-0">
         <img src={logo} alt="ReunItem logo" className="w-10 h-10 object-contain" />
-        <h3 className="text-xl font-bold truncate">ReunItem</h3>
+        <h3 className="text-3xl font-bold truncate">ReunItem</h3>
       </div>
 
       {/* Menu Links */}

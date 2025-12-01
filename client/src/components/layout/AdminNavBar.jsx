@@ -35,7 +35,7 @@ const AdminNavBar = ({ name = "Username", profile = usericon }) => {
         {/* Hide ReunItem on mobile top row */}
         <div className="flex sm:hidden items-center space-x-2">
           <img src={logo} alt="logo" className="w-8 h-8 object-contain" />
-          <h3 className="text-lg font-bold">ReunItem</h3>
+          <h3 className="text-3xl font-bold">ReunItem</h3>
         </div>
       </div>
 
