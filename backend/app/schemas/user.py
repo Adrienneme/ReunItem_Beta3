@@ -20,7 +20,7 @@ class UserSchemas:
     user_id: uuid.UUID
     first_name: str
     last_name: str
-    email: str
+    email: Optional[str]
     role: UserRole
 
   class UserLogin(BaseModel):
