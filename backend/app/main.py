@@ -4,7 +4,7 @@ from app.routes.entries import router as item_router
 from fastapi.middleware.cors import CORSMiddleware
 from app.admin.image_accept import router as admin_image_router
 from app.admin.routes import admin_claims_router
-from app.admin.backup import router as admin_backup_router 
+from app.admin.backup import router as admin_backup_router
 
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
@@ -33,7 +33,7 @@ app.include_router(user_router)
 app.include_router(item_router)
 app.include_router(admin_image_router)    # Admin image approvals
 app.include_router(admin_claims_router)   # Admin claim 
-app.include_router(admin_backup_router)   # Admin backup & restore
+app.include_router(admin_backup_router)  # Admin backup & restore
 
 # ------------------- Root -------------------
 @app.get("/")

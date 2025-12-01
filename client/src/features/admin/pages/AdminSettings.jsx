@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminNavBar from "../../../components/layout/AdminNavBar";
 import profile from "../../../assets/icons/usericon.png";
@@ -6,10 +6,7 @@ import { backupAllTables, restoreAllTables } from "../../../api/admin";
 
 const AdminSettings = () => {
   const navigate = useNavigate();
-  const fileInputRef = useRef();
   const [loading, setLoading] = useState(false);
-
-  const MAX_FILE_SIZE = 200 * 1024 * 1024; // 200MB
 
   // ---------------- Logout ----------------
   const handleLogout = () => {
@@ -20,63 +17,44 @@ const AdminSettings = () => {
 
   // ---------------- Backup ----------------
   const handleBackup = async () => {
-  if (!window.confirm("Are you sure you want to download a full backup?")) return;
-
-  setLoading(true);
-  try {
-    const res = await backupAllTables();
-
-    // If using axios with responseType 'blob'
-    const blob = new Blob([res.data], { type: "application/json" });
-
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `full_backup_${new Date().toISOString().replace(/[:.]/g, "_")}.json`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-
-    alert("Backup downloaded successfully!");
-  } catch (error) {
-    console.error("Backup failed:", error);
-    alert("Backup failed. Check console for details.");
-  } finally {
-    setLoading(false);
-  }
-};
-
-  // ---------------- Restore ----------------
-  const handleRestore = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    if (!file.name.endsWith(".json")) {
-      alert("Invalid file type. Must be a JSON backup file.");
-      e.target.value = null;
-      return;
-    }
-
-    if (file.size > MAX_FILE_SIZE) {
-      alert(`File too large. Maximum allowed size is ${MAX_FILE_SIZE / (1024 * 1024)}MB`);
-      e.target.value = null;
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("backup_file", file);
+    if (!window.confirm("Are you sure you want to download a full backup?")) return;
 
     setLoading(true);
     try {
-      const res = await restoreAllTables(formData);
-      console.log("Restore response:", res);
+      const res = await backupAllTables();
+
+      // Convert response data to Blob for download
+      const blob = new Blob([res.data], { type: "application/json" });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `full_backup_${new Date().toISOString().replace(/[:.]/g, "_")}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      alert("Backup downloaded successfully!");
+    } catch (error) {
+      console.error("Backup failed:", error);
+      alert("Backup failed. Check console for details.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ---------------- Restore ----------------
+  const handleRestore = async () => {
+    if (!window.confirm("Are you sure you want to restore the latest backup?")) return;
+
+    setLoading(true);
+    try {
+      const res = await restoreAllTables(); // Calls backend to restore latest backup
       alert(res.message || "Restore completed successfully!");
     } catch (error) {
       console.error("Restore failed:", error);
       alert("Restore failed. Check console for details.");
     } finally {
       setLoading(false);
-      e.target.value = null; // reset file input
     }
   };
 
@@ -109,21 +87,14 @@ const AdminSettings = () => {
 
           {/* Restore Button */}
           <div className="text-center">
-            <input
-              type="file"
-              accept=".json"
-              ref={fileInputRef}
-              hidden
-              onChange={handleRestore}
-            />
             <button
-              onClick={() => fileInputRef.current.click()}
+              onClick={handleRestore}
               disabled={loading}
               className={`px-6 py-2 rounded text-white transition ${
                 loading ? "bg-gray-500 cursor-not-allowed" : "bg-yellow-500 hover:bg-yellow-600"
               }`}
             >
-              {loading ? "Processing..." : "Restore Database"}
+              {loading ? "Processing..." : "Restore Latest Backup"}
             </button>
           </div>
 
