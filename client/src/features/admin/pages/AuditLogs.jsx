@@ -1,142 +1,180 @@
 import React, { useEffect, useState } from "react";
 import { adminCreateUser, getAllUsers, updateUser, deleteUser } from "../../../api/users";
-import { Pencil, Trash2, Plus, X } from "lucide-react";
+import { Pencil, Trash2, Plus, X, Search } from "lucide-react";
 import AdminNavBar from "../../../components/layout/AdminNavBar";
 
-    export default function UserCRUD() {
-    const [users, setUsers] = useState([]);
-    const [formData, setFormData] = useState({ first_name: "", last_name: "", email: "" });
-    const [editId, setEditId] = useState(null);
+export default function UserManagement() {
+  const [users, setUsers] = useState([]);
+  const [formData, setFormData] = useState({email: "", first_name: "", last_name: "", password_hash: "", role: "" });
+  const [editId, setEditId] = useState(null);
 
-    const fetchUsers = async () => {
-        const res = await getAllUsers();
-        setUsers(res || []);
-    };
+  const fetchUsers = async () => {
+    const res = await getAllUsers();
+    console.log("Fetched users:", res);
+    setUsers(res || []);
+  };
 
-    useEffect(() => {
-        fetchUsers();
-    }, []);
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (editId) {
         await updateUser(editId, formData);
-        } else {
+        } else  {
         await adminCreateUser(formData);
         }
-        setFormData({ first_name: "", last_name: "", email: "" });
+        setFormData({ email: "", first_name: "", last_name: "", password_hash: "", role: "" });
         setEditId(null);
         fetchUsers();
     };
 
-    const handleEdit = (user) => {
-        setEditId(user.id);
-        setFormData({ first_name: user.first_name, last_name: user.last_name, email: user.email });
-    };
 
-    const handleCancel = () => {
-        setEditId(null);
-        setFormData({ first_name: "", last_name: "", email: "" });
-    };
 
-    const handleDelete = async (id) => {
-        await deleteUser(id);
-        fetchUsers();
-    };
+  const handleEdit = (user) => {
+    setEditId(user.id);
+    setFormData({
+      first_name: user.first_name,
+      last_name: user.last_name,
+      role: user.role,
+    });
+  };
+
+  const handleDelete = async (id) => {
+    await deleteUser(id);
+    fetchUsers();
+  };
+
+  const handleCancel = () => {
+    setEditId(null);
+    setFormData({ first_name: "", last_name: "", email: "" });
+  };
 
   return (
-    <div className="min-h-screen bg-grey-50">
+    <div className="min-h-screen bg-black-50">
       <AdminNavBar />
 
-      <div className="p-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 text-white">
+      {/* PAGE HEADER */}
+      <div className="max-w-7xl mx-auto p-8">
+        <h1 className="text-3xl font-bold text-white-800 mb-2">User Management</h1>
 
-        {/* CREATE / UPDATE FORM */}
-        <div className="lg:col-span-1 bg-grey rounded-2xl shadow-lg p-6 flex flex-col gap-4">
-          <h2 className="text-2xl font-bold text-white-800 flex items-center gap-2">
-            {editId ? "Edit User" : "Create User"}
-          </h2>
+        {/* FILTER / ACTION BAR */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+          
+          {/* Search Bar */}
+          <div className="flex items-center border rounded-lg px-3 py-2 bg-white w-full md:w-1/3">
+            <Search size={18} className="text-gray-500" />
+            <input
+              className="ml-2 w-full outline-none"
+              placeholder="Search"
+              type="text"
+            />
+          </div>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <input
-              className="border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="First Name"
-              value={formData.first_name}
-              onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
-            />
-            <input
-              className="border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Last Name"
-              value={formData.last_name}
-              onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
-            />
-            <input
-              className="border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            />
+          {/* Filters + Add User */}
+          <div className="flex gap-3">
+            <button className="px-4 py-2 border text-black rounded-lg bg-white">Role</button>
+            <button className="px-4 py-2 border text-black rounded-lg bg-white">Status</button>
+            <button className="px-4 py-2 border text-black rounded-lg bg-white">Date</button>
 
-            <div className="flex gap-2">
-              <button
-                type="submit"
-                className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg text-white transition ${
-                  editId ? "bg-green-600 hover:bg-green-700" : "bg-blue-600 hover:bg-blue-700"
-                }`}
+            <button
+              onClick={() => setEditId(null)}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              <Plus size={18} /> Create User
+            </button>
+          </div>
+        </div>
+
+        {/* FORM */}
+        {editId !== null && (
+          <div className="bg-grey-700  shadow-md rounded-xl p-6 mb-6">
+            <h2 className="text-xl font-semibold mb-4">
+              {editId ? "Edit User" : "Create User"}
+            </h2>
+
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <input
+                className="border p-3 rounded-lg"
+                placeholder="First Name"
+                value={formData.first_name}
+                onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+              />
+              <input
+                className="border p-3 rounded-lg"
+                placeholder="Last Name"
+                value={formData.last_name}
+                onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+              />
+             <select
+                className="border p-3 rounded-lg hover:bg-gray-600"
+                value={formData.role}
+                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
               >
-                <Plus size={18} /> {editId ? "Update User" : "Create User"}
-              </button>
+                <option value="admin">Admin</option>
+                <option value="user">User</option>
+              </select>
 
-              {editId && (
+              <div className="col-span-full flex gap-3">
+                <button className="px-4 py-2 bg-green-600 text-white rounded-lg">
+                  Update
+                </button>
+
                 <button
                   type="button"
                   onClick={handleCancel}
-                  className="flex items-center justify-center gap-2 py-3 px-4 rounded-lg bg-gray-200 text-gray-800 hover:bg-gray-300 transition"
+                  className="px-4 py-2 bg-gray-300 rounded-lg"
                 >
-                  <X size={18} /> Cancel
+                  Cancel
                 </button>
-              )}
-            </div>
-          </form>
-        </div>
-       {/* USERS TABLE */}
-            <div className="lg:col-span-2 bg-grey rounded-2xl shadow-lg p-6 overflow-x-auto">
-            <h2 className="text-2xl font-bold text-white-800 mb-4">Users</h2>
+              </div>
+            </form>
+          </div>
+        )}
 
-            <table className="min-w-full text-left border-collapse">
-                <thead>
-                <tr className="bg-grey-50 text-white-700 uppercase text-sm font-medium">
-                    <th className="p-4 rounded-tl-lg">Name</th>
-                    <th className="p-4">Email</th>
-                    <th className="p-4 rounded-tr-lg">Actions</th>
+
+        {/* USERS TABLE */}
+        <div className="bg-black-600 shadow-lg rounded-xl overflow-hidden text-white">
+          <table className="min-w-full">
+            <thead className="bg-gray-100 text-gray-600 text-sm uppercase">
+              <tr>
+                <th className="p-4 text-left">Name</th>
+                <th className="p-4 text-left">Email</th>
+                <th className="p-4 text-left">Status</th>
+                <th className="p-4 text-left">Role</th>
+                <th className="p-4 text-left">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {users.map((u) => (
+                <tr key={u.id} className="border-t hover:bg-gray-600">
+                  <td className="p-4">{u.first_name} {u.last_name}</td>
+                  <td className="p-4">{u.email}</td>
+                   <td className="p-4">{u.status}</td>
+                    <td className="p-4">{u.role   }</td>
+                  <td className="p-4 flex gap-2">
+                    <button
+                      onClick={() => handleEdit(u)}
+                      className="px-3 py-1 bg-blue-600 text-white rounded-lg flex items-center gap-1"
+                    >
+                      <Pencil size={16} /> Edit
+                    </button>
+
+                    <button
+                      onClick={() => handleDelete(u.id)}
+                      className="px-3 py-1 bg-red-600 text-white rounded-lg flex items-center gap-1"
+                    >
+                      <Trash2 size={16} /> Delete
+                    </button>
+                  </td>
                 </tr>
-                </thead>
-                <tbody>
-                {users.map((user) => (
-                    <tr key={user.id} className="border-b transition">
-                    <td className="p-4">{user.first_name} {user.last_name}</td>
-                    <td className="p-4">{user.email}</td>
-                    <td className="p-4 flex gap-2">
-                        <button
-                        onClick={() => handleEdit(user)}
-                        className="px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-blue-700 transition"
-                        >
-                        Update
-                        </button>
+              ))}
+            </tbody>
 
-                        <button
-                        onClick={() => handleDelete(user.id)}
-                        className="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
-                        >
-                        Delete
-                        </button>
-                    </td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
-            </div>
-
-
+          </table>
+        </div>
       </div>
     </div>
   );
