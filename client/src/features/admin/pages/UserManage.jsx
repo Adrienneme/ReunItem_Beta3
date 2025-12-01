@@ -79,7 +79,7 @@ export default function UserManagement() {
             <button className="px-4 py-2 border text-black rounded-lg bg-white">Date</button>
 
             <button
-              onClick={() => setEditId(null)}
+              onClick={() => navigate("/signup")}
               className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
               <Plus size={18} /> Create User
