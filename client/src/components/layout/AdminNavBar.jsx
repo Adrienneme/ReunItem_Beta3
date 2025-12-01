@@ -4,6 +4,7 @@ import home from "../../assets/icons/home.png";
 import settings from "../../assets/icons/setting.png";
 import logo from "../../assets/icons/logo.png";
 import usericon from "../../assets/icons/usericon.png"
+import usermanage from "../../assets/icons/usermanage.png"
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import search from "../../assets/icons/search.png";
@@ -58,13 +59,20 @@ const AdminNavBar = ({ name = "Username", profile = usericon }) => {
           <span className="text-sm sm:text-base mt-0">Home</span>
         </Link>
 
-         <Link
-          to="/admin/auditlogs"
+        <Link
+          to="/admin/usermanage"
+          className="flex flex-col items-center hover:text-yellow-300 transition-colors duration-200">
+          <img src={usermanage} alt="Audit" className="w-6 h-6 sm:w-8 sm:h-8" />
+          <span className="text-sm sm:text-base mt-0">User Manage</span>
+        </Link>
+
+        <Link
+          to="/admin/auditlog"
           className="flex flex-col items-center hover:text-yellow-300 transition-colors duration-200">
           <img src={search} alt="Audit" className="w-6 h-6 sm:w-8 sm:h-8" />
           <span className="text-sm sm:text-base mt-0">User Manage</span>
         </Link>
-        
+
         <Link
           to="/admin/adminsettings"
           className="flex flex-col items-center hover:text-yellow-300 transition-colors duration-200">
@@ -72,7 +80,7 @@ const AdminNavBar = ({ name = "Username", profile = usericon }) => {
           <span className="text-sm sm:text-base mt-0">Settings</span>
         </Link>
 
-       
+
 
       </div>
     </nav>
