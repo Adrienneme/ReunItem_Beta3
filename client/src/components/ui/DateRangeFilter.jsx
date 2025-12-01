@@ -2,7 +2,6 @@ import React from "react";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import dayjs from "dayjs";
 
 export default function DateRangeFilter({ startDate, endDate, onChange }) {
   const handleStartChange = (newValue) => {
@@ -19,32 +18,55 @@ export default function DateRangeFilter({ startDate, endDate, onChange }) {
     });
   };
 
-  const textFieldSx = {
-    width: 180,
+const textFieldSx = {
+  width: 180,
 
-    "& .MuiOutlinedInput-root": {
-      height: 40,
-      "& fieldset": { borderColor: "white" },
-      "&:hover fieldset": { borderColor: "white" },
-      "&.Mui-focused fieldset": { borderColor: "white" },
-    },
+  // ROOT — forces white text everywhere
+  "& *": {
+    color: "white !important",
+    borderColor: "white !important",
+  },
 
-    "& .MuiInputLabel-root": {
-      color: "white",
-    },
-    "& .MuiInputLabel-root.Mui-focused": {
-      color: "white",
-    },
+  // OUTLINED INPUT ROOT
+  "& .MuiOutlinedInput-root": {
+    height: 40,
 
-    "& .MuiInputBase-input": {
-      color: "white", // <- input text
-      padding: "8px 10px",
+    "& fieldset": {
+      borderColor: "white !important",
     },
+    "&:hover fieldset": {
+      borderColor: "white !important",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "white !important",
+    },
+  },
 
-    "& .MuiSvgIcon-root": {
-      color: "gray", // calendar icon
-    },
-  };
+  // LABEL
+  "& .MuiInputLabel-root": {
+    color: "white !important",
+  },
+  "& .MuiInputLabel-root.Mui-focused": {
+    color: "white !important",
+  },
+
+  // INPUT TEXT
+  "& .MuiInputBase-input": {
+    color: "white !important",
+  },
+
+  // PLACEHOLDER
+  "& .MuiInputBase-input::placeholder": {
+    color: "white !important",
+    opacity: 1,
+  },
+
+  // CALENDAR ICON
+  "& .MuiSvgIcon-root": {
+    color: "white !important",
+  },
+};
+
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>

@@ -48,7 +48,7 @@ const AdminSettings = () => {
               <User2 size={64} className="text-gray-200" />
             </div>
             <h3 className="text-xl font-semibold mt-4 ml-5">
-              {user.first_name} {user.last_name}
+              {user.first_name}
             </h3>
           </div>
 
@@ -88,25 +88,7 @@ const AdminSettings = () => {
             </div>
           </div>
 
-          {/* SUPPORT */}
-          <div className="space-y-6 mb-12">
-            <p className="text-sm uppercase tracking-wide text-gray-400">Support</p>
-
-            <div className="flex items-center gap-3 cursor-pointer hover:text-green-300 transition">
-              <HelpCircle size={18} />
-              <span>Help & FAQ</span>
-            </div>
-
-            <div className="flex items-center gap-3 cursor-pointer hover:text-green-300 transition">
-              <Star size={18} />
-              <span>Rate This App</span>
-            </div>
-
-            <div className="flex items-center gap-3 cursor-pointer hover:text-green-300 transition">
-              <FileSignature size={18} />
-              <span>Send Feedback</span>
-            </div>
-          </div>
+         
 
           {/* APP INFO */}
           <div className="space-y-4 mb-12">

@@ -1,51 +1,138 @@
-import React from 'react'
-import AdminNavBar from '../../../components/layout/AdminNavBar'
-import { getLogs } from '../../../api/admin';
-import { useEffect } from 'react';
+import React, { useEffect, useState } from "react";
+import AdminNavBar from "../../../components/layout/AdminNavBar";
+import { getLogs } from "../../../api/admin";
+import DateRangeFilter from "../../../components/ui/DateRangeFilter";
+import dayjs from "dayjs";
 
 export default function AuditLog() {
-    const [logs, setLogs] = React.useState([]);
+    const [logs, setLogs] = useState([]);
+    const [selectedLog, setSelectedLog] = useState(null);
 
-     const fetchLogs = async () => {
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
+
+    const fetchLogs = async () => {
         const logs = await getLogs();
-        console.log(logs);
         setLogs(logs || []);
-      };
-    
-      useEffect(() => {
+    };
+
+    useEffect(() => {
         fetchLogs();
-      }, []);
+    }, []);
 
+    const filteredLogs = logs.filter((log) => {
+        const created = dayjs(log.created_at);
 
-    return <div>
-        <AdminNavBar />
-        <div className="p-8">
-            <h1 className="text-3xl font-bold text-white-800 mb-4">Audit Logs</h1>
-            <div className="bg-black-600 shadow-lg rounded-xl overflow-hidden text-white">
-                <table className="min-w-full">
-                    <thead className="bg-gray-100 text-gray-600 text-sm uppercase">
-                        <tr>
-                            <th className="p-4 text-left">User</th>
-                            <th className="p-4 text-left">Role</th>
-                            <th className="p-4 text-left">Action</th>
-                            <th className="p-4 text-left">Status</th>
-                            
-                        </tr>
-                    </thead>
+        if (startDate && created.isBefore(startDate, "day")) return false;
+        if (endDate && created.isAfter(endDate, "day")) return false;
 
-                    <tbody>
-                        {logs.map((u) => (
-                            <tr key={u.id} className="border-t hover:bg-gray-600">
-                                <td className="p-4">{u.user}</td>
-                                <td className="p-4">{u.role}</td>
-                                <td className="p-4">{u.action}</td>
-                                <td className="p-4">{u.status}</td>
-                            </tr>
-                        ))}
-                    </tbody>
+        return true;
+    });
 
-                </table>
+    const handleDateChange = ({ startDate, endDate }) => {
+        setStartDate(startDate);
+        setEndDate(endDate);
+    };
+
+    return (
+        <div>
+            <AdminNavBar />
+
+            <div className="p-8">
+                <h1 className="text-3xl font-bold text-white mb-4">Audit Logs</h1>
+
+                <div className="flex flex-row items-center gap-3 mb-4">
+                    <p><b>Filter Logs by Date: </b></p>
+                    <DateRangeFilter
+                        startDate={startDate}
+                        endDate={endDate}
+                        onChange={handleDateChange}
+                    />
+                </div>
+
+                <div className="bg-black-600 shadow-lg rounded-xl text-white flex">
+
+                    <div className="w-2/3 border-r border-gray-700">
+                        <div className="max-h-150 overflow-y-scroll">
+                            <table className="min-w-full">
+                                <thead className="bg-gray-100 text-gray-900 text-sm uppercase">
+                                    <tr>
+                                        <th className="p-4 text-left">User</th>
+                                        <th className="p-4 text-left">Role</th>
+                                        <th className="p-4 text-left">Action</th>
+                                        <th className="p-4 text-left">Status</th>
+                                        <th className="pr-10 text-left">Log Details</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    {filteredLogs.map((u) => (
+                                        <tr key={u.audit_id} className="border-t hover:bg-gray-600">
+
+                                            <td className="p-4 pr-15 whitespace-nowrap">{u.user}</td>
+                                            <td className="p-4 pr-15">{u.role}</td>
+                                            <td className="p-4 pr-15">{u.action}</td>
+
+                                            <td
+                                                className={`p-4 font-bold ${u.status === "OK"
+                                                    ? "text-green-400"
+                                                    : "text-red-400"
+                                                    }`}
+                                            >
+                                                {u.status}
+                                            </td>
+
+                                            <td>
+                                                <button
+                                                    className="underline text-blue-300 hover:text-blue-400"
+                                                    onClick={() => setSelectedLog(u)}
+                                                >
+                                                    View
+                                                </button>
+                                            </td>
+
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div className="w-1/3 p-6">
+                        <h2 className="text-2xl font-bold mb-4">Log Details</h2>
+
+                        {!selectedLog && (
+                            <p className="text-gray-400">Select a log from the left to view details.</p>
+                        )}
+
+                        {selectedLog && (
+                            <div className="space-y-5">
+                                <p><strong>Audit Log ID:</strong> {selectedLog.audit_id}</p>
+                                <p><strong>Actor ID:</strong> {selectedLog.actor_id}</p>
+                                <p><strong>User Full Name:</strong> {selectedLog.user}</p>
+                                <p><strong>Role:</strong> {selectedLog.role}</p>
+                                <p><strong>Action:</strong> {selectedLog.action}</p>
+
+                                <p>
+                                    <strong>Status:</strong>{" "}
+                                    <span className={selectedLog.status === "OK" ? "text-green-400" : "text-red-400"}>
+                                        {selectedLog.status}
+                                    </span>
+                                </p>
+
+                                <p><strong>Entity:</strong> {selectedLog.entity}</p>
+
+                                <p className="mt-2"><strong>Description:</strong> {selectedLog.details}</p>
+                                <p>
+                                    <strong>Timestamp:</strong>{" "}
+                                    {new Date(selectedLog.created_at).toLocaleString()}
+                                </p>
+                            </div>
+                        )}
+                    </div>
+
+                </div>
             </div>
         </div>
-    </div>
+    );
 }

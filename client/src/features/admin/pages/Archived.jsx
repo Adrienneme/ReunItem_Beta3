@@ -72,22 +72,24 @@ function LostFoundRep() {
   return (
     <div className="mb-6">
       <AdminNavBar />
-
-      <div className="flex flex-col items-center mt-10 gap-5">
-        <FilterDropdown
-          label="Filter"
-          options={["All", "Claimed", "Rejected"]}
-          value={filter}
-          onChange={setFilter}
-        />
-
-        <div className="flex flex-row gap-3 items-center">
-          <h1>Timeline:</h1>
-          <DateRangeFilter
-            startDate={dateRange.startDate}
-            endDate={dateRange.endDate}
-            onChange={setDateRange}
+      <div className="flex flex-col items-center mt-10 mb-5">
+        <h1 className="text-xl font-bold mb-5">Archived Item Entries</h1>
+        <div>
+          <h1 className='mb-5'><b>Filter By</b></h1>
+          <FilterDropdown
+            label="Filter"
+            options={["All", "Claimed", "Rejected"]}
+            value={filter}
+            onChange={setFilter}
           />
+          <div className='flex flex-row gap-3 items-center mt-6'>
+            <h1>Timeline:</h1>
+            <DateRangeFilter
+              startDate={dateRange.startDate}
+              endDate={dateRange.endDate}
+              onChange={setDateRange}
+            />
+          </div>
         </div>
       </div>
 

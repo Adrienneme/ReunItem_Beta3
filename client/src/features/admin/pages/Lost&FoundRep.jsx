@@ -5,7 +5,7 @@ import AdminNavBar from "../../../components/layout/AdminNavBar";
 import Cards2 from "../../../components/ui/Card2";
 import CircularLoad from "../../../components/ui/CircularLoad";
 import FilterDropdown from "../../../components/ui/Filters";
-import DateRangeFilter from "../../../components/ui/DateRangeFilter"; 
+import DateRangeFilter from "../../../components/ui/DateRangeFilter";
 import dayjs from "dayjs";
 
 import { admin_items } from "../../../api/admin";
@@ -26,11 +26,11 @@ function LostFoundRep() {
 
   const combined = data
     ? [
-        ...(data.lost_grouped?.Approved || []),
-        ...(data.lost_grouped?.Matched || []),
-        ...(data.found_grouped?.Approved || []),
-        ...(data.found_grouped?.Matched || []),
-      ]
+      ...(data.lost_grouped?.Approved || []),
+      ...(data.lost_grouped?.Matched || []),
+      ...(data.found_grouped?.Approved || []),
+      ...(data.found_grouped?.Matched || []),
+    ]
     : [];
 
   const filteredEntries = combined
@@ -72,25 +72,25 @@ function LostFoundRep() {
   return (
     <div className="mb-6">
       <AdminNavBar />
-
-      <div className="flex flex-col items-center mt-10 gap-5">
-
-        <FilterDropdown
-          label="Filter"
-          options={["All", "Lost", "Found"]}
-          value={filter}
-          onChange={setFilter}
-        />
-
-        <div className="flex flex-row gap-3 items-center">
-          <h1>Timeline:</h1>
-          <DateRangeFilter
-            startDate={dateRange.startDate}
-            endDate={dateRange.endDate}
-            onChange={setDateRange}
+      <div className="flex flex-col items-center mt-10">
+        <h1 className="text-xl font-bold mb-5">Lost and Found Item Entries:</h1>
+        <div>
+          <h1 className='mb-5'><b>Filter By</b></h1>
+          <FilterDropdown
+            label="Filter"
+            options={["All", "Lost", "Found"]}
+            value={filter}
+            onChange={setFilter}
           />
+          <div className="flex flex-row gap-3 items-center mt-6">
+            <h1>Timeline:</h1>
+            <DateRangeFilter
+              startDate={dateRange.startDate}
+              endDate={dateRange.endDate}
+              onChange={setDateRange}
+            />
+          </div>
         </div>
-
       </div>
 
       {filteredEntries.length === 0 ? (
