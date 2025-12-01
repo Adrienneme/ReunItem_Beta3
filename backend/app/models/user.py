@@ -5,7 +5,7 @@ from fastapi import HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
 from datetime import timedelta
 from jwt.exceptions import InvalidTokenError
-from app.models.entries import log_action
+from app.models.audit_logs import log_action
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -87,7 +87,10 @@ class UserModels:
             log_action(actor_id, "DELETE_USER", "ERR", f"Attempted to delete active user {target_user_id}", "user")
             raise HTTPException(status_code=400, detail="Cannot delete an active user. Ask them to log out first.")
 
-        delete_res = supabase.table("user").delete().eq("user_id", target_user_id).execute()
+        delete_res = supabase.table("user").update({"delete_user": True, 
+                                                    "email": None, 
+                                                    "first_name": "N/A", 
+                                                    "last_name": "N/A"}).eq("user_id", target_user_id).execute()
         if not delete_res.data:
             log_action(actor_id, "DELETE_USER", "ERR", f"Failed to delete user {target_user_id}", "user")
             raise HTTPException(status_code=500, detail="Failed to delete user")
@@ -136,7 +139,7 @@ class UserModels:
     def logout_user(current_user: UserSchemas.User):
         supabase.table("user").update({"active_status": False}).eq("user_id", current_user.user_id).execute()
 
-        log_action(current_user.user_id, "LOGOUT_USER", "OK", "User logged out", "user")
+        log_action(str(current_user.user_id), "LOGOUT_USER", "OK", "User logged out Successfully", "user")
 
         return {"message": "Logged out successfully"}
 

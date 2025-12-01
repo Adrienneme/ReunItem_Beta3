@@ -7,44 +7,11 @@ import re
 from urllib.parse import unquote
 from ai.generator import description_generator
 from ai.matching import match
+from app.models.audit_logs import log_action
 
 
 def clean_filename(name: str) -> str:
     return re.sub(r'[^A-Za-z0-9._-]', '_', name)
-
-
-def log_action(actor_id: str | None, action: str, status: str, details: str, entity: str):
-    try:
-        if not actor_id or actor_id == "00000000-0000-0000-0000-000000000000":
-            actor_id = actor_id
-            full_name = "SYSTEM"
-            user_role = "system"
-        else:
-            user_res = supabase.table("user").select(
-                "first_name, last_name, role"
-            ).eq("user_id", actor_id).execute()
-
-            if user_res.data:
-                u = user_res.data[0]
-                full_name = f"{u.get('first_name', '')} {u.get('last_name', '')}".strip()
-                user_role = u.get("role")
-            else:
-                full_name = None
-                user_role = None
-
-        supabase.table("audit_logs").insert({
-            "actor_id": actor_id,
-            "user": full_name,
-            "role": user_role,
-            "action": action,
-            "status": status,
-            "details": details,
-            "entity": entity
-        }).execute()
-
-    except Exception as e:
-        print("AUDIT LOGGING ERROR:", str(e))
-
 
 class ItemModels:
 
