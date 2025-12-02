@@ -11,7 +11,7 @@ import dayjs from "dayjs";
 import { getPendingItems } from "../../../api/admin";
 
 function Pendingsub() {
-  const [filter, setFilter] = useState("All");
+  const [filter, setFilter] = React.useState("All");
   const [dateRange, setDateRange] = useState({
     startDate: null,
     endDate: null,
@@ -42,44 +42,51 @@ function Pendingsub() {
     );
   }
 
-  const filteredEntries = entries?.filter((item) => {
-    const { startDate, endDate } = dateRange;
+  const filteredEntries = entries?.filter((item) =>
+    filter === "All" ? true : item.type === filter
+  )
+    .filter((item) => {
+      const { startDate, endDate } = dateRange;
 
-    if (!startDate || !endDate) return true;
+      if (!startDate || !endDate) return true;
 
-    const itemDate = dayjs(item.created_at);
+      const itemDate = dayjs(item.created_at);
 
-    return (
-      itemDate.isAfter(startDate.startOf("day")) &&
-      itemDate.isBefore(endDate.endOf("day"))
-    );
-  });
+      return (
+        itemDate.isAfter(startDate.startOf("day")) &&
+        itemDate.isBefore(endDate.endOf("day"))
+      );
+    });
 
   return (
     <div className="mb-6">
       <AdminNavBar />
-      <div className="flex flex-col items-center mt-10 mb-5">
+      <div className="flex flex-col ml-20 mt-10 mb-5">
         <div className="flex flex-row gap-3">
           <ClipboardList className="w-8 h-8 mb-2" />
-        <h1 className="text-xl font-bold mb-5">Pending Entry Submissions</h1>
+          <h1 className="text-2xl font-bold mb-5">Pending Item Reports</h1>
         </div>
+        <p className="mb-5">
+          <b>Review item submissions awaiting approval.</b><br></br>
+          Admins can review, approve, or reject reports submitted by users. Use this page to verify item details and keep your system accurate and up-to-date.
+        </p>
         <div>
           <h1 className='mb-3'><b>Filter by</b></h1>
           <div className="flex flex-row items-center gap-10">
             <FilterDropdown
-            label="Type"
-            options={["All", "Lost", "Found"]}
-            value={filter}
-            onChange={setFilter}
-          />
-          <div className='flex flex-row gap-3 items-center'>
-            <h1>Timeline:</h1>
-            <DateRangeFilter
-              startDate={dateRange.startDate}
-              endDate={dateRange.endDate}
-              onChange={setDateRange}
+              label="Type"
+              options={["All", "lost", "found"]}
+              value={filter}
+              onChange={setFilter}
             />
-          </div>
+            <div className='flex flex-row gap-3 items-center'>
+              <h1>Timeline:</h1>
+              <DateRangeFilter
+                startDate={dateRange.startDate}
+                endDate={dateRange.endDate}
+                onChange={setDateRange}
+              />
+            </div>
           </div>
         </div>
       </div>
