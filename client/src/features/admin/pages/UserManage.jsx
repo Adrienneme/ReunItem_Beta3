@@ -9,13 +9,15 @@ export default function UserManagement() {
 
   const [users, setUsers] = useState([]);
   const [formData, setFormData] = useState({
-    email: "",
     first_name: "",
     last_name: "",
+    email: "",
+    password: "",
     role: "",
   });
 
   const [editId, setEditId] = useState(null);
+  const [showPopup, setShowPopup] = useState(false);
 
   const fetchUsers = async () => {
     const res = await getAllUsers();
@@ -27,14 +29,11 @@ export default function UserManagement() {
     fetchUsers();
   }, []);
 
-  // UPDATE ONLY — Create logic removed
+  // UPDATE USER
   const handleUpdate = async (e) => {
     e.preventDefault();
     await updateUser(editId, formData);
 
-    console.log("Updated user:", formData);
-
-    // Reset
     setFormData({
       first_name: "",
       last_name: "",
@@ -47,7 +46,6 @@ export default function UserManagement() {
 
   const handleEdit = (user) => {
     setEditId(user.id);
-    console.log("Editing user:", user);
 
     setFormData({
       first_name: user.first_name,
@@ -65,11 +63,32 @@ export default function UserManagement() {
   const handleCancel = () => {
     setEditId(null);
     setFormData({
-      email: "",
       first_name: "",
       last_name: "",
       role: "",
     });
+  };
+
+  // CREATE USER SUBMISSION
+  const handleCreate = async (e) => {
+    e.preventDefault();
+    try {
+      await adminCreateUser(formData);
+      setShowPopup(false);
+
+      setFormData({
+        first_name: "",
+        last_name: "",
+        email: "",
+        password: "",
+        role: "user",
+      });
+
+      fetchUsers();
+    } catch (err) {
+      console.error(err);
+      alert("Error creating user.");
+    }
   };
 
   return (
@@ -84,22 +103,17 @@ export default function UserManagement() {
           {/* Search Bar */}
           <div className="flex items-center border rounded-lg px-3 py-2 bg-white w-full md:w-1/3">
             <Search size={18} className="text-gray-500" />
-            <input
-              className="ml-2 w-full outline-none"
-              placeholder="Search"
-              type="text"
-            />
+            <input className="ml-2 w-full outline-none" placeholder="Search" type="text" />
           </div>
 
-          {/* Filters + Add User */}
           <div className="flex gap-3">
             <button className="px-4 py-2 border text-black rounded-lg bg-white">Role</button>
             <button className="px-4 py-2 border text-black rounded-lg bg-white">Status</button>
             <button className="px-4 py-2 border text-black rounded-lg bg-white">Date</button>
 
-            {/* CREATE GOES TO /signup */}
+            {/* OPEN POPUP SIGNUP */}
             <button
-              onClick={() => navigate("/signup")}
+              onClick={() => setShowPopup(true)}
               className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
               <Plus size={18} /> Create User
@@ -113,7 +127,6 @@ export default function UserManagement() {
             <h2 className="text-xl font-semibold mb-4">Edit User</h2>
 
             <form onSubmit={handleUpdate} className="grid grid-cols-1 md:grid-cols-3 gap-4">
-
               <input
                 className="border p-3 rounded-lg"
                 placeholder="First Name"
@@ -150,7 +163,6 @@ export default function UserManagement() {
                   Cancel
                 </button>
               </div>
-
             </form>
           </div>
         )}
@@ -199,6 +211,95 @@ export default function UserManagement() {
           </table>
         </div>
       </div>
+
+      {/* POPUP SIGNUP */}
+      {showPopup && (
+        <div className="fixed inset-0 bg-transparent bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-gray-800 text-white p-6 rounded-xl w-[400px] shadow-xl relative">
+
+            <button
+              onClick={() => setShowPopup(false)}
+              className="absolute top-3 right-3 text-gray-300 hover:text-white"
+            >
+              <X size={20} />
+            </button>
+
+            <h2 className="text-2xl font-semibold mb-4 text-center">Create User</h2>
+
+            <form onSubmit={handleCreate} className="flex flex-col gap-3">
+
+              <input
+                type="text"
+                name="first_name"
+                placeholder="First Name"
+                className="p-3 rounded-lg bg-gray-700 border border-gray-600"
+                value={formData.first_name}
+                onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+                required
+              />
+
+              <input
+                type="text"
+                name="last_name"
+                placeholder="Last Name"
+                className="p-3 rounded-lg bg-gray-700 border border-gray-600"
+                value={formData.last_name}
+                onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+                required
+              />
+
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                className="p-3 rounded-lg bg-gray-700 border border-gray-600"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                required
+              />
+
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                className="p-3 rounded-lg bg-gray-700 border border-gray-600"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                required
+              />
+
+              <select
+                name="role"
+                className="p-3 rounded-lg bg-gray-700 border border-gray-600"
+                value={formData.role}
+                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+              >
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+              </select>
+
+              <div className="flex justify-end gap-3 mt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowPopup(false)}
+                  className="px-4 py-2 bg-gray-600 rounded-lg hover:bg-gray-500"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-700"
+                >
+                  Submit
+                </button>
+              </div>
+            </form>
+
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
