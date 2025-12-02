@@ -42,13 +42,13 @@ class UserModels:
 
         response = supabase.table("user").insert(user_data).execute()
         if not response.data:
-            log_action(actor_id, "CREATE_USER", "ERR", "Failed to create user", "user")
+            log_action(str(actor_id), "CREATE_USER", "ERR", "Failed to create user", "user")
             raise HTTPException(status_code=500, detail="Failed to create user")
 
         created_user = response.data[0]
         created_user.pop("password_hash", None)
 
-        log_action(actor_id, "CREATE_USER", "OK", f"Created user {created_user['user_id']}", "user")
+        log_action(str(actor_id), "CREATE_USER", "OK", f"Created user {created_user['user_id']}", "user")
 
         return UserSchemas.User(**created_user)
     
@@ -85,7 +85,7 @@ class UserModels:
             raise HTTPException(status_code=404, detail="User not found")
         
         if existing_user.data[0].get("active_status") is True:
-            log_action(actor_id, "DELETE_USER", "ERR", f"Attempted to delete active user {target_user_id}", "user")
+            log_action(str(actor_id), "DELETE_USER", "ERR", f"Attempted to delete active user {target_user_id}", "user")
             raise HTTPException(status_code=400, detail="Cannot delete an active user. Ask them to log out first.")
 
         delete_res = supabase.table("user").update({"delete_user": True, 
@@ -93,10 +93,10 @@ class UserModels:
                                                     "first_name": "N/A", 
                                                     "last_name": "N/A"}).eq("user_id", target_user_id).execute()
         if not delete_res.data:
-            log_action(actor_id, "DELETE_USER", "ERR", f"Failed to delete user {target_user_id}", "user")
+            log_action(str(actor_id), "DELETE_USER", "ERR", f"Failed to delete user {target_user_id}", "user")
             raise HTTPException(status_code=500, detail="Failed to delete user")
 
-        log_action(actor_id,"DELETE_USER", "OK", f"Deleted user {target_user_id}","user")
+        log_action(str(actor_id),"DELETE_USER", "OK", f"Deleted user {target_user_id}","user")
 
         return {"message": "User deleted successfully"}
 
