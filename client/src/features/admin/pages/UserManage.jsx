@@ -2,18 +2,15 @@ import React, { useEffect, useState } from "react";
 import { adminCreateUser, getAllUsers, updateUser, deleteUser } from "../../../api/users";
 import { Pencil, Trash2, Plus, X, Search } from "lucide-react";
 import AdminNavBar from "../../../components/layout/AdminNavBar";
-import { useNavigate } from "react-router-dom";
 
 export default function UserManagement() {
-  const navigate = useNavigate();
-
   const [users, setUsers] = useState([]);
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
     email: "",
-    password: "",
-    role: "",
+    password_hash: "",
+    role: "user", // default role
   });
 
   const [editId, setEditId] = useState(null);
@@ -37,7 +34,7 @@ export default function UserManagement() {
     setFormData({
       first_name: "",
       last_name: "",
-      role: "",
+      role: "user",
     });
 
     setEditId(null);
@@ -65,7 +62,7 @@ export default function UserManagement() {
     setFormData({
       first_name: "",
       last_name: "",
-      role: "",
+      role: "user",
     });
   };
 
@@ -73,6 +70,7 @@ export default function UserManagement() {
   const handleCreate = async (e) => {
     e.preventDefault();
     try {
+      console.log("Submitting:", formData);
       await adminCreateUser(formData);
       setShowPopup(false);
 
@@ -80,7 +78,7 @@ export default function UserManagement() {
         first_name: "",
         last_name: "",
         email: "",
-        password: "",
+        password_hash: "",
         role: "user",
       });
 
@@ -260,11 +258,11 @@ export default function UserManagement() {
 
               <input
                 type="password"
-                name="password"
+                name="password_hash"
                 placeholder="Password"
                 className="p-3 rounded-lg bg-gray-700 border border-gray-600"
-                value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                value={formData.password_hash} // ✅ fixed
+                onChange={(e) => setFormData({ ...formData, password_hash: e.target.value })} // ✅ fixed
                 required
               />
 
