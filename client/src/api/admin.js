@@ -164,34 +164,47 @@ export const approveItem = async (entryId) => {
 };
 
 
-
 // ================= Backup & Restore =================
 
 // Backup all tables (download)
 export const backupAllTables = async () => {
   try {
     const response = await jsonClient.get("/admin/backup_all", {
-      responseType: "blob", // important
+      responseType: "blob", // Treat as file
       headers: { role: "admin" },
     });
-    return response; // response.data will be a Blob
+
+    const blob = new Blob([response.data], { type: "application/json" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+
+    // Use filename from headers or fallback
+    const filename = response.headers["content-disposition"]
+      ? response.headers["content-disposition"].split("filename=")[1]
+      : `backup_${new Date().toISOString()}.json`;
+
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+
+    return { message: "Backup downloaded successfully", filename };
   } catch (error) {
     console.error("Failed to backup all tables:", error);
     throw error;
   }
 };
 
-
-// Restore API
-export const restoreAllTables = async (formData) => {
+// Restore all tables (automatic latest backup)
+export const restoreAllTables = async () => {
   try {
-    const response = await jsonClient.post("/admin/restore_all", formData, {
-      headers: {
-        role: "admin",
-        "Content-Type": "multipart/form-data" // required for file upload
-      },
+    const response = await jsonClient.post("/admin/restore_all", null, {
+      headers: { role: "admin" },
       timeout: 10 * 60 * 1000, // 10 minutes
     });
+
     return response.data;
   } catch (error) {
     console.error("Failed to restore database:", error);
