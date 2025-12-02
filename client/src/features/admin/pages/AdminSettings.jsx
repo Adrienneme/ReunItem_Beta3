@@ -27,7 +27,7 @@ const AdminSettings = () => {
     <div>
       <AdminNavBar />
 
-      <div className="flex justify-center px-4 mt-12">
+      <div className="flex justify-left ml-20 px-4 mt-12">
         <div className="w-full max-w-lg">
 
           {/* BACK BUTTON */}

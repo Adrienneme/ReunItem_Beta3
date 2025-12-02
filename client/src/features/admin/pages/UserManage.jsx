@@ -15,7 +15,7 @@ export default function UserManagement() {
 
   // Password strength state
   const [passwordStrength, setPasswordStrength] = useState({ status: 'none', color: 'text-gray-400', text: '' });
-  const [error, setError] = useState(''); 
+  const [error, setError] = useState('');
 
   // Password strength checker
   const getPasswordStrength = (password) => {
@@ -113,6 +113,8 @@ export default function UserManagement() {
       <AdminNavBar />
       <div className="max-w-7xl mx-auto p-8">
         <h1 className="text-3xl font-bold text-white mb-4">User Management</h1>
+        <p className="mb-5">Manage users and their access.<br></br>
+          View, add, and update users in your system. Control roles, permissions, and account status from one place.</p>
 
         {/* Search and buttons */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
@@ -173,7 +175,8 @@ export default function UserManagement() {
 
         {/* USERS TABLE */}
         <div className="bg-black-600 shadow-lg rounded-xl overflow-hidden text-white">
-          <table className="min-w-full">
+          <div className="max-h-150 overflow-y-auto">
+            <table className="min-w-full">
             <thead className="bg-gray-100 text-gray-600 text-sm uppercase">
               <tr>
                 <th className="p-4 text-left">Name</th>
@@ -202,6 +205,7 @@ export default function UserManagement() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       </div>
 
@@ -227,18 +231,19 @@ export default function UserManagement() {
                   setPasswordStrength(getPasswordStrength(value));
                 }} required />
               <p className={`text-sm mt-2 font-medium ${passwordStrength.color}`}>{passwordStrength.text}</p>
-              
+
               <label className="mt-2 font-medium">Choose Role:</label>
               <select className="p-3 rounded-lg bg-gray-700 border border-gray-600" value={formData.role}
                 onChange={(e) => setFormData({ ...formData, role: e.target.value })} required>
                 <option value="user">User</option>
                 <option value="admin">Admin</option>
               </select>
-              
+
               {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
               <div className="flex justify-end gap-3 mt-4">
-                <button type="button" onClick={() => {setShowPopup(false)
+                <button type="button" onClick={() => {
+                  setShowPopup(false)
                   setFormData({ first_name: "", last_name: "", email: "", password_hash: "", role: "user" });
                   setPasswordStrength({ status: 'none', color: 'text-gray-400', text: '' });
                   setError('');

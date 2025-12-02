@@ -38,8 +38,10 @@ export default function AuditLog() {
         <div>
             <AdminNavBar />
 
-            <div className="p-8">
+            <div className="ml-10 p-8">
                 <h1 className="text-3xl font-bold text-white mb-4">Audit Logs</h1>
+                <p className="mb-5">See what happened and when.<br></br>
+                    Track system activities, user actions, and changes to keep everything transparent and accountable.</p>
 
                 <div className="flex flex-row items-center gap-3 mb-4">
                     <p><b>Filter Logs by Date: </b></p>
