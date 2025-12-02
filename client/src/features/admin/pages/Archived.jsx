@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Archive } from "lucide-react";
 
 import AdminNavBar from "../../../components/layout/AdminNavBar";
 import Card2 from "../../../components/ui/Card2";
@@ -73,22 +74,27 @@ function LostFoundRep() {
     <div className="mb-6">
       <AdminNavBar />
       <div className="flex flex-col items-center mt-10 mb-5">
+        <div className="flex flex-row gap-3">
+          <Archive className="w-8 h-8 mb-2" />
         <h1 className="text-xl font-bold mb-5">Archived Item Entries</h1>
+        </div>
         <div>
-          <h1 className='mb-5'><b>Filter By</b></h1>
-          <FilterDropdown
-            label="Filter"
-            options={["All", "Claimed", "Rejected"]}
+          <h1 className='mb-3'><b>Filter by</b></h1>
+          <div className="flex flex-row items-center gap-10">
+            <FilterDropdown
+            label="Type"
+            options={["All", "Lost", "Found"]}
             value={filter}
             onChange={setFilter}
           />
-          <div className='flex flex-row gap-3 items-center mt-6'>
+          <div className='flex flex-row gap-3 items-center'>
             <h1>Timeline:</h1>
             <DateRangeFilter
               startDate={dateRange.startDate}
               endDate={dateRange.endDate}
               onChange={setDateRange}
             />
+          </div>
           </div>
         </div>
       </div>

@@ -54,6 +54,7 @@ export default function UserManagement() {
       last_name: user.last_name,
       role: user.role,
     });
+    console.log("Form data set to:", formData);
   };
 
   const handleDelete = async (id) => {

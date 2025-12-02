@@ -54,6 +54,7 @@ class UserModels:
     
     @staticmethod
     def update_user(target_user_id: str, updates: dict, actor_id: str):
+        print(updates)
         existing = supabase.table("user").select("*").eq("user_id", target_user_id).execute()
         if not existing.data:
             raise HTTPException(status_code=404, detail="User not found")

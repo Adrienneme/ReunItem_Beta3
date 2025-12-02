@@ -9,6 +9,7 @@ import DateRangeFilter from "../../../components/ui/DateRangeFilter";
 import dayjs from "dayjs";
 
 import { admin_items } from "../../../api/admin";
+import { FolderSearch } from "lucide-react";
 
 function LostFoundRep() {
   const [filter, setFilter] = useState("All");
@@ -70,25 +71,30 @@ function LostFoundRep() {
   }
 
   return (
-    <div className="mb-6">
+     <div className="mb-6">
       <AdminNavBar />
-      <div className="flex flex-col items-center mt-10">
-        <h1 className="text-xl font-bold mb-5">Lost and Found Item Entries:</h1>
+      <div className="flex flex-col items-center mt-10 mb-5">
+        <div className="flex flex-row gap-3">
+          <FolderSearch className="w-8 h-8 mb-2" />
+        <h1 className="text-xl font-bold mb-5">Lost and Found Item Entries</h1>
+        </div>
         <div>
-          <h1 className='mb-5'><b>Filter By</b></h1>
-          <FilterDropdown
-            label="Filter"
+          <h1 className='mb-3'><b>Filter by</b></h1>
+          <div className="flex flex-row items-center gap-10">
+            <FilterDropdown
+            label="Type"
             options={["All", "Lost", "Found"]}
             value={filter}
             onChange={setFilter}
           />
-          <div className="flex flex-row gap-3 items-center mt-6">
+          <div className='flex flex-row gap-3 items-center'>
             <h1>Timeline:</h1>
             <DateRangeFilter
               startDate={dateRange.startDate}
               endDate={dateRange.endDate}
               onChange={setDateRange}
             />
+          </div>
           </div>
         </div>
       </div>
