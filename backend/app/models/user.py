@@ -60,18 +60,18 @@ class UserModels:
             raise HTTPException(status_code=404, detail="User not found")
         
         if existing.data[0].get("active_status") is True:
-            log_action(actor_id, "UPDATE_USER", "ERR", f"Attempted to update active user {target_user_id}", "user")
+            log_action(str(actor_id), "UPDATE_USER", "ERR", f"Attempted to update active user {target_user_id}", "user")
             raise HTTPException(status_code=400, detail="Cannot update an active user. Ask them to log out first.")
 
         response = supabase.table("user").update(updates).eq("user_id", target_user_id).execute()
         if not response.data:
-            log_action(actor_id, "UPDATE_USER", "ERR", f"Failed to update user {target_user_id}", "user")
+            log_action(str(actor_id), "UPDATE_USER", "ERR", f"Failed to update user {target_user_id}", "user")
             raise HTTPException(status_code=500, detail="Failed to update user")
 
         updated_user = response.data[0]
         updated_user.pop("password_hash", None)
 
-        log_action(actor_id, "UPDATE_USER", "OK", f"Updated user {target_user_id}","user")
+        log_action(str(actor_id), "UPDATE_USER", "OK", f"Updated user {target_user_id}","user")
 
         return UserSchemas.User(**updated_user)
     

@@ -28,6 +28,8 @@ export default function UserManagement() {
 
   // UPDATE USER
   const handleUpdate = async (e) => {
+    console.log("Updated user with ID:", editId);
+    console.log("Form data used for update:", formData);
     e.preventDefault();
     await updateUser(editId, formData);
 
@@ -49,7 +51,6 @@ export default function UserManagement() {
       last_name: user.last_name,
       role: user.role,
     });
-    console.log("Form data set to:", formData);
   };
 
   const handleDelete = async (id) => {
@@ -180,7 +181,7 @@ export default function UserManagement() {
 
             <tbody>
               {users.map((u) => (
-                <tr key={u.id} className="border-t hover:bg-gray-600">
+                <tr key={u.user_id} className="border-t hover:bg-gray-600">
                   <td className="p-4">{u.first_name} {u.last_name}</td>
                   <td className="p-4">{u.email}</td>
                   <td className="p-4">{u.status}</td>
@@ -188,14 +189,16 @@ export default function UserManagement() {
 
                   <td className="p-4 flex gap-2">
                     <button
-                      onClick={() => handleEdit(u)}
+                      onClick={() => {handleEdit(u);
+                                      setEditId(u.user_id);
+                      }}
                       className="px-3 py-1 bg-blue-600 text-white rounded-lg flex items-center gap-1"
                     >
                       <Pencil size={16} /> Edit
                     </button>
 
                     <button
-                      onClick={() => handleDelete(u.id)}
+                      onClick={() => handleDelete(u.user_id)}
                       className="px-3 py-1 bg-red-600 text-white rounded-lg flex items-center gap-1"
                     >
                       <Trash2 size={16} /> Delete
