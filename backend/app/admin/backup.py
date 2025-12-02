@@ -128,6 +128,7 @@ async def restore_all_tables(admin=Depends(get_current_admin)):
     try:
         bucket = supabase.storage.from_(BUCKET_NAME)
 
+        # Get latest backup metadata
         files = bucket.list()
         metadata_files = [f for f in files if f["name"].endswith("_metadata.json")]
         if not metadata_files:
@@ -138,6 +139,7 @@ async def restore_all_tables(admin=Depends(get_current_admin)):
         metadata = json.loads(metadata_bytes.decode("utf-8"))
         chunk_files = metadata.get("chunks", [])
 
+        # Download all chunk data
         content_bytes = b""
         for cf in chunk_files:
             content_bytes += supabase_download_with_retry(bucket, cf)
@@ -149,13 +151,25 @@ async def restore_all_tables(admin=Depends(get_current_admin)):
         # ---------------- Clear tables safely ----------------
         for table in tables:
             try:
-                # Safe delete for all rows, avoids DELETE without WHERE error
+                # Attempt to delete all rows
                 sql = f"DELETE FROM {table} WHERE true;"
-                supabase.rpc("run_sql", {"sql": sql}).execute()
+                result = supabase.rpc("run_sql", {"sql": sql}).execute()
                 logging.info(f"[RESTORE] Cleared table {table}")
+
+                # If table was empty, just proceed
+                if result is None or not hasattr(result, "data") or not result.data:
+                    logging.debug(f"[RESTORE] Table {table} empty or delete had no effect, proceeding...")
+
             except Exception as e:
-                logging.error(f"[RESTORE] Failed to clear table {table}: {e}")
-                raise HTTPException(status_code=500, detail=f"Failed to clear table {table}")
+                logging.warning(f"[RESTORE] Standard DELETE failed for {table}: {e}")
+                #  truncate with cascade to ensure table is empty
+                try:
+                    sql = f"TRUNCATE TABLE {table} CASCADE;"
+                    supabase.rpc("run_sql", {"sql": sql}).execute()
+                    logging.info(f"[RESTORE] Fallback TRUNCATE applied to {table}")
+                except Exception as ex:
+                    logging.error(f"[RESTORE] Failed to force-clear table {table}: {ex}")
+                    raise HTTPException(status_code=500, detail=f"Failed to clear table {table}")
 
         # ---------------- Insert backup data ----------------
         for table in tables:
