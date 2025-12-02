@@ -14,7 +14,8 @@ export default function UserManagement() {
   });
 
   // Password strength state
-  const [passwordStrength, setPasswordStrength] = useState({ status: 'none', color: 'text-gray-400', text: 'Enter a password' });
+  const [passwordStrength, setPasswordStrength] = useState({ status: 'none', color: 'text-gray-400', text: '' });
+  const [error, setError] = useState(''); 
 
   // Password strength checker
   const getPasswordStrength = (password) => {
@@ -23,15 +24,15 @@ export default function UserManagement() {
     const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
 
     if (password.length === 0) {
-      return { status: 'none', color: 'text-gray-400', text: 'Enter a password' };
+      return { status: 'none', color: 'text-gray-400', text: '' };
     } else if (password.length < minLength) {
-      return { status: 'weak', color: 'text-red-900', text: `Weak: Must be at least ${minLength} characters.` };
+      return { status: 'weak', color: 'text-red-500', text: `Weak: Must be at least ${minLength} characters.` };
     } else if (password.length >= minLength && hasAlphaNumeric && hasSpecialChar) {
       return { status: 'strong', color: 'text-green-500', text: 'Strong: Excellent password.' };
     } else if (password.length >= minLength && hasAlphaNumeric) {
       return { status: 'good', color: 'text-yellow-500', text: 'Good: Add a special character for max strength.' };
     } else {
-      return { status: 'weak', color: 'text-red-900', text: 'Weak: Requires letters, numbers, and at least 8 characters.' };
+      return { status: 'weak', color: 'text-red-500', text: 'Weak: Requires letters, numbers, and at least 8 characters.' };
     }
   };
 
@@ -65,11 +66,10 @@ export default function UserManagement() {
       await adminCreateUser(formData);
       setShowPopup(false);
       setFormData({ first_name: "", last_name: "", email: "", password_hash: "", role: "user" });
-      setPasswordStrength({ status: 'none', color: 'text-gray-400', text: 'Enter a password' });
+      setPasswordStrength({ status: 'none', color: 'text-gray-400', text: '' });
       fetchUsers();
     } catch (err) {
-      console.error(err);
-      alert("Error creating user.");
+      setError(err.response?.data?.detail || "Something went wrong.");
     }
   };
 
@@ -95,7 +95,7 @@ export default function UserManagement() {
       email: user.email || "",
       password_hash: "",
     });
-    setPasswordStrength({ status: 'none', color: 'text-gray-400', text: 'Enter a password' });
+    setPasswordStrength({ status: 'none', color: 'text-gray-400', text: '' });
   };
 
   const handleDelete = async (id) => {
@@ -180,7 +180,7 @@ export default function UserManagement() {
                 <th className="p-4 text-left">Email</th>
                 <th className="p-4 text-left">Status</th>
                 <th className="p-4 text-left">Role</th>
-                <th className="p-4 text-left">Actions</th>
+                <th className="pl-20 text-left">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -188,13 +188,13 @@ export default function UserManagement() {
                 <tr key={u.user_id} className="border-t hover:bg-gray-600">
                   <td className="p-4">{u.first_name} {u.last_name}</td>
                   <td className="p-4">{u.email}</td>
-                  <td className="p-4">{u.status}</td>
+                  <td className="p-4 pr-40">{u.status}</td>
                   <td className="p-4">{u.role}</td>
-                  <td className="p-4 flex gap-2">
-                    <button onClick={() => handleEdit(u)} className="px-3 py-1 bg-blue-600 text-white rounded-lg flex items-center gap-1">
+                  <td className="p-4 pl-20 flex gap-2">
+                    <button onClick={() => handleEdit(u)} className="px-3 py-1 bg-green-800 text-white rounded-lg flex items-center gap-1">
                       <Pencil size={16} /> Edit
                     </button>
-                    <button onClick={() => handleDelete(u.user_id)} className="px-3 py-1 bg-red-600 text-white rounded-lg flex items-center gap-1">
+                    <button onClick={() => handleDelete(u.user_id)} className="px-3 py-1 bg-red-700 text-white rounded-lg flex items-center gap-1">
                       <Trash2 size={16} /> Delete
                     </button>
                   </td>
@@ -227,15 +227,22 @@ export default function UserManagement() {
                   setPasswordStrength(getPasswordStrength(value));
                 }} required />
               <p className={`text-sm mt-2 font-medium ${passwordStrength.color}`}>{passwordStrength.text}</p>
-
+              
+              <label className="mt-2 font-medium">Choose Role:</label>
               <select className="p-3 rounded-lg bg-gray-700 border border-gray-600" value={formData.role}
                 onChange={(e) => setFormData({ ...formData, role: e.target.value })} required>
                 <option value="user">User</option>
                 <option value="admin">Admin</option>
               </select>
+              
+              {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
               <div className="flex justify-end gap-3 mt-4">
-                <button type="button" onClick={() => setShowPopup(false)} className="px-4 py-2 bg-gray-600 rounded-lg hover:bg-gray-500">
+                <button type="button" onClick={() => {setShowPopup(false)
+                  setFormData({ first_name: "", last_name: "", email: "", password_hash: "", role: "user" });
+                  setPasswordStrength({ status: 'none', color: 'text-gray-400', text: '' });
+                  setError('');
+                }} className="px-4 py-2 bg-gray-600 rounded-lg hover:bg-gray-500">
                   Cancel
                 </button>
                 <button type="submit" className="px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-700">Submit</button>

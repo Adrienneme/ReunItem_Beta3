@@ -29,6 +29,7 @@ class UserModels:
         existing_user = supabase.table("user").select("*").eq("email", user.email).execute()
         print("CHECKING EMAIL", user.email, existing_user.data)
         if existing_user.data:
+            log_action(str(actor_id), "UPDATE_USER", "ERR", f"Attempted to create existing user {user.email}", "user")
             raise HTTPException(status_code=400, detail="Email already registered")
 
         user_data = user.model_dump()
