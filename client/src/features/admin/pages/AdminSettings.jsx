@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminNavBar from "../../../components/layout/AdminNavBar";
 import { logoutUser } from "../../../api/users";
 import {
-  User2, Mail, LogOut, Palette, Globe, HelpCircle,
-  FileText, Info, FileSignature, Star, ArrowLeft
+  User2, Mail, LogOut, Palette, Globe,
+  FileText, Info, ArrowLeft, HardDrive, X
 } from "lucide-react";
 
 const AdminSettings = () => {
@@ -15,6 +15,8 @@ const AdminSettings = () => {
     last_name: "",
     email: "",
   };
+
+  const [showBackupPanel, setShowBackupPanel] = useState(false); // ADDED
 
   const handleLogout = async () => {
     await logoutUser();
@@ -27,7 +29,10 @@ const AdminSettings = () => {
     <div>
       <AdminNavBar />
 
-      <div className="flex justify-left ml-20 px-4 mt-12">
+      {/* MAIN PAGE LAYOUT – NOW SUPPORTS RIGHT-SIDE PANEL */}
+      <div className="flex justify-left ml-20 px-4 mt-12 relative">
+
+        {/* LEFT COLUMN: SETTINGS CONTENT */}
         <div className="w-full max-w-lg">
 
           {/* BACK BUTTON */}
@@ -39,7 +44,6 @@ const AdminSettings = () => {
             Back
           </button>
 
-          {/* Header */}
           <h2 className="text-3xl font-bold text-left mb-10">Settings:</h2>
 
           {/* Profile */}
@@ -73,7 +77,7 @@ const AdminSettings = () => {
             </div>
           </div>
 
-          {/* GENERAL SETTINGS */}
+          {/* GENERAL */}
           <div className="space-y-6 mb-12">
             <p className="text-sm uppercase tracking-wide text-gray-400">General</p>
 
@@ -86,9 +90,16 @@ const AdminSettings = () => {
               <Globe size={18} />
               <span>Language</span>
             </div>
-          </div>
 
-         
+            {/* BACKUP BUTTON — ADDED */}
+            <div
+              onClick={() => setShowBackupPanel(true)}
+              className="flex items-center gap-3 cursor-pointer hover:text-green-300 transition"
+            >
+              <HardDrive size={18} />
+              <span>Backup & Restore</span>
+            </div>
+          </div>
 
           {/* APP INFO */}
           <div className="space-y-4 mb-12">
@@ -116,6 +127,45 @@ const AdminSettings = () => {
           </button>
 
         </div>
+
+        {/* RIGHT-SIDE BACKUP PANEL (INLINE, NOT POPUP) */}
+        {showBackupPanel && (
+          <div className="absolute right-0 top-0 w-[500px] h-full bg-gray-900 text-white p-6 shadow-2xl rounded-l-xl">
+
+            <div className="flex justify-between items-center mb-6">
+              <HardDrive size={35}/>
+              <h2 className="text-2xl font-bold">Backup & Restore</h2>
+
+              <button onClick={() => setShowBackupPanel(false)}>
+                <X size={22} className="text-gray-300 hover:text-white" />
+              </button>
+            </div>
+
+            <p className="text-gray-400 mb-6">
+              Manage data backups and restore previous system states.
+            </p>
+
+            <div className="space-y-4">
+
+              <button className="w-full py-3 mb-20 bg-green-600 hover:bg-green-700 rounded-lg font-semibold">
+                Backup System Data
+              </button>
+
+              <button className="w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold">
+                Restore Backup Data
+              </button>
+
+              <div className="mt-6 p-4 bg-gray-800 rounded-lg border border-gray-700">
+                <p className="font-semibold">Recent Backups</p>
+                <p className="text-sm text-gray-400 mt-2">
+                  • No backups found
+                </p>
+              </div>
+
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   );

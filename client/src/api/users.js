@@ -1,5 +1,6 @@
 import jsonClient from "../api/axios/jsonClient";
 import userClient from "../api/axios/userClient";
+import { logoutClient } from "./axios/logoutClient";
 
 export const registerUser = async (data) => {
   console.log(data)
@@ -19,7 +20,7 @@ export const loginUser = async (data) => {
 
 
 export const logoutUser = async () => {
-  const response = await jsonClient.post("/users/logout");
+  const response = await logoutClient.post("/users/logout");
   return response.data;
 };
 

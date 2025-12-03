@@ -1,4 +1,5 @@
 import axios from "axios";
+import { logoutUser } from "../users";
 
 const jsonClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:8000" || "http://127.0.0.1:8000", 
@@ -20,10 +21,15 @@ jsonClient.interceptors.request.use(
 
 jsonClient.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     const status = error.response?.status;
     if (status === 401) {
       console.warn("Session expired. Redirecting to login...");
+      try{
+        await logoutUser();
+      }catch(logoutErr) {
+        console.error("Logout API failed:", logoutErr);
+      }
       localStorage.removeItem("token");
       localStorage.removeItem("user");
 
