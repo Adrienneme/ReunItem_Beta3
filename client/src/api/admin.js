@@ -174,7 +174,7 @@ export const backupAllTables = async () => {
       headers: { role: "admin" },
     });
 
-    const blob = new Blob([response.data], { type: "application/json" });
+    const blob = new Blob([response.data], { type: "application/json" }); //convert binary response to downloadable file
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
