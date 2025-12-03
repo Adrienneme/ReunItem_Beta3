@@ -80,10 +80,16 @@ export default function UserManagement() {
       alert("Please fill in all fields.");
       return;
     }
-    await updateUser(editId, formData);
-    setFormData({ first_name: "", last_name: "", email: "", password_hash: "", role: "user" });
-    setEditId(null);
-    fetchUsers();
+    try {
+      const response = await updateUser(editId, formData);
+      setFormData({ first_name: "", last_name: "", email: "", password_hash: "", role: "user" });
+      setEditId(null);
+      fetchUsers();
+      setError(null);
+    } catch (err) {
+      window.alert(err.response?.data?.detail || "Something went wrong.");
+      console.log(err.response?.data?.detail || "Something went wrong.");
+    }
   };
 
   const handleEdit = (user) => {
@@ -99,8 +105,17 @@ export default function UserManagement() {
   };
 
   const handleDelete = async (id) => {
-    await deleteUser(id);
-    fetchUsers();
+    const isConfirmed = window.confirm("Are you sure you want to delete this user?");
+
+    if (!isConfirmed) return;
+    try {
+      await deleteUser(id);
+      fetchUsers();
+
+    } catch (err) {
+      window.alert(err.response?.data?.detail || "Something went wrong.");
+      console.log(err.response?.data?.detail || "Something went wrong.");
+    }
   };
 
   const handleCancel = () => {
@@ -114,7 +129,7 @@ export default function UserManagement() {
       <div className="max-w-7xl mx-auto p-8">
         <h1 className="text-3xl font-bold text-white mb-4">User Management</h1>
         <p className="mb-5">Manage users and their access.<br></br>
-          View, add, and update users in your system. Control roles, permissions, and account status from one place.</p>
+          View, add, update, and delete users in your system. Control roles, and permissions from one place.</p>
 
         {/* Search and buttons */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
@@ -177,34 +192,34 @@ export default function UserManagement() {
         <div className="bg-black-600 shadow-lg rounded-xl overflow-hidden text-white">
           <div className="max-h-150 overflow-y-auto">
             <table className="min-w-full">
-            <thead className="bg-gray-100 text-gray-600 text-sm uppercase">
-              <tr>
-                <th className="p-4 text-left">Name</th>
-                <th className="p-4 text-left">Email</th>
-                <th className="p-4 text-left">Status</th>
-                <th className="p-4 text-left">Role</th>
-                <th className="pl-20 text-left">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((u) => (
-                <tr key={u.user_id} className="border-t hover:bg-gray-600">
-                  <td className="p-4">{u.first_name} {u.last_name}</td>
-                  <td className="p-4">{u.email}</td>
-                  <td className="p-4 pr-40">{u.status}</td>
-                  <td className="p-4">{u.role}</td>
-                  <td className="p-4 pl-20 flex gap-2">
-                    <button onClick={() => handleEdit(u)} className="px-3 py-1 bg-green-800 text-white rounded-lg flex items-center gap-1">
-                      <Pencil size={16} /> Edit
-                    </button>
-                    <button onClick={() => handleDelete(u.user_id)} className="px-3 py-1 bg-red-700 text-white rounded-lg flex items-center gap-1">
-                      <Trash2 size={16} /> Delete
-                    </button>
-                  </td>
+              <thead className="bg-gray-100 text-gray-600 text-sm uppercase">
+                <tr>
+                  <th className="p-4 text-left">Name</th>
+                  <th className="p-4 text-left">Email</th>
+                  <th className="p-4 text-left">Status</th>
+                  <th className="p-4 text-left">Role</th>
+                  <th className="pl-20 text-left">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {users.map((u) => (
+                  <tr key={u.user_id} className="border-t hover:bg-gray-600">
+                    <td className="p-4 pr-20">{u.first_name} {u.last_name}</td>
+                    <td className="p-4 pr-15">{u.email}</td>
+                    <td className="p-4 pr-35">{u.active_status}</td>
+                    <td className="p-4">{u.role}</td>
+                    <td className="py-4 px-7 flex justify-end  gap-2">
+                      <button onClick={() => handleEdit(u)} className="px-3 py-1 bg-green-800 text-white rounded-lg flex items-center gap-1">
+                        <Pencil size={16} /> Edit
+                      </button>
+                      <button onClick={() => handleDelete(u.user_id)} className="px-3 py-1 bg-red-700 text-white rounded-lg flex items-center gap-1">
+                        <Trash2 size={16} /> Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

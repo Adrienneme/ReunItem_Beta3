@@ -80,7 +80,7 @@ function LostFoundRep() {
         </div>
         <p className="mb-5">
           <b>Access items that are no longer active.</b><br></br>
-          Archived items are stored here for record-keeping and reference. These entries are preserved but cannot be edited or used in active workflows.
+          Archived items are stored here for record-keeping and reference. These entries can be deleted and are preserved but cannot be edited or used in active workflows.
         </p>
         <div>
           <h1 className='mb-3'><b>Filter by</b></h1>
