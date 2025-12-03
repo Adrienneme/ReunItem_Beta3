@@ -177,7 +177,7 @@ class UserModels:
 
     @staticmethod
     def get_all_users():
-        response = supabase.table("user").select("*").neq("delete_user", True).execute()
+        response = supabase.table("user").select("*").neq("delete_user", True).order("created_at", desc=True).execute()
         if not response.data:
             raise HTTPException(status_code=404, detail="No users found")
 

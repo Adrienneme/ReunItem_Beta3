@@ -22,6 +22,7 @@ class UserSchemas:
     last_name: str
     email: Optional[str]
     role: UserRole
+    active_status: bool
 
   class UserLogin(BaseModel):
     email: str

@@ -66,7 +66,7 @@ class ItemModels:
 
     @staticmethod
     def get_items(user_id: str):
-        res = supabase.table("items").select("*").eq("user_id", user_id).execute()
+        res = supabase.table("items").select("*").eq("user_id", user_id).order("created_at", desc=True).execute()
         return [ItemSchemas.ItemResponse(**i) for i in res.data] if res.data else []
 
 

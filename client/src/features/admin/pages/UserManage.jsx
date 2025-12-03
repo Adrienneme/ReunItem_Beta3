@@ -13,11 +13,13 @@ export default function UserManagement() {
     role: "user",
   });
 
-  // Password strength state
   const [passwordStrength, setPasswordStrength] = useState({ status: 'none', color: 'text-gray-400', text: '' });
   const [error, setError] = useState('');
 
-  // Password strength checker
+  const [searchQuery, setSearchQuery] = useState("");
+  const [roleFilter, setRoleFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+
   const getPasswordStrength = (password) => {
     const minLength = 8;
     const hasAlphaNumeric = /[a-zA-Z]/.test(password) && /\d/.test(password);
@@ -48,7 +50,25 @@ export default function UserManagement() {
     fetchUsers();
   }, []);
 
-  // Validate form before submit
+  console.log(users)
+
+  const filteredUsers = users.filter((u) => {
+    const fullName = `${u.first_name} ${u.last_name}`.toLowerCase();
+
+    const matchesSearch =
+      fullName.includes(searchQuery.toLowerCase()) ||
+      u.email?.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesRole =
+      roleFilter === "all" || u.role?.toLowerCase() === roleFilter;
+
+    const matchesStatus =
+      statusFilter === "all" ||
+      String(u.active_status).toLowerCase() === statusFilter;
+
+    return matchesSearch && matchesRole && matchesStatus;
+  });
+
   const isFormValid = () => {
     const { first_name, last_name, email, password_hash, role } = formData;
     if (!first_name || !last_name || !email || !password_hash || !role) {
@@ -58,10 +78,9 @@ export default function UserManagement() {
     return true;
   };
 
-  // CREATE USER SUBMISSION
   const handleCreate = async (e) => {
     e.preventDefault();
-    if (!isFormValid()) return; // Stop submission if invalid
+    if (!isFormValid()) return;
     try {
       await adminCreateUser(formData);
       setShowPopup(false);
@@ -73,7 +92,6 @@ export default function UserManagement() {
     }
   };
 
-  // UPDATE USER
   const handleUpdate = async (e) => {
     e.preventDefault();
     if (!formData.first_name || !formData.last_name || !formData.role) {
@@ -81,14 +99,13 @@ export default function UserManagement() {
       return;
     }
     try {
-      const response = await updateUser(editId, formData);
+      await updateUser(editId, formData);
       setFormData({ first_name: "", last_name: "", email: "", password_hash: "", role: "user" });
       setEditId(null);
       fetchUsers();
       setError(null);
     } catch (err) {
       window.alert(err.response?.data?.detail || "Something went wrong.");
-      console.log(err.response?.data?.detail || "Something went wrong.");
     }
   };
 
@@ -101,20 +118,17 @@ export default function UserManagement() {
       email: user.email || "",
       password_hash: "",
     });
-    setPasswordStrength({ status: 'none', color: 'text-gray-400', text: '' });
   };
 
   const handleDelete = async (id) => {
     const isConfirmed = window.confirm("Are you sure you want to delete this user?");
-
     if (!isConfirmed) return;
+
     try {
       await deleteUser(id);
       fetchUsers();
-
     } catch (err) {
       window.alert(err.response?.data?.detail || "Something went wrong.");
-      console.log(err.response?.data?.detail || "Something went wrong.");
     }
   };
 
@@ -131,16 +145,44 @@ export default function UserManagement() {
         <p className="mb-5">Manage users and their access.<br></br>
           View, add, update, and delete users in your system. Control roles, and permissions from one place.</p>
 
-        {/* Search and buttons */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+
+          {/* SEARCH BAR */}
           <div className="flex items-center border rounded-lg px-3 py-2 bg-white w-full md:w-1/3">
             <Search size={18} className="text-gray-500" />
-            <input className="ml-2 w-full outline-none" placeholder="Search" type="text" />
+            <input
+              className="ml-2 w-full outline-none text-black"
+              placeholder="Search name or email..."
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
 
+          {/* FILTER DROPDOWNS */}
           <div className="flex gap-3">
-            <button className="px-4 py-2 border text-black rounded-lg bg-white">Role</button>
-            <button className="px-4 py-2 border text-black rounded-lg bg-white">Status</button>
+
+            {/* Role Dropdown */}
+            <select
+              className="px-4 py-2 border text-black rounded-lg bg-white"
+              value={roleFilter}
+              onChange={(e) => setRoleFilter(e.target.value)}
+            >
+              <option value="all">All Roles</option>
+              <option value="admin">Admin</option>
+              <option value="user">User</option>
+            </select>
+
+            {/* Status Dropdown */}
+            <select
+              className="px-4 py-2 border text-black rounded-lg bg-white"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+            >
+              <option value="all">All Status</option>
+              <option value="true">Active</option>
+              <option value="false">Inactive</option>
+            </select>
 
             <button
               onClick={() => setShowPopup(true)}
@@ -154,35 +196,51 @@ export default function UserManagement() {
         {/* UPDATE FORM */}
         {editId !== null && (
           <div className="bg-gray-700 shadow-md rounded-xl p-6 mb-6">
-            <h2 className="text-xl font-semibold mb-4">Edit User</h2>
+            <div className="flex flex-row">
+              <Pencil />
+              <h2 className="text-2xl font-semibold mb-4">Edit User</h2>
+            </div>
             <form onSubmit={handleUpdate} className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <input
-                className="border p-3 rounded-lg"
-                placeholder="First Name"
-                value={formData.first_name}
-                onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
-                required
-              />
-              <input
-                className="border p-3 rounded-lg"
-                placeholder="Last Name"
-                value={formData.last_name}
-                onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
-                required
-              />
-              <select
-                className="border p-3 rounded-lg hover:bg-gray-600"
-                value={formData.role}
-                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                required
-              >
-                <option value="admin">Admin</option>
-                <option value="user">User</option>
-              </select>
+              {/* First Name */}
+              <div className="flex flex-col">
+                <label className="mb-1 text-white font-medium">First Name</label>
+                <input
+                  className="border p-3 rounded-lg"
+                  placeholder="First Name"
+                  value={formData.first_name}
+                  onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+                />
+              </div>
+
+              {/* Last Name */}
+              <div className="flex flex-col">
+                <label className="mb-1 text-white font-medium">Last Name</label>
+                <input
+                  className="border p-3 rounded-lg"
+                  placeholder="Last Name"
+                  value={formData.last_name}
+                  onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+                />
+              </div>
+
+              {/* Role */}
+              <div className="flex flex-col">
+                <label className="mb-1 text-white font-medium">Role</label>
+                <select
+                  className="border p-3 rounded-lg hover:bg-gray-600"
+                  value={formData.role}
+                  onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                >
+                  <option value="admin">Admin</option>
+                  <option value="user">User</option>
+                </select>
+              </div>
 
               <div className="col-span-full flex gap-3 mt-2">
                 <button className="px-4 py-2 bg-green-600 text-white rounded-lg">Update</button>
-                <button type="button" onClick={handleCancel} className="px-4 py-2 bg-gray-300 rounded-lg">Cancel</button>
+                <button type="button" onClick={handleCancel} className="px-4 py-2 bg-gray-300 rounded-lg text-gray-700">
+                  Cancel
+                </button>
               </div>
             </form>
           </div>
@@ -202,17 +260,20 @@ export default function UserManagement() {
                 </tr>
               </thead>
               <tbody>
-                {users.map((u) => (
+                {filteredUsers.map((u) => (
                   <tr key={u.user_id} className="border-t hover:bg-gray-600">
                     <td className="p-4 pr-20">{u.first_name} {u.last_name}</td>
                     <td className="p-4 pr-15">{u.email}</td>
                     <td className="p-4 pr-35">{u.active_status}</td>
                     <td className="p-4">{u.role}</td>
-                    <td className="py-4 px-7 flex justify-end  gap-2">
-                      <button onClick={() => handleEdit(u)} className="px-3 py-1 bg-green-800 text-white rounded-lg flex items-center gap-1">
+                    <td className="py-4 px-7 flex justify-end gap-2">
+                      <button onClick={() => handleEdit(u)}
+                        className="px-3 py-1 bg-green-800 text-white rounded-lg flex items-center gap-1">
                         <Pencil size={16} /> Edit
                       </button>
-                      <button onClick={() => handleDelete(u.user_id)} className="px-3 py-1 bg-red-700 text-white rounded-lg flex items-center gap-1">
+
+                      <button onClick={() => handleDelete(u.user_id)}
+                        className="px-3 py-1 bg-red-700 text-white rounded-lg flex items-center gap-1">
                         <Trash2 size={16} /> Delete
                       </button>
                     </td>
@@ -224,7 +285,7 @@ export default function UserManagement() {
         </div>
       </div>
 
-      {/* POPUP SIGNUP */}
+      {/* POPUP */}
       {showPopup && (
         <div className="fixed inset-0 bg-transparent bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-gray-800 text-white p-6 rounded-xl w-[400px] shadow-xl relative">
@@ -232,24 +293,34 @@ export default function UserManagement() {
               <X size={20} />
             </button>
             <h2 className="text-2xl font-semibold mb-4 text-center">Create User</h2>
+
             <form onSubmit={handleCreate} className="flex flex-col gap-3">
               <input type="text" placeholder="First Name" className="p-3 rounded-lg bg-gray-700 border border-gray-600"
-                value={formData.first_name} onChange={(e) => setFormData({ ...formData, first_name: e.target.value })} required />
+                value={formData.first_name}
+                onChange={(e) => setFormData({ ...formData, first_name: e.target.value })} />
+
               <input type="text" placeholder="Last Name" className="p-3 rounded-lg bg-gray-700 border border-gray-600"
-                value={formData.last_name} onChange={(e) => setFormData({ ...formData, last_name: e.target.value })} required />
+                value={formData.last_name}
+                onChange={(e) => setFormData({ ...formData, last_name: e.target.value })} />
+
               <input type="email" placeholder="Email" className="p-3 rounded-lg bg-gray-700 border border-gray-600"
-                value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required />
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
+
               <input type="password" placeholder="Password" className="p-3 rounded-lg bg-gray-700 border border-gray-600"
-                value={formData.password_hash} onChange={(e) => {
+                value={formData.password_hash}
+                onChange={(e) => {
                   const value = e.target.value;
                   setFormData({ ...formData, password_hash: value });
                   setPasswordStrength(getPasswordStrength(value));
-                }} required />
+                }} />
+
               <p className={`text-sm mt-2 font-medium ${passwordStrength.color}`}>{passwordStrength.text}</p>
 
               <label className="mt-2 font-medium">Choose Role:</label>
-              <select className="p-3 rounded-lg bg-gray-700 border border-gray-600" value={formData.role}
-                onChange={(e) => setFormData({ ...formData, role: e.target.value })} required>
+              <select className="p-3 rounded-lg bg-gray-700 border border-gray-600"
+                value={formData.role}
+                onChange={(e) => setFormData({ ...formData, role: e.target.value })}>
                 <option value="user">User</option>
                 <option value="admin">Admin</option>
               </select>
@@ -257,17 +328,23 @@ export default function UserManagement() {
               {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
               <div className="flex justify-end gap-3 mt-4">
-                <button type="button" onClick={() => {
-                  setShowPopup(false)
-                  setFormData({ first_name: "", last_name: "", email: "", password_hash: "", role: "user" });
-                  setPasswordStrength({ status: 'none', color: 'text-gray-400', text: '' });
-                  setError('');
-                }} className="px-4 py-2 bg-gray-600 rounded-lg hover:bg-gray-500">
+                <button type="button"
+                  onClick={() => {
+                    setShowPopup(false);
+                    setFormData({ first_name: "", last_name: "", email: "", password_hash: "", role: "user" });
+                    setPasswordStrength({ status: 'none', color: 'text-gray-400', text: '' });
+                    setError('');
+                  }}
+                  className="px-4 py-2 bg-gray-600 rounded-lg hover:bg-gray-500">
                   Cancel
                 </button>
-                <button type="submit" className="px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-700">Submit</button>
+
+                <button type="submit" className="px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-700">
+                  Submit
+                </button>
               </div>
             </form>
+
           </div>
         </div>
       )}
