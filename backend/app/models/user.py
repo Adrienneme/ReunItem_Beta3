@@ -138,10 +138,10 @@ class UserModels:
         )
 
     @staticmethod
-    def logout_user(current_user: UserSchemas.User):
-        supabase.table("user").update({"active_status": False}).eq("user_id", current_user.user_id).execute()
+    def logout_user(user_id: str):
+        supabase.table("user").update({"active_status": False}).eq("user_id", str(user_id)).execute()
 
-        log_action(str(current_user.user_id), "LOGOUT_USER", "OK", "User logged out Successfully", "user")
+        log_action(str(user_id), "LOGOUT_USER", "OK", "User logged out Successfully", "user")
 
         return {"message": "Logged out successfully"}
 

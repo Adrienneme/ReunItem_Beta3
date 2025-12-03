@@ -19,7 +19,10 @@ const AdminSettings = () => {
   const [showBackupPanel, setShowBackupPanel] = useState(false); // ADDED
 
   const handleLogout = async () => {
-    await logoutUser();
+    const res = JSON.parse(localStorage.getItem("user"));
+    const user_id = res?.user_id
+    console.log(user_id)
+    await logoutUser(user_id);
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     navigate("/login");
@@ -30,7 +33,7 @@ const AdminSettings = () => {
       <AdminNavBar />
 
       {/* MAIN PAGE LAYOUT – NOW SUPPORTS RIGHT-SIDE PANEL */}
-      <div className="flex justify-left ml-20 px-4 mt-12 relative">
+      <div className="flex justify-left ml-25 px-4 mt-12 relative">
 
         {/* LEFT COLUMN: SETTINGS CONTENT */}
         <div className="w-full max-w-lg">

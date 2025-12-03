@@ -20,7 +20,6 @@ const Login = () => {
     } else {
       try {
         const response = await loginUser(form);
-
         localStorage.setItem("token", response.access_token)
         localStorage.setItem("user", JSON.stringify(response.user))
 

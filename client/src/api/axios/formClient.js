@@ -18,18 +18,15 @@ formClient.interceptors.request.use(
 
 formClient.interceptors.response.use(
   (response) => response,
-  async (error) => {
+  (error) => {
     if (error.response && error.response.status === 401) {
       if (!window.alertShown) {
         window.alertShown = true;
         alert("Your session has expired. Please log in again.");
 
-        try {
-          await logoutUser();
-          console.log("Log out")
-        } catch (logoutErr) {
-          console.error("Logout API failed:", logoutErr);
-        }
+        const res = JSON.parse(localStorage.getItem("user"));
+        const user_id = res?.user_id
+        logoutUser(user_id);
 
         setTimeout(() => {
           window.alertShown = false;

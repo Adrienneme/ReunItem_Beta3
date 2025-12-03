@@ -94,7 +94,7 @@ const LostBaseForm = ({
         <GenerateButton
           loading={loading}
           onClick={onGenerate}
-          disabled={disabled}
+          disabled={!formData.photo || disabled}
         />
       </div>
 

@@ -2,7 +2,7 @@ import axios from "axios";
 import { logoutUser } from "../users";
 
 const jsonClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:8000" || "http://127.0.0.1:8000", 
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:8000" || "http://127.0.0.1:8000",
   headers: {
     "Content-Type": "application/json",
   },
@@ -21,23 +21,20 @@ jsonClient.interceptors.request.use(
 
 jsonClient.interceptors.response.use(
   (response) => response,
-  async (error) => {
-    const status = error.response?.status;
-    if (status === 401) {
-      console.warn("Session expired. Redirecting to login...");
-      try{
-        await logoutUser();
-      }catch(logoutErr) {
-        console.error("Logout API failed:", logoutErr);
-      }
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-
+  (error) => {
+    if (error.response && error.response.status === 401) {
       if (!window.alertShown) {
         window.alertShown = true;
         alert("Your session has expired. Please log in again.");
+
+        const res = JSON.parse(localStorage.getItem("user"));
+        const user_id = res?.user_id
+        logoutUser(user_id);
+
         setTimeout(() => {
           window.alertShown = false;
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
           window.location.assign("/login");
         }, 200);
       }

@@ -19,8 +19,8 @@ export const loginUser = async (data) => {
 };
 
 
-export const logoutUser = async () => {
-  const response = await logoutClient.post("/users/logout");
+export const logoutUser = async (user_id) => {
+  const response = await logoutClient.post(`/users/logout/${user_id}`);
   return response.data;
 };
 
