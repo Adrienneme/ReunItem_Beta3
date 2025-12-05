@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminNavBar from "../../../components/layout/AdminNavBar";
 import { logoutUser } from "../../../api/users";
+
+import { backupAllTables, restoreAllTables } from "../../../api/admin";
+
 import {
   User2, Mail, LogOut, Palette, Globe,
   FileText, Info, ArrowLeft, HardDrive, X
@@ -18,6 +21,11 @@ const AdminSettings = () => {
 
   const [showBackupPanel, setShowBackupPanel] = useState(false); // ADDED
 
+  //
+    const [loadingBackup, setLoadingBackup] = useState(false);
+  const [loadingRestore, setLoadingRestore] = useState(false);
+
+
   const handleLogout = async () => {
     const res = JSON.parse(localStorage.getItem("user"));
     const user_id = res?.user_id
@@ -27,6 +35,43 @@ const AdminSettings = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
+//Backup function
+ const handleBackup = async () => {
+    if (!window.confirm("Download full system backup?")) return;
+
+    setLoadingBackup(true);
+    try {
+      await backupAllTables();
+      alert("Backup downloaded successfully!");
+    } catch (error) {
+      console.error(error);
+      alert("Backup failed. Check console.");
+    } finally {
+      setLoadingBackup(false);
+    }
+  };
+
+  //Restore function
+  const handleRestore = async () => {
+    if (
+      !window.confirm(
+        "Restore the latest backup? This will overwrite existing data."
+      )
+    )
+      return;
+
+    setLoadingRestore(true);
+    try {
+      const res = await restoreAllTables();
+      alert(res?.message || "Restore completed successfully!");
+    } catch (error) {
+      console.error(error);
+      alert("Restore failed. Check console.");
+    } finally {
+      setLoadingRestore(false);
+    }
+  };
+
 
   return (
     <div>
@@ -149,13 +194,23 @@ const AdminSettings = () => {
             </p>
 
             <div className="space-y-4">
-
-              <button className="w-full py-3 mb-20 bg-green-600 hover:bg-green-700 rounded-lg font-semibold">
-                Backup System Data
+              
+              {/* BACKUP BUTTON */}
+              <button
+                onClick={handleBackup}
+                disabled={loadingBackup}
+                className="w-full py-3 mb-20 bg-green-600 hover:bg-green-700 rounded-lg font-semibold"
+              >
+                {loadingBackup ? "Processing Backup..." : "Backup System Data"}
               </button>
 
-              <button className="w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold">
-                Restore Backup Data
+              {/* RESTORE BUTTON */}
+              <button
+                onClick={handleRestore}
+                disabled={loadingRestore}
+                className="w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold"
+              >
+                {loadingRestore ? "Processing Restore..." : "Restore Backup Data"}
               </button>
 
               <div className="mt-6 p-4 bg-gray-800 rounded-lg border border-gray-700">
