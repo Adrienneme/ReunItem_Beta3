@@ -5,10 +5,11 @@ import AdminNavBar from "../../../components/layout/AdminNavBar";
 import Cards2 from "../../../components/ui/Card2";
 import CircularLoad from "../../../components/ui/CircularLoad";
 import FilterDropdown from "../../../components/ui/Filters";
-import DateRangeFilter from "../../../components/ui/DateRangeFilter"; 
+import DateRangeFilter from "../../../components/ui/DateRangeFilter";
 import dayjs from "dayjs";
 
 import { admin_items } from "../../../api/admin";
+import { FolderSearch } from "lucide-react";
 
 function LostFoundRep() {
   const [filter, setFilter] = useState("All");
@@ -26,11 +27,11 @@ function LostFoundRep() {
 
   const combined = data
     ? [
-        ...(data.lost_grouped?.Approved || []),
-        ...(data.lost_grouped?.Matched || []),
-        ...(data.found_grouped?.Approved || []),
-        ...(data.found_grouped?.Matched || []),
-      ]
+      ...(data.lost_grouped?.Approved || []),
+      ...(data.lost_grouped?.Matched || []),
+      ...(data.found_grouped?.Approved || []),
+      ...(data.found_grouped?.Matched || []),
+    ]
     : [];
 
   const filteredEntries = combined
@@ -72,25 +73,34 @@ function LostFoundRep() {
   return (
     <div className="mb-6">
       <AdminNavBar />
-
-      <div className="flex flex-col items-center mt-10 gap-5">
-
-        <FilterDropdown
-          label="Filter"
-          options={["All", "Lost", "Found"]}
-          value={filter}
-          onChange={setFilter}
-        />
-
-        <div className="flex flex-row gap-3 items-center">
-          <h1>Timeline:</h1>
-          <DateRangeFilter
-            startDate={dateRange.startDate}
-            endDate={dateRange.endDate}
-            onChange={setDateRange}
-          />
+      <div className="flex flex-col ml-20 mt-10 mb-5">
+        <div className="flex flex-row gap-3">
+          <FolderSearch className="w-8 h-8 mb-2" />
+          <h1 className="text-2xl font-bold mb-5">Lost and Found Item Entries</h1>
         </div>
-
+        <p className="mb-5">
+          <b>View all approved item reports.</b><br></br>
+          This page lists items that have been reviewed and approved. Use it to track valid entries and manage any further updates.
+        </p>
+        <div>
+          <h1 className='mb-3'><b>Filter by</b></h1>
+          <div className="flex flex-row items-center gap-10">
+            <FilterDropdown
+              label="Type"
+              options={["All", "Lost", "Found"]}
+              value={filter}
+              onChange={setFilter}
+            />
+            <div className='flex flex-row gap-3 items-center'>
+              <h1>Timeline:</h1>
+              <DateRangeFilter
+                startDate={dateRange.startDate}
+                endDate={dateRange.endDate}
+                onChange={setDateRange}
+              />
+            </div>
+          </div>
+        </div>
       </div>
 
       {filteredEntries.length === 0 ? (

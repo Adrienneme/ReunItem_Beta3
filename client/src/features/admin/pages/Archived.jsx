@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Archive } from "lucide-react";
 
 import AdminNavBar from "../../../components/layout/AdminNavBar";
 import Card2 from "../../../components/ui/Card2";
@@ -26,11 +27,11 @@ function LostFoundRep() {
 
   const combined = data
     ? [
-        ...(data.lost_grouped?.Claimed || []),
-        ...(data.lost_grouped?.Rejected || []),
-        ...(data.found_grouped?.Claimed || []),
-        ...(data.found_grouped?.Rejected || []),
-      ]
+      ...(data.lost_grouped?.Claimed || []),
+      ...(data.lost_grouped?.Rejected || []),
+      ...(data.found_grouped?.Claimed || []),
+      ...(data.found_grouped?.Rejected || []),
+    ]
     : [];
 
   const filteredEntries = combined
@@ -72,22 +73,33 @@ function LostFoundRep() {
   return (
     <div className="mb-6">
       <AdminNavBar />
-
-      <div className="flex flex-col items-center mt-10 gap-5">
-        <FilterDropdown
-          label="Filter"
-          options={["All", "Claimed", "Rejected"]}
-          value={filter}
-          onChange={setFilter}
-        />
-
-        <div className="flex flex-row gap-3 items-center">
-          <h1>Timeline:</h1>
-          <DateRangeFilter
-            startDate={dateRange.startDate}
-            endDate={dateRange.endDate}
-            onChange={setDateRange}
-          />
+      <div className="flex flex-col ml-20 mt-10 mb-5">
+        <div className="flex flex-row gap-3">
+          <Archive className="w-8 h-8 mb-2" />
+          <h1 className="text-2xl font-bold mb-5">Archived Item Entries</h1>
+        </div>
+        <p className="mb-5">
+          <b>Access items that are no longer active.</b><br></br>
+          Archived items are stored here for record-keeping and reference. These entries can be deleted and are preserved but cannot be edited or used in active workflows.
+        </p>
+        <div>
+          <h1 className='mb-3'><b>Filter by</b></h1>
+          <div className="flex flex-row items-center gap-10">
+            <FilterDropdown
+              label="Type"
+              options={["All", "Claimed", "Rejected"]}
+              value={filter}
+              onChange={setFilter}
+            />
+            <div className='flex flex-row gap-3 items-center'>
+              <h1>Timeline:</h1>
+              <DateRangeFilter
+                startDate={dateRange.startDate}
+                endDate={dateRange.endDate}
+                onChange={setDateRange}
+              />
+            </div>
+          </div>
         </div>
       </div>
 

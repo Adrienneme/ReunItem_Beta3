@@ -11,7 +11,7 @@ const Filter = ({ label = "Filter", options = [], onChange }) => {
 
   return (
     <div className="flex items-center gap-2">
-      <label htmlFor={label} className="text-white-700 font-medium">
+      <label htmlFor={label} className="text-white-700 font-normal">
         {label}:
       </label>
 

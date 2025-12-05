@@ -35,18 +35,18 @@ class ItemModels:
 
             res = supabase.table("items").insert(item_data).execute()
             if not res.data:
-                log_action(user_id, "CREATE_ITEM", "ERR", "Failed to insert item", "items")
+                log_action(str(user_id), "CREATE_ITEM", "ERR", "Failed to insert item", "items")
                 raise Exception("Failed to insert item")
 
             full = supabase.table("items").select("*") \
                 .eq("entry_id", res.data[0]["entry_id"]) \
                 .single().execute()
 
-            log_action(user_id, "CREATE_ITEM", "OK", "Item created", "items")
+            log_action(str(user_id), "CREATE_ITEM", "OK", "Item created", "items")
             return ItemSchemas.ItemResponse(**full.data)
 
         except Exception as e:
-            log_action(user_id, "CREATE_ITEM", "ERR", str(e), "items")
+            log_action(str(user_id), "CREATE_ITEM", "ERR", str(e), "items")
             print(f"what error: {str(e)}")
             raise HTTPException(status_code=500, detail=str(e))
 
@@ -66,7 +66,7 @@ class ItemModels:
 
     @staticmethod
     def get_items(user_id: str):
-        res = supabase.table("items").select("*").eq("user_id", user_id).execute()
+        res = supabase.table("items").select("*").eq("user_id", user_id).order("created_at", desc=True).execute()
         return [ItemSchemas.ItemResponse(**i) for i in res.data] if res.data else []
 
 
@@ -110,11 +110,11 @@ class ItemModels:
 
             updated = supabase.table("items").select("*").eq("entry_id", entry_id).single().execute()
 
-            log_action(user_id, "UPDATE_ITEM", "OK", f"Updated {entry_id}", "items")
+            log_action(str(user_id), "UPDATE_ITEM", "OK", f"Updated {entry_id}", "items")
             return ItemSchemas.ItemResponse(**updated.data)
 
         except Exception as e:
-            log_action(user_id, "UPDATE_ITEM", "ERR", str(e), "items")
+            log_action(str(user_id), "UPDATE_ITEM", "ERR", str(e), "items")
             raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -135,11 +135,11 @@ class ItemModels:
 
             supabase.table("items").delete().eq("entry_id", entry_id).execute()
 
-            log_action(user_id, "DELETE_ITEM", "OK", f"Deleted {entry_id}", "items")
+            log_action(str(user_id), "DELETE_ITEM", "OK", f"Deleted {entry_id}", "items")
             return {"message": "Item deleted successfully"}
 
         except Exception as e:
-            log_action(user_id, "DELETE_ITEM", "ERR", str(e), "items")
+            log_action(str(user_id), "DELETE_ITEM", "ERR", str(e), "items")
             raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -189,7 +189,7 @@ class ItemModels:
             lost_item = supabase.table("items").select("*").eq("entry_id", lostentry_id).single().execute().data
             found_item = supabase.table("items").select("*").eq("entry_id", foundentry_id).single().execute().data
 
-            log_action(user_id, "SET_MATCH", "OK", "Match created", "matches_table")
+            log_action(str(user_id), "SET_MATCH", "OK", "Match created", "matches_table")
 
             return MatchSchemas.MatchResponse(
                 match_id=res.data[0]["match_id"],
@@ -200,7 +200,7 @@ class ItemModels:
             )
 
         except Exception as e:
-            log_action(user_id, "SET_MATCH", "ERR", str(e), "matches_table")
+            log_action(str(user_id), "SET_MATCH", "ERR", str(e), "matches_table")
             raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -241,9 +241,9 @@ class ItemModels:
             supabase.table("items").update({"status": "Approved"}).eq("entry_id", lostentry_id).execute()
             supabase.table("items").update({"status": "Approved"}).eq("entry_id", foundentry_id).execute()
 
-            log_action(user_id, "CANCEL_CLAIM", "OK", "Claim cancelled", "matches_table")
+            log_action(str(user_id), "CANCEL_CLAIM", "OK", "Claim cancelled", "matches_table")
             return {"message": "Claim canceled successfully"}
 
         except Exception as e:
-            log_action(user_id, "CANCEL_CLAIM", "ERR", str(e), "matches_table")
+            log_action(str(user_id), "CANCEL_CLAIM", "ERR", str(e), "matches_table")
             raise HTTPException(status_code=500, detail=str(e))

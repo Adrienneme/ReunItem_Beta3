@@ -29,6 +29,7 @@ class UserModels:
         existing_user = supabase.table("user").select("*").eq("email", user.email).execute()
         print("CHECKING EMAIL", user.email, existing_user.data)
         if existing_user.data:
+            log_action(str(actor_id), "CREATE_USER", "ERR", f"Attempted to create existing user {user.email}", "user")
             raise HTTPException(status_code=400, detail="Email already registered")
 
         user_data = user.model_dump()
@@ -42,35 +43,36 @@ class UserModels:
 
         response = supabase.table("user").insert(user_data).execute()
         if not response.data:
-            log_action(actor_id, "CREATE_USER", "ERR", "Failed to create user", "user")
+            log_action(str(actor_id), "CREATE_USER", "ERR", "Failed to create user", "user")
             raise HTTPException(status_code=500, detail="Failed to create user")
 
         created_user = response.data[0]
         created_user.pop("password_hash", None)
 
-        log_action(actor_id, "CREATE_USER", "OK", f"Created user {created_user['user_id']}", "user")
+        log_action(str(actor_id), "CREATE_USER", "OK", f"Created user {created_user['user_id']}", "user")
 
         return UserSchemas.User(**created_user)
     
     @staticmethod
     def update_user(target_user_id: str, updates: dict, actor_id: str):
+        print(updates)
         existing = supabase.table("user").select("*").eq("user_id", target_user_id).execute()
         if not existing.data:
             raise HTTPException(status_code=404, detail="User not found")
         
         if existing.data[0].get("active_status") is True:
-            log_action(actor_id, "UPDATE_USER", "ERR", f"Attempted to update active user {target_user_id}", "user")
+            log_action(str(actor_id), "UPDATE_USER", "ERR", f"Attempted to update active user {target_user_id}", "user")
             raise HTTPException(status_code=400, detail="Cannot update an active user. Ask them to log out first.")
 
         response = supabase.table("user").update(updates).eq("user_id", target_user_id).execute()
         if not response.data:
-            log_action(actor_id, "UPDATE_USER", "ERR", f"Failed to update user {target_user_id}", "user")
+            log_action(str(actor_id), "UPDATE_USER", "ERR", f"Failed to update user {target_user_id}", "user")
             raise HTTPException(status_code=500, detail="Failed to update user")
 
         updated_user = response.data[0]
         updated_user.pop("password_hash", None)
 
-        log_action(actor_id, "UPDATE_USER", "OK", f"Updated user {target_user_id}","user")
+        log_action(str(actor_id), "UPDATE_USER", "OK", f"Updated user {target_user_id}","user")
 
         return UserSchemas.User(**updated_user)
     
@@ -84,7 +86,7 @@ class UserModels:
             raise HTTPException(status_code=404, detail="User not found")
         
         if existing_user.data[0].get("active_status") is True:
-            log_action(actor_id, "DELETE_USER", "ERR", f"Attempted to delete active user {target_user_id}", "user")
+            log_action(str(actor_id), "DELETE_USER", "ERR", f"Attempted to delete active user {target_user_id}", "user")
             raise HTTPException(status_code=400, detail="Cannot delete an active user. Ask them to log out first.")
 
         delete_res = supabase.table("user").update({"delete_user": True, 
@@ -92,10 +94,10 @@ class UserModels:
                                                     "first_name": "N/A", 
                                                     "last_name": "N/A"}).eq("user_id", target_user_id).execute()
         if not delete_res.data:
-            log_action(actor_id, "DELETE_USER", "ERR", f"Failed to delete user {target_user_id}", "user")
+            log_action(str(actor_id), "DELETE_USER", "ERR", f"Failed to delete user {target_user_id}", "user")
             raise HTTPException(status_code=500, detail="Failed to delete user")
 
-        log_action(actor_id,"DELETE_USER", "OK", f"Deleted user {target_user_id}","user")
+        log_action(str(actor_id),"DELETE_USER", "OK", f"Deleted user {target_user_id}","user")
 
         return {"message": "User deleted successfully"}
 
@@ -136,10 +138,10 @@ class UserModels:
         )
 
     @staticmethod
-    def logout_user(current_user: UserSchemas.User):
-        supabase.table("user").update({"active_status": False}).eq("user_id", current_user.user_id).execute()
+    def logout_user(user_id: str):
+        supabase.table("user").update({"active_status": False}).eq("user_id", str(user_id)).execute()
 
-        log_action(str(current_user.user_id), "LOGOUT_USER", "OK", "User logged out Successfully", "user")
+        log_action(str(user_id), "LOGOUT_USER", "OK", "User logged out Successfully", "user")
 
         return {"message": "Logged out successfully"}
 
@@ -175,7 +177,7 @@ class UserModels:
 
     @staticmethod
     def get_all_users():
-        response = supabase.table("user").select("*").execute()
+        response = supabase.table("user").select("*").neq("delete_user", True).order("created_at", desc=True).execute()
         if not response.data:
             raise HTTPException(status_code=404, detail="No users found")
 

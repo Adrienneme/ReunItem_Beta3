@@ -20,9 +20,9 @@ def admin_create_user_route(user: UserSchemas.UserCreate, admin = Depends(get_cu
 def login_user_route(credentials: UserSchemas.UserLogin):
   return UserModels.login_user(credentials)
 
-@router.post("/logout")
-def logout_user_route(current_user: Annotated[UserSchemas.User, Depends(UserModels.get_current_active_user)]):
-    return UserModels.logout_user(current_user)
+@router.post("/logout/{user_id}")
+def logout_user_route(user_id: str):
+    return UserModels.logout_user(user_id)
 
 
 @router.get("/me", response_model=UserSchemas.User)

@@ -2,8 +2,9 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import UserNavBar from "../../../components/layout/UserNavBar";
 import { logoutUser } from "../../../api/users";
-import { User2, Mail, LogOut, Palette, Globe, HelpCircle, FileText,
-          Info, FileSignature, Star,
+import {
+  User2, Mail, LogOut, Palette, Globe, HelpCircle, FileText,
+  Info, FileSignature, Star,
 } from "lucide-react";
 
 const Settings = () => {
@@ -16,7 +17,9 @@ const Settings = () => {
   };
 
   const handleLogout = async () => {
-    await logoutUser();
+    const res = JSON.parse(localStorage.getItem("user"));
+    const user_id = res?.user_id
+    await logoutUser(user_id);
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     navigate("/login");
