@@ -264,7 +264,11 @@ export default function UserManagement() {
                   <tr key={u.user_id} className="border-t hover:bg-gray-600">
                     <td className="p-4 pr-20">{u.first_name} {u.last_name}</td>
                     <td className="p-4 pr-15">{u.email}</td>
-                    <td className="p-4 pr-35">{u.active_status}</td>
+                    <td className="p-4 pr-35">{
+                      u.active_status === false ? (<span className="text-gray-500">Inactive</span>) : 
+                      (<span className="text-green-400">Active</span>)
+                      
+                      }</td>
                     <td className="p-4">{u.role}</td>
                     <td className="py-4 px-7 flex justify-end gap-2">
                       <button onClick={() => handleEdit(u)}
