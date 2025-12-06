@@ -233,6 +233,7 @@ async def restore_all_tables(admin=Depends(get_current_admin)):
                 logging.info(f"[RESTORE] Inserted {len(batch)} rows into {table}")
 
         logging.info("[RESTORE] Restore completed successfully")
+        log_action(str(admin.user_id), "RESTORE_SYSTEM", "OK", "System Data has been successfully restored", "ALL_DATA")
         return {"message": "Restore completed successfully!"}
 
     except Exception as e:
