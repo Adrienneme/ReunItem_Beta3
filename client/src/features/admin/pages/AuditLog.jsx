@@ -3,6 +3,7 @@ import AdminNavBar from "../../../components/layout/AdminNavBar";
 import { getLogs } from "../../../api/admin";
 import DateRangeFilter from "../../../components/ui/DateRangeFilter";
 import dayjs from "dayjs";
+import { Search } from "lucide-react";
 
 export default function AuditLog() {
     const [logs, setLogs] = useState([]);
@@ -10,6 +11,8 @@ export default function AuditLog() {
 
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
+
+    const [searchQuery, setSearchQuery] = useState("");
 
     const fetchLogs = async () => {
         const logs = await getLogs();
@@ -22,6 +25,14 @@ export default function AuditLog() {
 
     const filteredLogs = logs.filter((log) => {
         const created = dayjs(log.created_at);
+
+        const matchesSearch =
+            log.user?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            log.action?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            log.role?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            log.status?.toLowerCase().includes(searchQuery.toLowerCase());
+
+        if (!matchesSearch) return false;
 
         if (startDate && created.isBefore(startDate, "day")) return false;
         if (endDate && created.isAfter(endDate, "day")) return false;
@@ -43,13 +54,27 @@ export default function AuditLog() {
                 <p className="mb-5">See what happened and when.<br></br>
                     Track system activities, user actions, and changes to keep everything transparent and accountable.</p>
 
-                <div className="flex flex-row items-center gap-3 mb-4">
-                    <p><b>Filter Logs by Date: </b></p>
-                    <DateRangeFilter
-                        startDate={startDate}
-                        endDate={endDate}
-                        onChange={handleDateChange}
-                    />
+                <div className="flex flex-row justify-between">
+                    <div className="flex items-center border rounded-lg px-3 py-2 bg-white w-1/3 mb-5">
+                        <Search size={18} className="text-gray-500" />
+                        <input
+                            className="ml-2 w-full outline-none text-black"
+                            placeholder="Search user, role, action, or status..."
+                            type="text"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                    </div>
+
+                    <div className="flex flex-row items-center gap-3 mb-4">
+                        <p><b>Filter Logs by Date: </b></p>
+                        <DateRangeFilter
+                            startDate={startDate}
+                            endDate={endDate}
+                            onChange={handleDateChange}
+                        />
+                    </div>
+
                 </div>
 
                 <div className="bg-black-600 shadow-lg rounded-xl text-white flex">

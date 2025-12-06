@@ -167,3 +167,66 @@ export const getLogs = async () => {
   const response = await jsonClient.get("/admin/get-logs");
     return response.data;
 }
+
+
+
+// ================= Backup & Restore =================
+
+// Backup all tables (download)
+export const backupAllTables = async () => {
+  try {
+    const response = await jsonClient.get("/admin/backup_all", {
+      responseType: "blob", // Treat as file
+      headers: { role: "admin" },
+    });
+
+    const blob = new Blob([response.data], { type: "application/json" }); //convert binary response to downloadable file
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+
+    // Use filename from headers or fallback
+    const filename = response.headers["content-disposition"]
+      ? response.headers["content-disposition"].split("filename=")[1]
+      : `backup_${new Date().toISOString()}.json`;
+
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+
+    return { message: "Backup downloaded successfully", filename };
+  } catch (error) {
+    console.error("Failed to backup all tables:", error);
+    throw error;
+  }
+};
+
+// Restore all tables (automatic latest backup)
+export const restoreAllTables = async () => {
+  try {
+    const response = await jsonClient.post("/admin/restore_all", null, {
+      headers: { role: "admin" },
+      timeout: 10 * 60 * 1000, // 10 minutes
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Failed to restore database:", error);
+    throw error;
+  }
+};
+
+//For metadata list
+export const getBackupList = async () => {
+  try {
+    const response = await jsonClient.get("/admin/backup_list", {
+      headers: { role: "admin" },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching backup list:", error);
+    throw error;
+  }
+};
