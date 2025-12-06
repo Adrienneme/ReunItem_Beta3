@@ -6,7 +6,8 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from app.core.db import supabase
 from app.models.user import UserModels
-import pytz #Python lib timezone
+import pytz 
+from app.models.audit_logs import log_action
 
 router = APIRouter(prefix="/admin", tags=["Admin Backup Restore"])
 
@@ -123,7 +124,7 @@ async def backup_all_tables(admin=Depends(get_current_admin)):
         metadata = {"chunks": chunk_files, "generated_at": timestamp}
         metadata_filename = f"full_backup_{timestamp}_metadata.json"  # removed total size from metadata filename
         supabase_upload_chunk(bucket, metadata_filename, json.dumps(metadata).encode("utf-8"))
-
+        log_action(str(admin.user_id), "BACKUP_SYSTEM", "OK", "System Data has been successfully backed up", "ALL_DATA")
         logging.info(f"[BACKUP] Backup completed successfully with {num_chunks} chunk(s)")
         return {"message": "Backup uploaded successfully", "chunks": num_chunks, "metadata": metadata_filename}
 
@@ -269,7 +270,19 @@ async def list_backup_metadata(admin=Depends(get_current_admin)):
         # Newest backups first
         metadata_files.sort(key=extract_timestamp, reverse=True)
 
-        return {"backups": metadata_files}
+        # ✅ ADDED — Lookup table: filename → size in bytes
+        size_lookup = {f["name"]: f["metadata"]["size"] for f in files}
+
+        # ✅ ADDED — Return filenames *with sizes*
+        return {
+            "backups": [
+                {
+                    "name": name,
+                    "size_bytes": size_lookup.get(name, 0)
+                }
+                for name in metadata_files
+            ]
+        }
 
     except Exception as e:
         logging.error(f"[DEBUG] List backup error: {e}")
