@@ -56,24 +56,24 @@ export default function AuditLog() {
 
                 <div className="flex flex-row justify-between">
                     <div className="flex items-center border rounded-lg px-3 py-2 bg-white w-1/3 mb-5">
-                    <Search size={18} className="text-gray-500"/>
-                    <input
-                        className="ml-2 w-full outline-none text-black"
-                        placeholder="Search user, role, action, or status..."
-                        type="text"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                </div>
-                
-                <div className="flex flex-row items-center gap-3 mb-4">
-                    <p><b>Filter Logs by Date: </b></p>
-                    <DateRangeFilter
-                        startDate={startDate}
-                        endDate={endDate}
-                        onChange={handleDateChange}
-                    />
-                </div>
+                        <Search size={18} className="text-gray-500" />
+                        <input
+                            className="ml-2 w-full outline-none text-black"
+                            placeholder="Search user, role, action, or status..."
+                            type="text"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                    </div>
+
+                    <div className="flex flex-row items-center gap-3 mb-4">
+                        <p><b>Filter Logs by Date: </b></p>
+                        <DateRangeFilter
+                            startDate={startDate}
+                            endDate={endDate}
+                            onChange={handleDateChange}
+                        />
+                    </div>
 
                 </div>
 
