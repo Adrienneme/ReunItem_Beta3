@@ -217,3 +217,16 @@ export const restoreAllTables = async () => {
     throw error;
   }
 };
+
+//For metadata list
+export const getBackupList = async () => {
+  try {
+    const response = await jsonClient.get("/admin/backup_list", {
+      headers: { role: "admin" },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching backup list:", error);
+    throw error;
+  }
+};

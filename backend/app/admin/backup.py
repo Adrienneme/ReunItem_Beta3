@@ -13,7 +13,7 @@ router = APIRouter(prefix="/admin", tags=["Admin Backup Restore"])
 logging.basicConfig(level=logging.DEBUG)
 
 BUCKET_NAME = "backups" # call function whenever "backups" is needed, for easier bucket change also
-CHUNK_SIZE = 2 * 1024 * 1024  # 2MB for chunk download, size limit to avoid timeeout
+CHUNK_SIZE = 2 * 1024 * 1024  # 2MB for chunk download, size limit to avoid timeout
 MAX_RETRIES = 5 #to handle upload error due to slow internet/connection timeout
 RETRY_BACKOFF = 1  # seconds, to prevent immediate retry avoiding overload and repeated failure
 
@@ -25,26 +25,25 @@ def get_current_admin(current_user=Depends(UserModels.get_current_active_user)):
 
 # ---------------- Table helpers ----------------
 def get_all_backup_tables():
-   #specify all tables to backup/restore 
-        
-        return [
-            "user",
-            "items",
-            "matches_table",
-            "activity_logs",
-            "audit_logs",
-        ]
+    # specify all tables to backup/restore 
+    return [
+        "user",
+        "items",
+        "matches_table",
+        "activity_logs",
+        "audit_logs",
+    ]
 
 def get_table_columns(table):
     try:
         res = supabase.rpc("get_columns", {"tbl": table}).execute() 
-        #calls PostgresSql get_column function then send paarameter "tbl":table into RPC function
-        #(create or replace function get_table_schema(tbl text))
-        #Function created from supabase SQL editor "get_table_schema"
-        #in "get_table_schema" "table" returns list of rows with these feilds
-        #"tbl" specifies the table that "language sql" will filter(column_name, data_type, is_nullable, column_name,is_identity)
-        #in pks As( : it find the primary key(index, column definition, column nam)e
-        #return column_name from pks(primary key set)
+        # calls PostgresSql get_column function then send parameter "tbl":table into RPC function
+        # (create or replace function get_table_schema(tbl text))
+        # Function created from supabase SQL editor "get_table_schema"
+        # in "get_table_schema" "table" returns list of rows with these fields
+        # "tbl" specifies the table that "language sql" will filter(column_name, data_type, is_nullable, column_name,is_identity)
+        # in pks As( : it find the primary key(index, column definition, column name)
+        # return column_name from pks(primary key set)
         if not res.data:
             return []
         return [c["column_name"] if isinstance(c, dict) else c for c in res.data]
@@ -64,7 +63,7 @@ def supabase_upload_chunk(bucket, path, data: bytes): #where to upload, path of 
             if attempt == MAX_RETRIES - 1:
                 raise
             time.sleep(RETRY_BACKOFF * (2 ** attempt))
-        #using the max_retries and retsy_backof earlier
+
 def supabase_download_with_retry(bucket, path):
     for attempt in range(MAX_RETRIES):
         try:
@@ -76,60 +75,66 @@ def supabase_download_with_retry(bucket, path):
             if attempt == MAX_RETRIES - 1:
                 raise
             time.sleep(RETRY_BACKOFF * (2 ** attempt))
-
-# ---------------- Backup ----------------
+            
+      # ---------------- Backup ----------------
 @router.get("/backup_all")
 async def backup_all_tables(admin=Depends(get_current_admin)):
     try:
-        tables = get_all_backup_tables() #return list of tables to backup from helper function
-        backup_data = {} #is a disctionary which will hold table name
+        tables = get_all_backup_tables()
+        backup_data = {}
 
-        for table in tables: #loops trhough all tables specified by the helper function
+        # Fetch table data
+        for table in tables:
             res = supabase.table(table).select("*").execute()
             backup_data[table] = res.data or []
             logging.info(f"[BACKUP] Table {table}: {len(backup_data[table])} rows")
 
-        backup_data["backup_generated_at"] = datetime.now(pytz.UTC).isoformat() #utc tiimestamp for backup generation time
-         # Convert to JSON and split into chunks
+        backup_data["backup_generated_at"] = datetime.now(pytz.UTC).isoformat()
         backup_bytes = json.dumps(backup_data, indent=4).encode("utf-8")
-        total_size = len(backup_bytes) #identify total chunck
-        num_chunks = math.ceil(total_size / CHUNK_SIZE) #How many chunks needed(files to be generated)
+        total_size = len(backup_bytes)
+        num_chunks = math.ceil(total_size / CHUNK_SIZE)  # split into chunks
 
         # Ensure bucket exists
         try:
-            buckets = supabase.storage.list_buckets()#list all buckets in supabase to check
+            buckets = supabase.storage.list_buckets()
             if BUCKET_NAME not in [b.name for b in buckets]:
-                #creates a new bucket if not exists 
-                #"buckets" specified at the top
                 supabase.storage.create_bucket(BUCKET_NAME)
                 logging.info(f"[BACKUP] Bucket '{BUCKET_NAME}' created.")
         except Exception as e:
             logging.debug(f"[DEBUG] Failed checking/creating bucket: {e}")
             raise HTTPException(status_code=500, detail="Backup failed due to bucket error.")
 
-        bucket = supabase.storage.from_(BUCKET_NAME) #returns a supabase storage object
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        chunk_files = [] #store all backupchunck name for metadata
+        bucket = supabase.storage.from_(BUCKET_NAME)
+        now = datetime.now()
+        timestamp = now.strftime("%b_%d_%Y_Time_%I_%M_%S%p")  # e.g., Dec_06_2025_Time_11_30_45AM
+        chunk_files = []
 
+        # Upload chunks
         for i in range(num_chunks):
-            start = i * CHUNK_SIZE #starting byte of chunk
-            end = start + CHUNK_SIZE    #ending byte of chunk
+            start = i * CHUNK_SIZE
+            end = start + CHUNK_SIZE
             chunk_data = backup_bytes[start:end]
-            filename = f"full_backup_{timestamp}_part{i+1}.json"
-            supabase_upload_chunk(bucket, filename, chunk_data) #upload all chunks
+            chunk_mb = math.ceil(len(chunk_data) / (1024*1024))
+            filename = f"full_backup_{timestamp}_part{i+1}.json"  # removed _XMB from filename
+            supabase_upload_chunk(bucket, filename, chunk_data)
             chunk_files.append(filename)
-#create metadata file
+
+        # Create metadata referencing all chunks
         metadata = {"chunks": chunk_files, "generated_at": timestamp}
-        #chunks - list of all chunk files
-        
-        supabase_upload_chunk(bucket, f"full_backup_{timestamp}_metadata.json", json.dumps(metadata).encode("utf-8"))
+        metadata_filename = f"full_backup_{timestamp}_metadata.json"  # removed total size from metadata filename
+        supabase_upload_chunk(bucket, metadata_filename, json.dumps(metadata).encode("utf-8"))
 
         logging.info(f"[BACKUP] Backup completed successfully with {num_chunks} chunk(s)")
-        return {"message": "Backup uploaded successfully", "chunks": num_chunks, "metadata": f"full_backup_{timestamp}_metadata.json"}
+        return {"message": "Backup uploaded successfully", "chunks": num_chunks, "metadata": metadata_filename}
 
     except Exception as e:
         logging.error(f"[DEBUG] Backup error: {e}")
         raise HTTPException(status_code=500, detail="Backup failed.")
+
+
+
+
+
 # ---------------- Restore ----------------
 @router.post("/restore_all")
 async def restore_all_tables(admin=Depends(get_current_admin)):
@@ -232,14 +237,51 @@ async def restore_all_tables(admin=Depends(get_current_admin)):
     except Exception as e:
         logging.error(f"[DEBUG] Restore error: {e}")
         raise HTTPException(status_code=500, detail="Restore failed.")
+    
+    
+# ================= Display metadata list of backups available =================
+@router.get("/backup_list")
+async def list_backup_metadata(admin=Depends(get_current_admin)):
+    try:
+        bucket = supabase.storage.from_(BUCKET_NAME)
+        files = bucket.list()
 
-    # notes
-    # "tables" is the list of all tables to backup/restore
-    # table is handling these restore table 1 by 1
+        # Only return metadata files
+        metadata_files = [f["name"] for f in files if f["name"].endswith("_metadata.json")]
 
-    # issues encountered during testing
-    # 1. during restore, some table failed to clear using DELETE FROM, so added a fallback using TRUNCATE TABLE CASCADE
-    # 2. during backup, supabase bucket creation sometimes failed due to network issues, added retry logic for upload/download functions
-    # 3. During cleaning, error failed rows does not exist, so added the "continue" statement
-    # 4. during insert, some column in backup data no longer exists in current database schema, so added column filtering based on current schema (Avoid postgres error)
-    # 5. during upload/download of large backup files, connection timeout errors occurred, so added chunking and retry logic
+        # Sort by timestamp in filename (newest first)
+        def extract_timestamp(name):
+            # e.g., full_backup_Dec_06_2025_Time_11_30_45AM_metadata.json
+            parts = name.split("_")
+            try:
+                if "Time" in parts:
+                    time_index = parts.index("Time")
+                    date_part = "_".join(parts[2:time_index])  # Dec_06_2025
+                    time_part = "_".join(parts[time_index + 1:time_index + 4])  # 11_30_45AM
+                    dt = datetime.strptime(f"{date_part}_{time_part}", "%b_%d_%Y_%I_%M_%S%p")
+                    return dt.timestamp()
+                else:
+                    return 0
+            except Exception as e:
+                logging.debug(f"[DEBUG] Failed to parse timestamp from {name}: {e}")
+                return 0
+
+        # Newest backups first
+        metadata_files.sort(key=extract_timestamp, reverse=True)
+
+        return {"backups": metadata_files}
+
+    except Exception as e:
+        logging.error(f"[DEBUG] List backup error: {e}")
+        raise HTTPException(status_code=500, detail="Failed to list backups")
+
+# notes
+# "tables" is the list of all tables to backup/restore
+# table is handling these restore table 1 by 1
+
+# issues encountered during testing
+# 1. during restore, some table failed to clear using DELETE FROM, so added a fallback using TRUNCATE TABLE CASCADE
+# 2. during backup, supabase bucket creation sometimes failed due to network issues, added retry logic for upload/download functions
+# 3. During cleaning, error failed rows does not exist, so added the "continue" statement
+# 4. during insert, some column in backup data no longer exists in current database schema, so added column filtering based on current schema (Avoid postgres error)
+# 5. during upload/download of large backup files, connection timeout errors occurred, so added chunking and retry logic

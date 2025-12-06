@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react"; // FIXED: added useEffect, removed duplicate import
 import { useNavigate } from "react-router-dom";
 import AdminNavBar from "../../../components/layout/AdminNavBar";
 import { logoutUser } from "../../../api/users";
 
-import { backupAllTables, restoreAllTables } from "../../../api/admin";
+import { backupAllTables, restoreAllTables, getBackupList } from "../../../api/admin";
 
 import {
   User2, Mail, LogOut, Palette, Globe,
@@ -20,11 +20,9 @@ const AdminSettings = () => {
   };
 
   const [showBackupPanel, setShowBackupPanel] = useState(false); // ADDED
-
-  //
-    const [loadingBackup, setLoadingBackup] = useState(false);
+  const [loadingBackup, setLoadingBackup] = useState(false);
   const [loadingRestore, setLoadingRestore] = useState(false);
-
+  const [backupList, setBackupList] = useState([]); // For metadata list
 
   const handleLogout = async () => {
     const res = JSON.parse(localStorage.getItem("user"));
@@ -35,8 +33,24 @@ const AdminSettings = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
-//Backup function
- const handleBackup = async () => {
+
+  //Metadata list
+  useEffect(() => {
+    const fetchBackupList = async () => {
+      try {
+        const res = await getBackupList();
+        setBackupList(res.backups || []);
+      } catch (err) {
+        console.error(err);
+        setBackupList([]);
+      }
+    };
+
+    fetchBackupList();
+  }, []);
+
+  //Backup function
+  const handleBackup = async () => {
     if (!window.confirm("Download full system backup?")) return;
 
     setLoadingBackup(true);
@@ -71,7 +85,6 @@ const AdminSettings = () => {
       setLoadingRestore(false);
     }
   };
-
 
   return (
     <div>
@@ -213,11 +226,18 @@ const AdminSettings = () => {
                 {loadingRestore ? "Processing Restore..." : "Restore Backup Data"}
               </button>
 
+              {/* Metadata list */}
               <div className="mt-6 p-4 bg-gray-800 rounded-lg border border-gray-700">
                 <p className="font-semibold">Recent Backups</p>
-                <p className="text-sm text-gray-400 mt-2">
-                  • No backups found
-                </p>
+                {backupList.length === 0 ? (
+                  <p className="text-sm text-gray-400 mt-2">• No backups found</p>
+                ) : (
+                  <ul className="text-sm text-gray-300 mt-2 space-y-1">
+                    {backupList.map((file, index) => (
+                      <li key={index}>• {file}</li>
+                    ))}
+                  </ul>
+                )}
               </div>
 
             </div>
