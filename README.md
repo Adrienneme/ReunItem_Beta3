@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="client/src/assets/icons/logo.png" alt="Reunitem Logo" width="500">
+  <img src="client/src/assets/icons/logo.png" alt="Reunitem Logo" width="250">
 </p>
 
 # Reunitem 🔍
