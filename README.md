@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://drive.google.com/file/d/1zB26x8XlZYmLVU8KXB-IzxhnRd8fprbM/view?usp=drive_link" alt="Reunitem Logo" width="500">
+  <img src="client/src/assets/icons/logo.png" alt="Reunitem Logo" width="500">
 </p>
 
 # Reunitem 🔍
