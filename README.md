@@ -53,7 +53,7 @@
 
 3. **Install dependencies**:
    ```bash
-   pip install fastapi uvicorn supabase transformers torch pillow
+   pip install -r requirements.txt
    ```
 
 4. **Environment Variables**:
