@@ -9,7 +9,21 @@
 ## 🚀 Key Features
 
 * **Dual-Role Authentication**: Secure login for Users and Admins (Lost and Found Centers) using **JWT** (JSON Web Tokens—a compact way to securely send information between parties).
-* **AI-Powered Matching**: 
+* **AI-Powered Matching**:
+<div align="center">
+  <table>
+    <tr>
+      <td align="center">
+        <img src="assets/generate.gif" width="350px" alt="AI Image Captioning"/><br />
+        <b>AI Image Captioning</b>
+      </td>
+      <td align="center">
+        <img src="assets/match.gif" width="350px" alt="Similarity Matching"/><br />
+        <b>Similarity Matching</b>
+      </td>
+    </tr>
+  </table>
+</div>
     * **Text Similarity**: Uses the `all-MiniLM-L6-v2` model to calculate similarity scores between lost and found item descriptions.
     * **Image Captioning**: Integrated `BLIP` (Bootstrapping Language-Image Pre-training) model to automatically generate descriptive text from uploaded photos.
 * **Smart Filtering**: Matches are prioritized based on location, item category, and description accuracy.
