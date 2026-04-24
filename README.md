@@ -42,18 +42,17 @@
 1. **Clone the repository**:
    ```bash
    git clone https://github.com/yourusername/reunitem.git
-   cd reunitem
    ```
 
 2. **Set up virtual environment**:
    ```bash
-   python -m venv venv
+   python3.11 -m venv .venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
 3. **Install dependencies**:
    ```bash
-   pip install fastapi uvicorn supabase transformers torch pillow
+   pip install -r requirements.txt
    ```
 
 4. **Environment Variables**:
@@ -66,7 +65,7 @@
 
 5. **Run the server**:
    ```bash
-   uvicorn main:app --reload
+   uvicorn app.main:app --reload
    ```
 
 ## 🛡️ Security & Monitoring
