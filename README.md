@@ -10,11 +10,12 @@
 
 * **Dual-Role Authentication**: Secure login for Users and Admins (Lost and Found Centers) using **JWT** (JSON Web Tokens—a compact way to securely send information between parties).
 * **AI-Powered Matching**:
+
 <div align="center">
   <table>
     <tr>
       <td align="center">
-        <img src="assets/generate.gif" width="350px" alt="AI Image Captioning"/><br />
+        <img src="assets/generate.gif" width="400px" alt="AI Image Captioning"/><br />
         <b>AI Image Captioning</b>
       </td>
       <td align="center">
@@ -24,10 +25,17 @@
     </tr>
   </table>
 </div>
-    * **Text Similarity**: Uses the `all-MiniLM-L6-v2` model to calculate similarity scores between lost and found item descriptions.
-    * **Image Captioning**: Integrated `BLIP` (Bootstrapping Language-Image Pre-training) model to automatically generate descriptive text from uploaded photos.
+
+* **Text Similarity**: Uses the `all-MiniLM-L6-v2` model to calculate similarity scores between lost and found item descriptions.
+* **Image Captioning**: Integrated `BLIP` (Bootstrapping Language-Image Pre-training) model to automatically generate descriptive text from uploaded photos.
 * **Smart Filtering**: Matches are prioritized based on location, item category, and description accuracy.
-* **Admin Dashboard**: Institutions can approve/reject submissions, monitor activity logs, and facilitate safe claims.
+
+<div align="center">
+  <img src="assets/admin.gif" width="500px" alt="Similarity Matching"/><br />
+  <b>Similarity Matching</b>
+</div>
+
+* **Admin Dashboard**: Institutions can approve/reject submissions, monitor users and activity logs, and facilitate safe claims.
 * **Security & Reliability**: Built-in system logging to monitor user activity and automated database backups.
 
 ## 🛠️ Technical Stack
