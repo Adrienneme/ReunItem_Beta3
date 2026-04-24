@@ -19,7 +19,7 @@
         <b>AI Image Captioning</b>
       </td>
       <td align="center">
-        <img src="assets/match.gif" width="350px" alt="Similarity Matching"/><br />
+        <img src="assets/match.gif" width="400px" alt="Similarity Matching"/><br />
         <b>Similarity Matching</b>
       </td>
     </tr>
@@ -31,8 +31,8 @@
 * **Smart Filtering**: Matches are prioritized based on location, item category, and description accuracy.
 
 <div align="center">
-  <img src="assets/admin.gif" width="500px" alt="Similarity Matching"/><br />
-  <b>Similarity Matching</b>
+  <img src="assets/admin.gif" width="550px" alt="Similarity Matching"/><br />
+  <b>Admin DashBoard</b>
 </div>
 
 * **Admin Dashboard**: Institutions can approve/reject submissions, monitor users and activity logs, and facilitate safe claims.
